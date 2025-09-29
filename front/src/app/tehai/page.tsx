@@ -14,10 +14,12 @@ import { TEHAI_STATUS_LABELS, TEHAI_STATUS_VARIANTS } from "@/types/tehai";
 import { staffAttendanceSampleData } from "@/data/staffAttendanceSampleData";
 import { WORK_TYPE_LABELS, EMPLOYMENT_TYPE_LABELS, ATTENDANCE_STATUS_LABELS, ATTENDANCE_STATUS_VARIANTS } from "@/types/staff-attendance";
 import { rosterPeriods } from "@/types/department-roster";
-import { partTimeAttendanceSampleData, PART_TIME_MIN_ROWS } from "@/data/partTimeAttendanceSampleData";
+import { partTimeAttendanceSampleData } from "@/data/partTimeAttendanceSampleData";
+//import { PART_TIME_MIN_ROWS } from "@/data/partTimeAttendanceSampleData";
 import { PART_TIME_REQUEST_TYPE_LABELS, PART_TIME_JOB_TYPE_LABELS, PART_TIME_REQUEST_TYPE_VARIANTS, PART_TIME_JOB_TYPE_VARIANTS } from "@/types/part-time-attendance";
-import { leaveAndDeductionSampleData, LEAVE_DEDUCTION_MAX_ROWS } from "@/data/leaveAndDeductionSampleData";
-import { LEAVE_DEDUCTION_TYPE_LABELS, LEAVE_DEDUCTION_TYPE_VARIANTS } from "@/types/leave-and-deduction";
+import { leaveAndDeductionSampleData } from "@/data/leaveAndDeductionSampleData";
+//import { LEAVE_DEDUCTION_MAX_ROWS } from "@/data/leaveAndDeductionSampleData";
+//import { LEAVE_DEDUCTION_TYPE_LABELS, LEAVE_DEDUCTION_TYPE_VARIANTS } from "@/types/leave-and-deduction";
 import { reservationSampleData } from "@/data/reservationSampleData";
 import { COURSE_COLORS } from "@/types/reservation";
 
