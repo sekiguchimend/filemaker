@@ -46,3 +46,5 @@ EasyGantt.js
 
 # markdown directory
 md/
+
+node_modules/
