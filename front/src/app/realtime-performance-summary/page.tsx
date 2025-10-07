@@ -99,9 +99,9 @@ export default function RealtimePerformanceSummary() {
       {/* メインコンテンツ */}
       <main className="flex flex-1 p-4 gap-4">
         {/* 左：サマリー */}
-        <div className="w-1/4 bg-white rounded-xl shadow">
+        <div className="w-1/4 bg-white rounded-xl shadow flex flex-col">
           {/* 上段：当日・達成目標を横4列に配置（達成目標は幅2倍） */}
-          <div className="grid grid-cols-4 gap-4">
+          <div className="flex-1 grid grid-cols-4 gap-4 p-4">
             {/* 左列：タイトルなしの見出し */}
             <section>
               <h2 className="font-bold text-green-700 text-center">　</h2>
@@ -133,11 +133,16 @@ export default function RealtimePerformanceSummary() {
           </div>
 
           {/* 下段：主担当データ */}
-          <section className="mt-4">
-            <h2 className="font-bold text-yellow-700">主副受付時間</h2>
-            <p className="p-2 bg-yellow-50 rounded">受付時間: 410.5 / 410.5 (達成率: 1.0061)</p>
-            <h2 className="font-bold text-yellow-700">主副出動人数</h2>
-            <p className="p-2 bg-yellow-50 rounded">出動人数: 68 / 68</p>
+          <section className="p-4 pt-0">
+            <div className="bg-yellow-50 p-4 rounded-lg">
+              <h2 className="font-bold text-yellow-700 mb-2">主副受付時間</h2>
+              <p className="mb-3">受付時間: 410.5 / 410.5 (達成率: 1.0061)</p>
+              <h2 className="font-bold text-yellow-700 mb-2">主副出動人数</h2>
+              <p>出動人数: 68 / 68</p>
+              <h2 className="font-bold text-green-700 text-center">当日</h2>
+              <p className="text-right p-2 bg-gray-50 rounded">917,350</p>
+              <p className="text-right p-2 bg-gray-50 rounded">131</p>
+            </div>
           </section>
         </div>
 

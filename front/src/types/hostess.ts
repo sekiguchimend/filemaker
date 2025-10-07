@@ -47,6 +47,8 @@ export interface HostessRanking {
   hostessName: string;
   stageName: string;
   category: string;
+  storeId?: string; // 店舗ID
+  storeName?: string; // 店舗名
   monthlyEarnings: number; // 月間収入
   totalCustomers: number; // 総客数
   averageServiceTime: number; // 平均サービス時間（分）
@@ -56,6 +58,17 @@ export interface HostessRanking {
   specialAchievements: string[]; // 特別な実績
   previousRank?: number; // 前回順位
   rankChange: 'up' | 'down' | 'same' | 'new'; // 順位変動
+  // 指名関連
+  regularNominationCount: number; // 通常指名数
+  panelNominationCount: number; // パネル指名数
+  freeNominationCount: number; // フリー指名数
+  nominationRevenue: number; // 指名売上
+  // 詳細集計
+  totalServiceTime: number; // 総サービス時間（分）
+  averageCustomerSpending: number; // 平均客単価
+  repeatCustomerRate: number; // リピート率（%）
+  newCustomerCount: number; // 新規客数
+  extensionRate: number; // 延長率（%）
 }
 
 // ホステスマネージャー一覧データ
