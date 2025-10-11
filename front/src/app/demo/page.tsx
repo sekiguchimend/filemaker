@@ -1,8 +1,6 @@
 'use client';
 import { useState } from "react";
-import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { X } from "lucide-react";
 import { MetricCard } from "@/components/MetricCard";
 import { SimpleMetricCard } from "@/components/SimpleMetricCard";
 import { HourlyBreakdownTable } from "@/components/HourlyBreakdownTable";

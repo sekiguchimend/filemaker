@@ -1,4 +1,4 @@
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+// table UI components are not used; grid layout is used instead
 
 interface HourlyData {
   time: string;

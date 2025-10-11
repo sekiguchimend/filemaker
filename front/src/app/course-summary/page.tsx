@@ -2,13 +2,11 @@
 
 import React from 'react';
 
-import { useRouter } from 'next/navigation';
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { ArrowLeft, BookOpen } from "lucide-react";
 
 export default function CourseSummary() {
-  const router = useRouter();
 
   return (
     <div className="min-h-screen bg-gray-100 p-4">
