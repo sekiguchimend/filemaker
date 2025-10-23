@@ -5,12 +5,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Customer, storeMapping } from '@/types';
-
-interface CustomerLedgerHeaderProps {
-  customer?: Customer;
-  onCustomerChange?: (customer: Partial<Customer>) => void;
-  readOnly?: boolean;
-}
+import type { CustomerLedgerHeaderProps } from '@/types/customer-ledger';
 
 /**
  * 顧客台帳ヘッダーコンポーネント

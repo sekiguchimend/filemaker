@@ -2,10 +2,7 @@ import React, { useState } from 'react';
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { AttendingStaff, AttendingHostess } from '@/types/attendance';
-
-interface AttendingStaffItemProps {
-  data: AttendingStaff;
-}
+import type { AttendingStaffItemProps, AttendingHostessItemProps, AttendanceTabProps } from '@/types/attendance-tab';
 
 /**
  * 出勤スタッフの1行分のコンポーネント
@@ -126,10 +123,6 @@ function AttendingStaffItem({ data }: AttendingStaffItemProps) {
   );
 }
 
-interface AttendingHostessItemProps {
-  data: AttendingHostess;
-}
-
 /**
  * 出勤ホステスの1行分のコンポーネント
  */
@@ -177,11 +170,6 @@ function AttendingHostessItem({ data }: AttendingHostessItemProps) {
       <div className="text-sm text-gray-500 truncate">{data.notes || '-'}</div>
     </div>
   );
-}
-
-interface AttendanceTabProps {
-  staffList: AttendingStaff[];
-  hostessList: AttendingHostess[];
 }
 
 /**

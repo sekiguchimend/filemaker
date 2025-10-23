@@ -1,13 +1,5 @@
 import { Card } from "@/components/ui/card";
-
-interface MetricCardProps {
-  label: string;
-  current: number;
-  target: number;
-  unit?: string;
-  subLabel?: string;
-  colorScheme?: "default" | "success" | "neutral";
-}
+import type { MetricCardProps } from '@/types/metric-card';
 
 export const MetricCard = ({ 
   label, 

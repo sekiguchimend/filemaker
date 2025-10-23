@@ -9,29 +9,9 @@ import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { ArrowLeft, Search, Calendar, Plus } from "lucide-react";
 import { timeBasedHostessAttendanceSampleData } from '@/data/timeBasedHostessAttendanceSampleData';
+import type { HostessAttendanceTask, AttendanceDataItem } from '@/types/time-based-hostess-attendance';
 
-// --- Types ---
-export type HostessAttendanceTask = {
-  id: string;
-  hostessId: string;
-  hostessName: string;
-  start: string; // ISO string
-  end: string; // ISO string
-  location?: string;
-  notes?: string;
-};
-
-// --- Types for Data Conversion ---
-interface AttendanceDataItem {
-  id?: string;
-  startTime: string;
-  endTime: string;
-  hostessId?: string;
-  hostessName?: string;
-  location?: string;
-  notes?: string;
-  status?: string;
-}
+// --- Types --- 別ファイルに分離済み
 
 // --- Data Conversion ---
 function convertToGanttTasks(attendanceData: unknown[]): HostessAttendanceTask[] {

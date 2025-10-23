@@ -12,43 +12,10 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Textarea } from "@/components/ui/textarea";
 import { FileText, User2, MapPin, Plus, Trash2, ArrowLeft } from "lucide-react";
 import { Customer, storeMapping } from '@/types';
+import type { Vehicle, UsageHistory, PreferenceForm, ReceiptForm, PetOption, WorkAreaOption } from '@/types/customer-ledger';
 import { sampleCustomers } from '@/data/customerSampleData';
 
-interface Vehicle {
-  id: string;
-  type: string;
-  color: string;
-  number: string;
-}
-
-interface UsageHistory {
-  id: string;
-  receptionNumber: string;
-  date: string;
-  storeName: string;
-  staffName: string;
-  category: string;
-  rank: string;
-  startTime: string;
-  endTime: string;
-  amount: number;
-  status: 'completed' | 'absent'; // 'completed' = 終了（青）, 'absent' = 当日欠（赤）
-}
-
-interface PreferenceForm {
-  rank: 'A' | 'B' | 'C';
-  favoriteType: string;
-  speakingStyle: string;
-  dislikedType: string;
-}
-
-interface ReceiptForm {
-  recipient: string;
-  note: string;
-}
-
-type PetOption = 'dog' | 'cat' | 'none' | 'other';
-type WorkAreaOption = 'local' | 'business_trip';
+// 型は分離済み
 
 export default function CustomerLedger() {
   const router = useRouter();

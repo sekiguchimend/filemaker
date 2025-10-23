@@ -1,14 +1,7 @@
 'use client'
 
 import { cn } from "@/lib/utils";
-import { ReactNode } from "react";
-
-interface BusinessCardProps {
-  children: ReactNode;
-  variant?: 'primary' | 'secondary' | 'gray' | 'accent';
-  className?: string;
-  onClick?: () => void;
-}
+import type { BusinessCardProps } from '@/types/business-card';
 
 export const BusinessCard = ({ 
   children, 

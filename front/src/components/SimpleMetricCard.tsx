@@ -1,14 +1,5 @@
 import { Card } from "@/components/ui/card";
-
-interface SimpleMetricCardProps {
-  label: string;
-  subLabel?: string;
-  value: number;
-  actual: number;
-  target: number;
-  unit?: string;
-  bgColor?: string;
-}
+import type { SimpleMetricCardProps } from '@/types/simple-metric-card';
 
 export const SimpleMetricCard = ({ 
   label, 

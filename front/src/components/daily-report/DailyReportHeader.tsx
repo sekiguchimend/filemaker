@@ -3,29 +3,7 @@
 import React from 'react';
 import { Button } from "@/components/ui/button";
 import { Menu, List, CreditCard, Store, ChevronsLeft, ChevronLeft, ChevronRight, ChevronsRight, Plus, Trash2, Search, User } from "lucide-react";
-
-interface DailyReportHeaderProps {
-  currentDate?: Date;
-  closingDateTime?: Date | string;
-  manager?: string;
-  serialNumber?: string | number;
-  createdAt?: Date | string;
-  updatedAt?: Date | string;
-  onMenuClick?: () => void;
-  onListClick?: () => void;
-  onCreditCheckClick?: () => void;
-  onStoreCardSummaryClick?: () => void;
-  onAClick?: () => void;
-  onBClick?: () => void;
-  onWeekBackClick?: () => void;
-  onPreviousDayClick?: () => void;
-  onNextDayClick?: () => void;
-  onWeekForwardClick?: () => void;
-  onNewClick?: () => void;
-  onDeleteClick?: () => void;
-  onSearchClick?: () => void;
-  onOwnerClick?: () => void;
-}
+import type { DailyReportHeaderProps } from '@/types/daily-report';
 
 export default function DailyReportHeader({
   currentDate = new Date(),

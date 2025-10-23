@@ -1,9 +1,6 @@
 import React from 'react';
 import { Staff } from '@/types/staff';
-
-interface StaffListItemProps {
-  data: Staff;
-}
+import type { StaffListItemProps, StaffListProps } from '@/types/staff-list';
 
 /**
  * スタッフリストの1行分のコンポーネント
@@ -57,9 +54,7 @@ function StaffListItem({ data }: StaffListItemProps) {
   );
 }
 
-interface StaffListProps {
-  staffList: Staff[];
-}
+// Props 型は分離済み
 
 /**
  * スタッフリストコンポーネント

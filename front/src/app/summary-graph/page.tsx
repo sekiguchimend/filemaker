@@ -8,7 +8,7 @@ import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { ArrowLeft, TrendingUp, BarChart3, ExternalLink } from "lucide-react";
 
-// データ型定義
+// データ型定義（分離）
 interface LocationData {
   id: number;
   storeName: string;
