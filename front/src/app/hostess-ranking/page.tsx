@@ -226,7 +226,7 @@ export default function HostessRanking() {
       <div className="mb-4">
         <Button 
           variant="outline" 
-          onClick={() => router.push('/')}
+          onClick={() => router.push('/dashboard')}
           className="flex items-center gap-2"
         >
           <ArrowLeft className="w-4 h-4" />

@@ -54,7 +54,7 @@ export default function GroupLedgerPage() {
               <Button 
                 variant="outline" 
                 size="sm"
-                onClick={() => router.push('/')}
+                onClick={() => router.push('/dashboard')}
                 className="flex items-center gap-2"
               >
                 <ArrowLeft className="w-4 h-4" />

@@ -1,7 +1,12 @@
+"use client";
+
+import { useRouter } from "next/navigation";
 import { BusinessCard } from "@/components/ui/business-card";
 import { LogOut, Circle } from "lucide-react";
+import { logout } from "@/lib/auth";
 
 export const DashboardFooter = () => {
+  const router = useRouter();
   // 現在の日付を取得
   const today = new Date();
   const todayStr = today.toLocaleDateString('ja-JP', { 
@@ -9,6 +14,11 @@ export const DashboardFooter = () => {
     month: '2-digit', 
     day: '2-digit' 
   });
+
+  const handleLogout = () => {
+    logout();
+    router.replace('/');
+  };
 
   return (
     <div className="bg-gradient-secondary p-4 border-t border-border">
@@ -26,6 +36,7 @@ export const DashboardFooter = () => {
         <BusinessCard 
           variant="secondary"
           className="flex items-center gap-2 px-4 py-2"
+          onClick={handleLogout}
         >
           <LogOut className="w-4 h-4" />
           <span className="text-sm">ログアウト</span>
