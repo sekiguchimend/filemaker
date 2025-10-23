@@ -4,7 +4,9 @@ import { Card } from "@/components/ui/card";
 import { MetricCard } from "@/components/MetricCard";
 import { SimpleMetricCard } from "@/components/SimpleMetricCard";
 import { HourlyBreakdownTable } from "@/components/HourlyBreakdownTable";
-import { TrendChart } from "@/components/TrendChart";
+import dynamic from 'next/dynamic';
+
+const TrendChart = dynamic(() => import("@/components/TrendChart").then(m => m.TrendChart), { ssr: false });
 
 const Index = () => {
   const [currentDate] = useState("2025年08月27日水曜日");
