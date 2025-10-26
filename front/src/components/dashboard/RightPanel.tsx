@@ -26,7 +26,7 @@ export const RightPanel = () => {
     const routeMap: { [key: string]: string } = {
       "各店リスト": "/store-list",
       "ホステスマネージャリスト": "/hostess-manager-list",
-      "店舗別顧客ルート集計表": "/store-customer-route-summary",
+      "店舗別実績ノルマ集計表": "/store-customer-route-summary",
       "時間帯別ホステス出勤": "/time-based-hostess-attendance",
       "リアルタイム自動成績集計表": "/realtime-performance-summary",
       "店舗別メディア利用集計": "/store-media-usage-summary",
@@ -44,7 +44,7 @@ export const RightPanel = () => {
       items: [
         { name: "各店リスト", icon: Edit3 },
         { name: "ホステスマネージャリスト", icon: Calendar },
-        { name: "店舗別顧客ルート集計表", icon: BarChart3 },
+        { name: "店舗別実績ノルマ集計表", icon: BarChart3 },
         { name: "時間帯別ホステス出勤", icon: Clock },
         { name: "リアルタイム自動成績集計表", icon: Activity },
         { name: "店舗別メディア利用集計", icon: BarChart3 },

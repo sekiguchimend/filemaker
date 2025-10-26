@@ -29,7 +29,7 @@ export default function StoreCustomerRouteSummary() {
         <CardHeader>
           <div className="flex items-center gap-3">
             <BarChart3 className="w-6 h-6" />
-            <h1 className="text-2xl font-bold">店舗別顧客ルート集計表</h1>
+            <h1 className="text-2xl font-bold">店舗別実績ノルマ集計表</h1>
           </div>
         </CardHeader>
       </Card>
@@ -39,7 +39,7 @@ export default function StoreCustomerRouteSummary() {
         <CardContent className="p-8">
           <div className="text-center text-gray-500">
             <BarChart3 className="w-16 h-16 mx-auto mb-4 text-gray-300" />
-            <h2 className="text-xl font-semibold mb-2">店舗別顧客ルート集計表</h2>
+            <h2 className="text-xl font-semibold mb-2">店舗別実績ノルマ集計表</h2>
             <p>このページは準備中です</p>
           </div>
         </CardContent>
