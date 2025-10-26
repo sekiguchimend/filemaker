@@ -93,6 +93,14 @@ export interface HostessManager {
   notes?: string; // 備考
 }
 
+// ホステスマネージャリスト（シンプル表示用）
+export interface HostessManagerListItem {
+  no: number; // 通し番号
+  name: string; // 氏名
+  standardHours: number; // 基準時間
+  peopleCount: number; // 人数
+}
+
 // 勤務形態の型定義
 export type WorkType = 'full_time' | 'part_time' | 'contract' | 'dispatch' | 'temp';
 

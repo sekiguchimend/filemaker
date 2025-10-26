@@ -6,6 +6,8 @@ import { useRouter } from 'next/navigation';
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { ArrowLeft, Calendar } from "lucide-react";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { hostessManagerListSampleData } from "@/data/hostessManagerListSampleData";
 
 export default function HostessManagerList() {
   const router = useRouter();
@@ -36,11 +38,28 @@ export default function HostessManagerList() {
 
       {/* メインコンテンツ */}
       <Card>
-        <CardContent className="p-8">
-          <div className="text-center text-gray-500">
-            <Calendar className="w-16 h-16 mx-auto mb-4 text-gray-300" />
-            <h2 className="text-xl font-semibold mb-2">ホステスマネージャリスト</h2>
-            <p>このページは準備中です</p>
+        <CardContent className="p-4">
+          <div className="overflow-x-auto">
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead className="w-20">No</TableHead>
+                  <TableHead>氏名</TableHead>
+                  <TableHead className="w-32">基準時間</TableHead>
+                  <TableHead className="w-24">人数</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {hostessManagerListSampleData.map((row) => (
+                  <TableRow key={row.no}>
+                    <TableCell>{row.no}</TableCell>
+                    <TableCell>{row.name}</TableCell>
+                    <TableCell>{row.standardHours}</TableCell>
+                    <TableCell>{row.peopleCount}</TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
           </div>
         </CardContent>
       </Card>
