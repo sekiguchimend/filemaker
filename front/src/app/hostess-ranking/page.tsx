@@ -16,6 +16,7 @@ import { sampleHostessRanking } from "@/data/hostessSampleData";
 import type { HostessRanking } from "@/types/hostess";
 import type { SortKey, RankingCardProps, RankChangeIconProps } from "@/types/hostess-ranking";
 import { SORT_OPTIONS } from "@/types/hostess-ranking";
+import RankingTransitionChart from "@/components/hostess/ranking-transition-chart";
 
 // ランク変動アイコン
 const RankChangeIcon = ({ change }: RankChangeIconProps) => {
@@ -214,6 +215,23 @@ export default function HostessRanking() {
     'regularNominationCount'
   ]);
 
+  // 月次推移用コントロール
+  const [transitionMetric, setTransitionMetric] = useState<SortKey>('monthlyEarnings');
+  const [transitionStore, setTransitionStore] = useState<string>('all');
+  const [transitionMonths, setTransitionMonths] = useState<number>(6);
+  const [transitionTopN, setTransitionTopN] = useState<number>(5);
+
+  // 店舗一覧（共通）
+  const allStores = useMemo(() => {
+    const storeMap = new Map<string, string>();
+    sampleHostessRanking.forEach(item => {
+      if (item.storeId && item.storeName) {
+        storeMap.set(item.storeId, item.storeName);
+      }
+    });
+    return Array.from(storeMap.entries()).map(([id, name]) => ({ id, name }));
+  }, []);
+
   const handleSortChange = (index: number, key: SortKey) => {
     const newSortKeys = [...sortKeys] as [SortKey, SortKey, SortKey, SortKey];
     newSortKeys[index] = key;
@@ -249,6 +267,76 @@ export default function HostessRanking() {
             </div>
           </div>
         </CardHeader>
+      </Card>
+
+      {/* 月次ランキング推移 */}
+      <Card className="mb-4">
+        <CardHeader className="pb-3">
+          <div className="flex items-center justify-between">
+            <CardTitle className="text-lg flex items-center gap-2">
+              月次ランキング推移
+            </CardTitle>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-2 mt-2">
+            {/* 指標選択 */}
+            <Select value={transitionMetric} onValueChange={(v) => setTransitionMetric(v as SortKey)}>
+              <SelectTrigger className="w-full">
+                <SelectValue placeholder="指標を選択" />
+              </SelectTrigger>
+              <SelectContent>
+                {SORT_OPTIONS.map((opt) => (
+                  <SelectItem key={opt.value} value={opt.value}>{opt.label}</SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+
+            {/* 店舗選択 */}
+            <Select value={transitionStore} onValueChange={setTransitionStore}>
+              <SelectTrigger className="w-full">
+                <SelectValue placeholder="店舗を選択" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">全店舗</SelectItem>
+                {allStores.map((s) => (
+                  <SelectItem key={s.id} value={s.id}>{s.name}</SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+
+            {/* 期間選択 */}
+            <Select value={String(transitionMonths)} onValueChange={(v) => setTransitionMonths(Number(v))}>
+              <SelectTrigger className="w-full">
+                <SelectValue placeholder="期間（月数)" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="3">直近3ヶ月</SelectItem>
+                <SelectItem value="6">直近6ヶ月</SelectItem>
+                <SelectItem value="12">直近12ヶ月</SelectItem>
+              </SelectContent>
+            </Select>
+
+            {/* 表示人数 */}
+            <Select value={String(transitionTopN)} onValueChange={(v) => setTransitionTopN(Number(v))}>
+              <SelectTrigger className="w-full">
+                <SelectValue placeholder="表示人数" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="3">上位3名</SelectItem>
+                <SelectItem value="5">上位5名</SelectItem>
+                <SelectItem value="8">上位8名</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+        </CardHeader>
+        <CardContent>
+          <RankingTransitionChart
+            sourceData={sampleHostessRanking as HostessRanking[]}
+            metric={transitionMetric}
+            storeId={transitionStore}
+            months={transitionMonths}
+            topN={transitionTopN}
+          />
+        </CardContent>
       </Card>
 
       {/* 統計サマリー */}

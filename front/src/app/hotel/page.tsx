@@ -126,7 +126,6 @@ export default function HotelPage() {
                   <TableHead>地域区分</TableHead>
                   <TableHead>電話番号</TableHead>
                   <TableHead>独り入室</TableHead>
-                  <TableHead>割引</TableHead>
                   <TableHead>郵便番号</TableHead>
                   <TableHead>住所</TableHead>
                   <TableHead>画像</TableHead>
@@ -168,9 +167,6 @@ export default function HotelPage() {
                       >
                         {item.singleRoomEntry}
                       </Badge>
-                    </TableCell>
-                    <TableCell className="text-muted-foreground">
-                      {item.discount || '-'}
                     </TableCell>
                     <TableCell className="flex items-center gap-1">
                       <MapPin className="w-3 h-3 text-muted-foreground" />

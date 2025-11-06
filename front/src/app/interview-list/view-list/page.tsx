@@ -53,8 +53,8 @@ export default function ViewList() {
   const exportToCSV = () => {
     // CSVエクスポート機能（実装例）
     const headers = [
-      '通し番号', '日付', '開始時刻', '面接種類', '出稼ぎ', '氏名', '年齢', '媒体',
-      '面接者', '結果', '所属店舗', '店内名', '在職', '担当者', '備考'
+      'No', '日付', '開始時刻', '面接種類', '出稼ぎ', '氏名', '年齢', '媒体',
+      '面接者', '結果', '所属店舗', '店内名', '在職', '担当者', '電話番号', 'メールアドレス', '場所', '備考'
     ];
 
     const csvData = filteredInterviews.map((interview, index) => [
@@ -72,6 +72,9 @@ export default function ViewList() {
       interview.storeName,
       employmentStatusLabels[interview.employmentStatus],
       interview.assignedStaff,
+      interview.phoneNumber || '',
+      interview.email || '',
+      interview.location || '',
       interview.notes || ''
     ]);
 
@@ -156,10 +159,10 @@ export default function ViewList() {
                         onCheckedChange={handleSelectAll}
                       />
                     </th>
-                    <th className="border border-gray-300 px-2 py-2 w-16">通し番号</th>
+                    <th className="border border-gray-300 px-2 py-2 w-10">No</th>
                     <th className="border border-gray-300 px-2 py-2 w-20">日付</th>
                     <th className="border border-gray-300 px-2 py-2 w-16">開始時刻</th>
-                    <th className="border border-gray-300 px-2 py-2 w-16">面接種類</th>
+                    <th className="border border-gray-300 px-2 py-2 w-16 whitespace-nowrap">面接種類</th>
                     <th className="border border-gray-300 px-2 py-2 w-12">出稼ぎ</th>
                     <th className="border border-gray-300 px-2 py-2 w-20">氏名</th>
                     <th className="border border-gray-300 px-2 py-2 w-12">年齢</th>
@@ -170,6 +173,9 @@ export default function ViewList() {
                     <th className="border border-gray-300 px-2 py-2 w-20">店内名</th>
                     <th className="border border-gray-300 px-2 py-2 w-12">在職</th>
                     <th className="border border-gray-300 px-2 py-2 w-20">担当者</th>
+                    <th className="border border-gray-300 px-2 py-2 w-28">電話番号</th>
+                    <th className="border border-gray-300 px-2 py-2 w-40">メールアドレス</th>
+                    <th className="border border-gray-300 px-2 py-2 w-28">場所</th>
                     <th className="border border-gray-300 px-2 py-2 w-32">備考</th>
                   </tr>
                 </thead>
@@ -191,7 +197,7 @@ export default function ViewList() {
                       <td className="border border-gray-300 px-2 py-2 text-center">
                         {interview.startTime}
                       </td>
-                      <td className="border border-gray-300 px-2 py-2 text-center">
+                      <td className="border border-gray-300 px-2 py-2 text-center whitespace-nowrap">
                         <span className={`px-2 py-1 rounded text-xs ${
                           interview.interviewType === 'driver' ? 'bg-blue-100 text-blue-800' :
                           interview.interviewType === 'staff' ? 'bg-green-100 text-green-800' :
@@ -244,6 +250,15 @@ export default function ViewList() {
                       </td>
                       <td className="border border-gray-300 px-2 py-2">
                         {interview.assignedStaff}
+                      </td>
+                      <td className="border border-gray-300 px-2 py-2">
+                        {interview.phoneNumber || ''}
+                      </td>
+                      <td className="border border-gray-300 px-2 py-2">
+                        {interview.email || ''}
+                      </td>
+                      <td className="border border-gray-300 px-2 py-2">
+                        {interview.location || ''}
                       </td>
                       <td className="border border-gray-300 px-2 py-2 max-w-32 truncate" title={interview.notes}>
                         {interview.notes}

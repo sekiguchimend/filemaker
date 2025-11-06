@@ -123,8 +123,11 @@ export interface HostessScheduleData {
   hostessId: string; // ホステスID
   workType: WorkType; // 勤務形態
   name: string; // 名前（旧店内名フィールド）
+  isNewcomer?: boolean; // 新人フラグ
   assignedStaff: string; // 担当者
   hostessManager: string; // HM（ホステスマネージャー）
+  remarks?: string; // 備考（一覧用の自由記述）
+  store?: { id: string; name: string }; // 店舗情報（色分け用）
   
   // 1週間分の勤務時間
   weeklySchedule: {

@@ -64,6 +64,9 @@ export interface InterviewRecord {
   storeName: string; // 店内名
   employmentStatus: EmploymentStatus; // 在職
   assignedStaff: string; // 担当者
+  phoneNumber?: string; // 電話番号
+  email?: string; // メールアドレス
+  location?: string; // 面接場所
   notes?: string; // 備考
   createdAt: string;
   updatedAt: string;

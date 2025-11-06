@@ -38,7 +38,7 @@ export default function StaffLedger() {
   const exportToCSV = () => {
     // CSVエクスポート機能（実装例）
     const headers = [
-      '通し番号', 'SFID', '氏名', '雇用区分', '職務', '役割', '在職', '調整率', '表示順',
+      'No', 'SFID', '氏名', '雇用区分', '職務', '役割', '在職', '調整率', '表示順',
       'アカウント名', 'アクセス権', 'アクセス権ステータス', '登録日時', '更新日時'
     ];
 
@@ -134,7 +134,7 @@ export default function StaffLedger() {
               <table className="w-full text-xs border-collapse">
                 <thead>
                   <tr className="bg-gray-200">
-                    <th className="border border-gray-300 px-2 py-2 w-16">通し番号</th>
+                    <th className="border border-gray-300 px-1 py-2 w-8">No</th>
                     <th className="border border-gray-300 px-2 py-2 w-20">SFID</th>
                     <th className="border border-gray-300 px-2 py-2 w-24">氏名</th>
                     <th className="border border-gray-300 px-2 py-2 w-16">雇用区分</th>
@@ -153,7 +153,7 @@ export default function StaffLedger() {
                 <tbody>
                   {filteredStaffs.map((staff, index) => (
                     <tr key={staff.id} className="hover:bg-gray-50">
-                      <td className="border border-gray-300 px-2 py-2 text-center font-semibold">
+                      <td className="border border-gray-300 px-1 py-2 text-center font-semibold">
                         {index + 1}
                       </td>
                       <td className="border border-gray-300 px-2 py-2 text-center font-mono">

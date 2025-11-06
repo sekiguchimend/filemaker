@@ -18,6 +18,9 @@ export const interviewSampleData: InterviewRecord[] = [
     storeName: "みさき",
     employmentStatus: "",
     assignedStaff: "佐藤主任",
+    phoneNumber: "090-1111-2222",
+    email: "misaki.tanaka@example.com",
+    location: "本店 面接ルームA",
     notes: "明るい性格、接客経験あり",
     createdAt: "2025-01-27T09:00:00Z",
     updatedAt: "2025-01-27T11:30:00Z"
@@ -37,6 +40,9 @@ export const interviewSampleData: InterviewRecord[] = [
     storeName: "",
     employmentStatus: "",
     assignedStaff: "高橋係長",
+    phoneNumber: "080-2222-3333",
+    email: "taro.suzuki@example.com",
+    location: "銀座支店 会議室B",
     notes: "出稼ぎ希望、運転経験10年",
     createdAt: "2025-01-27T10:00:00Z",
     updatedAt: "2025-01-27T10:00:00Z"
@@ -56,6 +62,9 @@ export const interviewSampleData: InterviewRecord[] = [
     storeName: "",
     employmentStatus: "",
     assignedStaff: "",
+    phoneNumber: "070-3333-4444",
+    email: "hanako.takahashi@example.com",
+    location: "本店 面接ルームB",
     notes: "経験不足のため不採用",
     createdAt: "2025-01-27T12:00:00Z",
     updatedAt: "2025-01-27T14:30:00Z"
@@ -75,6 +84,9 @@ export const interviewSampleData: InterviewRecord[] = [
     storeName: "さくら",
     employmentStatus: "",
     assignedStaff: "鈴木マネージャー",
+    phoneNumber: "090-4444-5555",
+    email: "sakura.ito@example.com",
+    location: "VIPルーム オフィス",
     notes: "丁寧な応対、VIP対応経験あり",
     createdAt: "2025-01-27T13:00:00Z",
     updatedAt: "2025-01-27T15:45:00Z"
@@ -94,6 +106,9 @@ export const interviewSampleData: InterviewRecord[] = [
     storeName: "",
     employmentStatus: "",
     assignedStaff: "",
+    phoneNumber: "080-5555-6666",
+    email: "jiro.watanabe@example.com",
+    location: "本店 面接ルームC",
     notes: "本人より面接キャンセル連絡あり",
     createdAt: "2025-01-27T14:00:00Z",
     updatedAt: "2025-01-27T14:30:00Z"
@@ -113,6 +128,9 @@ export const interviewSampleData: InterviewRecord[] = [
     storeName: "",
     employmentStatus: "",
     assignedStaff: "中村主任",
+    phoneNumber: "070-6666-7777",
+    email: "misaki.yamaguchi@example.com",
+    location: "2F店舗 事務所",
     notes: "管理業務経験あり",
     createdAt: "2025-01-28T09:00:00Z",
     updatedAt: "2025-01-28T11:15:00Z"
@@ -132,6 +150,9 @@ export const interviewSampleData: InterviewRecord[] = [
     storeName: "あかり",
     employmentStatus: "",
     assignedStaff: "渡辺マネージャー",
+    phoneNumber: "090-7777-8888",
+    email: "akari.kobayashi@example.com",
+    location: "新宿支店 面接室",
     notes: "出稼ぎ希望、未経験だが意欲あり",
     createdAt: "2025-01-28T10:30:00Z",
     updatedAt: "2025-01-28T10:30:00Z"
@@ -151,6 +172,9 @@ export const interviewSampleData: InterviewRecord[] = [
     storeName: "",
     employmentStatus: "",
     assignedStaff: "高橋係長",
+    phoneNumber: "080-8888-9999",
+    email: "saburo.kato@example.com",
+    location: "渋谷支店 会議室A",
     notes: "安全運転管理経験あり",
     createdAt: "2025-01-28T13:00:00Z",
     updatedAt: "2025-01-28T15:20:00Z"
@@ -170,6 +194,9 @@ export const interviewSampleData: InterviewRecord[] = [
     storeName: "",
     employmentStatus: "",
     assignedStaff: "",
+    phoneNumber: "070-9999-0000",
+    email: "mai.matsumoto@example.com",
+    location: "本店 面接ルームA",
     notes: "勤務時間の希望が合わず不採用",
     createdAt: "2025-01-28T14:30:00Z",
     updatedAt: "2025-01-28T16:45:00Z"
@@ -189,6 +216,9 @@ export const interviewSampleData: InterviewRecord[] = [
     storeName: "",
     employmentStatus: "",
     assignedStaff: "伊藤主任",
+    phoneNumber: "090-0000-1111",
+    email: "taro.nakamura@example.com",
+    location: "プライベートルーム 応接室",
     notes: "接客マナー研修受講経験あり",
     createdAt: "2025-01-29T09:00:00Z",
     updatedAt: "2025-01-29T11:00:00Z"

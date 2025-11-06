@@ -48,3 +48,5 @@ EasyGantt.js
 md/
 
 node_modules/
+
+.gocache/
