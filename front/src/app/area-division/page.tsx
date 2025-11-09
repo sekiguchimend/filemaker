@@ -121,6 +121,7 @@ export default function AreaDivision() {
                   <TableHead>地域区分</TableHead>
                   <TableHead>行政区分</TableHead>
                   <TableHead>住所市区</TableHead>
+                  <TableHead>通称（基本住所表示マーカー）</TableHead>
                   <TableHead className="text-center">総数</TableHead>
                   <TableHead className="text-center">ラブ</TableHead>
                   <TableHead className="text-center">シティ</TableHead>
@@ -142,6 +143,15 @@ export default function AreaDivision() {
                     </TableCell>
                     <TableCell>{item.administrativeDivision}</TableCell>
                     <TableCell>{item.addressCity}</TableCell>
+                    <TableCell>
+                      <div className="flex flex-wrap gap-2">
+                        {(item.addressNicknames ?? []).slice(0, 2).map((nickname, idx) => (
+                          <Badge key={`${item.no}-nickname-${idx}`} variant="outline">
+                            {nickname}
+                          </Badge>
+                        ))}
+                      </div>
+                    </TableCell>
                     <TableCell className="text-center">
                       <Badge variant="secondary">
                         {formatNumber(item.totalHotels)}

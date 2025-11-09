@@ -42,6 +42,7 @@ export default function EmployeeSchedule() {
   const [editingRowId, setEditingRowId] = useState<string | null>(null);
   const [filterDepartment, setFilterDepartment] = useState<string>('');
   const [filterPosition, setFilterPosition] = useState<string>('');
+  const [isEditAll, setIsEditAll] = useState(false);
 
   useEffect(() => {
     setWeekDates(getCurrentWeekDates(currentWeekStart));
@@ -211,6 +212,15 @@ export default function EmployeeSchedule() {
                   <Plus className="w-4 h-4 mr-1" />
                   新規追加
                 </Button>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className={isEditAll ? 'bg-yellow-200' : 'bg-yellow-100'}
+                  onClick={() => setIsEditAll(prev => !prev)}
+                >
+                  <Calendar className="w-4 h-4 mr-1" />
+                  {isEditAll ? '全員編集: ON' : '全員編集: OFF'}
+                </Button>
                 <Button variant="outline" size="sm" className="bg-blue-100">
                   一括保存
                 </Button>
@@ -330,7 +340,7 @@ export default function EmployeeSchedule() {
                       <td className="border border-gray-300 px-2 py-2 text-center sticky left-0 bg-white">
                         <div className="flex items-center justify-center gap-2">
                           <span>{index + 1}</span>
-                          {editingRowId === shift.id ? (
+                          {(editingRowId === shift.id || isEditAll) ? (
                             <Button size="sm" variant="ghost" className="h-5 px-1" onClick={() => setEditingRowId(null)}>
                               <Check className="w-3 h-3" />
                             </Button>
@@ -354,7 +364,7 @@ export default function EmployeeSchedule() {
                         return (
                           <td key={dayIndex} className="border border-gray-300 px-1 py-1 align-top">
                             {daySchedule.isWorkDay ? (
-                              editingRowId === shift.id ? (
+                              (editingRowId === shift.id || isEditAll) ? (
                                 <div className="space-y-1 text-left">
                                   <div className="flex items-center gap-1">
                                     <Input

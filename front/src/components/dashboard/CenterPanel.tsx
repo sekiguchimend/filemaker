@@ -33,8 +33,7 @@ export const CenterPanel = () => {
       "有料道路": "/toll-road",
       "燃料・エコ手当管理": "/fuel-eco-management",
       "メディア管理": "/media-management",
-      "顧客車情報": "/customer-vehicle-info",
-      "派遣地区別交通費": "/dispatch-area-transport-fee"
+      "顧客車情報": "/customer-vehicle-info"
     };
 
     const route = routeMap[name];
@@ -63,8 +62,7 @@ export const CenterPanel = () => {
       items: [
         { name: "燃料・エコ手当管理", icon: Settings },
         { name: "メディア管理", icon: Database },
-        { name: "顧客車情報", icon: Users },
-        { name: "派遣地区別交通費", icon: MapPin }
+        { name: "顧客車情報", icon: Users }
       ]
     }
   ];

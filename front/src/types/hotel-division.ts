@@ -11,6 +11,7 @@ export interface HotelDivision {
   phoneNumber: string;
   singleRoomEntry: SingleRoomEntry; // 独り入室
   discount: string; // 割引（サンプルデータは空）
+  amount?: number; // 金額（円）
   postalCode: string; // 郵便番号（7桁ハイフン無し）
   address: string;
   hotelImage: HotelImage;
