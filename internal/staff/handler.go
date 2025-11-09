@@ -287,6 +287,432 @@ func buildAccountName(last, first string, sfid *int) string {
 	return name
 }
 
+// --- Update (partial) ---
+type UpdateDay struct {
+	Work  *bool   `json:"work"`
+	Start *string `json:"start"`
+	End   *string `json:"end"`
+}
+
+type UpdateStaffDetailRequest struct {
+	Sfid             *string `json:"sfid"`
+	LastName         *string `json:"lastName"`
+	FirstName        *string `json:"firstName"`
+	LastNameKana     *string `json:"lastNameKana"`
+	FirstNameKana    *string `json:"firstNameKana"`
+	AreaDivision     *string `json:"areaDivision"`
+	EmploymentStatus *string `json:"employmentStatus"` // 'active' | ''
+	EmploymentDate   *string `json:"employmentDate"`   // YYYY-MM-DD
+	EmploymentType   *string `json:"employmentType"`   // 'employee' | 'part_time'
+	JobDriver        *bool   `json:"jobDriver"`
+	JobOffice        *bool   `json:"jobOffice"`
+	Role             *string `json:"role"`
+	PhoneNumber      *string `json:"phoneNumber"`
+	MobileEmail      *string `json:"mobileEmail"`
+	PcEmail          *string `json:"pcEmail"`
+	VehicleId        *string `json:"vehicleId"`
+	BathTowel        *int    `json:"bathTowel"`
+	Equipment        *int    `json:"equipment"`
+	Car              *struct {
+		CarType   *string `json:"carType"`
+		Color     *string `json:"color"`
+		Capacity  *int    `json:"capacity"`
+		Area      *string `json:"area"`
+		Character *string `json:"character"`
+		Number    *int    `json:"number"`
+		IsETC     *bool   `json:"isETC"`
+	} `json:"car"`
+	Schedule map[string]UpdateDay `json:"schedule"`
+}
+
+func roleKeyToPosition(role string) string {
+	switch role {
+	case "chairman":
+		return "会長"
+	case "advisor":
+		return "顧問"
+	case "president":
+		return "社長"
+	case "general_manager":
+		return "統括部長"
+	case "manager":
+		return "マネージャ"
+	case "admin_manager":
+		return "管理部長"
+	case "office_manager":
+		return "内勤部長"
+	case "female_manager":
+		return "女子管理責任"
+	case "office_staff":
+		return "内勤"
+	case "pr":
+		return "PR"
+	default:
+		return role
+	}
+}
+
+func buildJobDescription(d *bool, o *bool) *string {
+	if d == nil && o == nil {
+		return nil
+	}
+	var parts []string
+	if d != nil && *d {
+		parts = append(parts, "送迎")
+	}
+	if o != nil && *o {
+		parts = append(parts, "事務")
+	}
+	s := strings.Join(parts, ",")
+	return &s
+}
+
+func currentValueString(v any) string {
+	if p, ok := v.(*string); ok && p != nil {
+		return *p
+	}
+	return ""
+}
+
+func currentValueInt(v any) int {
+	if p, ok := v.(*int); ok && p != nil {
+		return *p
+	}
+	return 0
+}
+
+func currentValueBool(v any) bool {
+	if p, ok := v.(*bool); ok && p != nil {
+		return *p
+	}
+	return false
+}
+
+func UpdateStaffHandler(c *gin.Context) {
+	id := c.Param("id")
+	if strings.TrimSpace(id) == "" {
+		c.JSON(http.StatusBadRequest, ErrorResponse{Code: "VAL_001", Message: "missing id"})
+		return
+	}
+	ctx, cancel := context.WithTimeout(c.Request.Context(), 12*time.Second)
+	defer cancel()
+
+	client, err := supa.NewClientFromEnv()
+	if err != nil {
+		log.Printf("DB_001: failed to init supabase client: %v", err)
+		c.JSON(http.StatusInternalServerError, ErrorResponse{Code: "DB_001", Message: "backend initialization error"})
+		return
+	}
+
+	var req UpdateStaffDetailRequest
+	if err := c.ShouldBindJSON(&req); err != nil {
+		log.Printf("VAL_002: invalid body: %v", err)
+		c.JSON(http.StatusBadRequest, ErrorResponse{Code: "VAL_002", Message: "invalid request body"})
+		return
+	}
+
+	// 1) 現在値を取得
+	qget := url.Values{}
+	qget.Set("select", strings.Join([]string{
+		"id", "sfid", "first_name", "last_name", "first_name_furigana", "last_name_furigana",
+		"area_division", "status", "employment_type", "job_description", "position",
+		"joining_date", "phone_number", "mobile_email_address", "pc_email_address",
+		"mon_start", "mon_end", "tue_start", "tue_end", "wed_start", "wed_end",
+		"thu_start", "thu_end", "fri_start", "fri_end", "sat_start", "sat_end", "sun_start", "sun_end",
+		"staff_car:vehicle(id,car_type,color,capacity,area,character,number,is_etc)",
+	}, ","))
+	qget.Set("id", "eq."+id)
+	qget.Set("limit", "1")
+	body, _, getErr := client.Get(ctx, "/rest/v1/staff", qget)
+	if getErr != nil {
+		log.Printf("DB_001: supabase get error: %v", getErr)
+		c.JSON(http.StatusInternalServerError, ErrorResponse{Code: "DB_001", Message: "database fetch error"})
+		return
+	}
+	var rows []StaffDTO
+	if err := json.Unmarshal(body, &rows); err != nil {
+		log.Printf("DB_002: json decode error: %v", err)
+		c.JSON(http.StatusInternalServerError, ErrorResponse{Code: "DB_002", Message: "response decode error"})
+		return
+	}
+	if len(rows) == 0 {
+		c.JSON(http.StatusNotFound, ErrorResponse{Code: "DB_404", Message: "staff not found"})
+		return
+	}
+	current := rows[0]
+
+	// 2) パッチを構築（差分比較せず、リクエストで受けた値をそのまま反映）
+	patch := map[string]any{}
+	// sfid
+	if req.Sfid != nil {
+		if v := strings.TrimSpace(*req.Sfid); v == "" {
+			patch["sfid"] = nil
+		} else {
+			// parse integer
+			digits := strings.TrimPrefix(strings.TrimPrefix(v, "+"), "-")
+			sign := 1
+			if strings.HasPrefix(v, "-") {
+				sign = -1
+			}
+			val := 0
+			valid := true
+			for _, ch := range digits {
+				if ch < '0' || ch > '9' {
+					valid = false
+					break
+				}
+				val = val*10 + int(ch-'0')
+			}
+			if valid {
+				patch["sfid"] = val * sign
+			}
+		}
+	}
+	// names
+	if req.LastName != nil {
+		patch["last_name"] = *req.LastName
+	}
+	if req.FirstName != nil {
+		patch["first_name"] = *req.FirstName
+	}
+	if req.LastNameKana != nil {
+		patch["last_name_furigana"] = *req.LastNameKana
+	}
+	if req.FirstNameKana != nil {
+		patch["first_name_furigana"] = *req.FirstNameKana
+	}
+	// area
+	if req.AreaDivision != nil {
+		patch["area_division"] = *req.AreaDivision
+	}
+	// status
+	if req.EmploymentStatus != nil {
+		patch["status"] = (*req.EmploymentStatus == "active")
+	}
+	// basics counts
+	if req.BathTowel != nil {
+		patch["bath_towel"] = *req.BathTowel
+	}
+	if req.Equipment != nil {
+		patch["equipment"] = *req.Equipment
+	}
+	// joining_date
+	if req.EmploymentDate != nil {
+		if strings.TrimSpace(*req.EmploymentDate) == "" {
+			patch["joining_date"] = nil
+		} else {
+			patch["joining_date"] = *req.EmploymentDate
+		}
+	}
+	// employment_type
+	if req.EmploymentType != nil {
+		patch["employment_type"] = *req.EmploymentType
+	}
+	// job_description
+	if jd := buildJobDescription(req.JobDriver, req.JobOffice); jd != nil {
+		patch["job_description"] = *jd
+	}
+	// role / position
+	if req.Role != nil {
+		patch["position"] = roleKeyToPosition(*req.Role)
+	}
+	// contacts
+	if req.PhoneNumber != nil {
+		patch["phone_number"] = *req.PhoneNumber
+	}
+	if req.MobileEmail != nil {
+		patch["mobile_email_address"] = *req.MobileEmail
+	}
+	if req.PcEmail != nil {
+		patch["pc_email_address"] = *req.PcEmail
+	}
+	// schedule (times)
+	if req.Schedule != nil {
+		setTime := func(day string, upd UpdateDay) {
+			if upd.Work != nil && !*upd.Work {
+				patch[day+"_start"] = nil
+				patch[day+"_end"] = nil
+				return
+			}
+			if upd.Start != nil {
+				patch[day+"_start"] = *upd.Start
+			}
+			if upd.End != nil {
+				patch[day+"_end"] = *upd.End
+			}
+		}
+		if v, ok := req.Schedule["mon"]; ok {
+			setTime("mon", v)
+		}
+		if v, ok := req.Schedule["tue"]; ok {
+			setTime("tue", v)
+		}
+		if v, ok := req.Schedule["wed"]; ok {
+			setTime("wed", v)
+		}
+		if v, ok := req.Schedule["thu"]; ok {
+			setTime("thu", v)
+		}
+		if v, ok := req.Schedule["fri"]; ok {
+			setTime("fri", v)
+		}
+		if v, ok := req.Schedule["sat"]; ok {
+			setTime("sat", v)
+		}
+		if v, ok := req.Schedule["sun"]; ok {
+			setTime("sun", v)
+		}
+	}
+	// vehicle foreign key (always reflect)
+	if req.VehicleId != nil {
+		newVehicle := strings.TrimSpace(*req.VehicleId)
+		if newVehicle == "" {
+			patch["vehicle"] = nil
+		} else {
+			patch["vehicle"] = newVehicle
+		}
+	}
+
+	// staff_car patch (if requested)
+	var carPatched bool
+	if req.Car != nil {
+		// determine target vehicle id
+		var targetVid *string
+		if req.VehicleId != nil && strings.TrimSpace(*req.VehicleId) != "" {
+			targetVid = req.VehicleId
+		} else if current.StaffCar != nil {
+			idCopy := current.StaffCar.ID
+			targetVid = &idCopy
+		}
+		if targetVid != nil {
+			carPatch := map[string]any{}
+			sameVehicle := current.StaffCar != nil && current.StaffCar.ID == *targetVid
+			setCarField := func(key string, newPtr any, curVal any) {
+				switch nv := newPtr.(type) {
+				case *string:
+					if nv != nil {
+						if !sameVehicle || currentValueString(curVal) != *nv {
+							carPatch[key] = *nv
+						}
+					}
+				case *int:
+					if nv != nil {
+						if !sameVehicle || currentValueInt(curVal) != *nv {
+							carPatch[key] = *nv
+						}
+					}
+				case *bool:
+					if nv != nil {
+						if !sameVehicle || currentValueBool(curVal) != *nv {
+							carPatch[key] = *nv
+						}
+					}
+				}
+			}
+			// helpers current values
+			var cur *struct {
+				CarType, Color, Area, Character *string
+				Capacity, Number                *int
+				IsETC                           *bool
+			}
+			if current.StaffCar != nil {
+				cur = &struct {
+					CarType, Color, Area, Character *string
+					Capacity, Number                *int
+					IsETC                           *bool
+				}{
+					CarType:   current.StaffCar.CarType,
+					Color:     current.StaffCar.Color,
+					Area:      current.StaffCar.Area,
+					Character: current.StaffCar.Character,
+					Capacity:  current.StaffCar.Capacity,
+					Number:    current.StaffCar.Number,
+					IsETC:     current.StaffCar.IsETC,
+				}
+			}
+			setCarField("car_type", req.Car.CarType, func() *string {
+				if cur != nil {
+					return cur.CarType
+				}
+				return nil
+			}())
+			setCarField("color", req.Car.Color, func() *string {
+				if cur != nil {
+					return cur.Color
+				}
+				return nil
+			}())
+			setCarField("capacity", req.Car.Capacity, func() *int {
+				if cur != nil {
+					return cur.Capacity
+				}
+				return nil
+			}())
+			setCarField("area", req.Car.Area, func() *string {
+				if cur != nil {
+					return cur.Area
+				}
+				return nil
+			}())
+			setCarField("character", req.Car.Character, func() *string {
+				if cur != nil {
+					return cur.Character
+				}
+				return nil
+			}())
+			setCarField("number", req.Car.Number, func() *int {
+				if cur != nil {
+					return cur.Number
+				}
+				return nil
+			}())
+			setCarField("is_etc", req.Car.IsETC, func() *bool {
+				if cur != nil {
+					return cur.IsETC
+				}
+				return nil
+			}())
+
+			if len(carPatch) > 0 {
+				qcar := url.Values{}
+				qcar.Set("id", "eq."+*targetVid)
+				if _, _, err := client.Patch(ctx, "/rest/v1/staff_car", qcar, carPatch); err != nil {
+					log.Printf("DB_003: supabase patch car error: %v", err)
+					c.JSON(http.StatusInternalServerError, ErrorResponse{Code: "DB_003", Message: "database update error (car)"})
+					return
+				}
+				carPatched = true
+			}
+		}
+	}
+
+	if len(patch) == 0 && !carPatched {
+		c.JSON(http.StatusOK, gin.H{"updated": 0, "message": "no changes"})
+		return
+	}
+
+	// 3) staff パッチ送信（差分がある場合のみ）
+	var staffUpdated []map[string]any
+	if len(patch) > 0 {
+		qpatch := url.Values{}
+		qpatch.Set("id", "eq."+id)
+		respBody, _, patchErr := client.Patch(ctx, "/rest/v1/staff", qpatch, patch)
+		if patchErr != nil {
+			log.Printf("DB_003: supabase patch error: %v", patchErr)
+			c.JSON(http.StatusInternalServerError, ErrorResponse{Code: "DB_003", Message: "database update error"})
+			return
+		}
+		// PostgREST returns an array with updated row when Prefer=return=representation
+		_ = json.Unmarshal(respBody, &staffUpdated)
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"updated":       1,
+		"changedFields": patch,
+		"row":           staffUpdated,
+	})
+}
+
 // ------- Staff Detail -------
 type DaySchedule struct {
 	Work  bool   `json:"work"`
@@ -302,6 +728,9 @@ type StaffDetailResponse struct {
 	JobOffice        bool    `json:"jobOffice"`
 	Role             string  `json:"role"`
 	EtcEnabled       bool    `json:"etcEnabled"`
+	VehicleId        *string `json:"vehicleId,omitempty"`
+	BathTowel        *int    `json:"bathTowel,omitempty"`
+	Equipment        *int    `json:"equipment,omitempty"`
 	Sfid             string  `json:"sfid"`
 	LastName         string  `json:"lastName"`
 	FirstName        string  `json:"firstName"`
@@ -355,6 +784,7 @@ func GetStaffDetailHandler(c *gin.Context) {
 		"id", "sfid", "first_name", "last_name", "first_name_furigana", "last_name_furigana",
 		"status", "employment_type", "job_description", "position",
 		"joining_date", "area_division", "phone_number", "mobile_email_address", "pc_email_address",
+		"bath_towel", "equipment",
 		"mon_start", "mon_end",
 		"tue_start", "tue_end",
 		"wed_start", "wed_end",
@@ -403,6 +833,8 @@ func GetStaffDetailHandler(c *gin.Context) {
 		JobOffice:        strings.Contains(strings.ToLower(coalesce(s.JobDescription, "")), "office") || strings.Contains(coalesce(s.JobDescription, ""), "事務"),
 		Role:             mapRole(s.Position),
 		EtcEnabled:       s.StaffCar != nil && s.StaffCar.IsETC != nil && *s.StaffCar.IsETC,
+		BathTowel:        s.BathTowel,
+		Equipment:        s.Equipment,
 		Sfid:             coalesce(toStringPtrFromIntPtr(s.SFID), ""),
 		LastName:         coalesce(s.LastName, ""),
 		FirstName:        coalesce(s.FirstName, ""),
@@ -415,6 +847,8 @@ func GetStaffDetailHandler(c *gin.Context) {
 		Schedule:         schedule,
 	}
 	if s.StaffCar != nil {
+		id := s.StaffCar.ID
+		resp.VehicleId = &id
 		resp.Car = &struct {
 			CarType   *string `json:"carType,omitempty"`
 			Color     *string `json:"color,omitempty"`

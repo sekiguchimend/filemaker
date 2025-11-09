@@ -21,6 +21,8 @@ type StaffDTO struct {
 	AreaDivision      *string      `json:"area_division"`
 	Group             *string      `json:"group"`
 	Status            *bool        `json:"status"`
+	BathTowel         *int         `json:"bath_towel"`
+	Equipment         *int         `json:"equipment"`
 	EmploymentType    *string      `json:"employment_type"`
 	JobDescription    *string      `json:"job_description"`
 	Position          *string      `json:"position"`
@@ -48,4 +50,3 @@ type StaffDTO struct {
 	UpdatedAt         *string      `json:"updated_at"`
 	StaffCar          *StaffCarDTO `json:"staff_car"`
 }
-

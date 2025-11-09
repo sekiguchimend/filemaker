@@ -32,6 +32,7 @@ func main() {
 	{
 		api.GET("/staff-ledger", staff.GetStaffLedgerHandler)
 		api.GET("/staff/:id", staff.GetStaffDetailHandler)
+		api.PATCH("/staff/:id", staff.UpdateStaffHandler)
 	}
 
 	router.Run(":8080")

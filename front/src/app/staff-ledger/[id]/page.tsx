@@ -17,6 +17,7 @@ import {
 } from '@/components/ui/select';
 import { Separator } from '@/components/ui/separator';
 import { Textarea } from '@/components/ui/textarea';
+import { useToast } from '@/hooks/use-toast';
 import {
   employmentTypeLabels,
   jobTypeLabels,
@@ -47,6 +48,7 @@ type BasicSchedule = Record<Day, BasicDaySchedule>;
 
 export default function StaffDetailPage({ params }: StaffDetailPageProps) {
   const { id } = React.use(params);
+  const { toast } = useToast();
 
   const [sfid, setSfid] = useState<string>('');
   const [lastName, setLastName] = useState<string>('');
@@ -57,10 +59,13 @@ export default function StaffDetailPage({ params }: StaffDetailPageProps) {
   const [phoneNumber, setPhoneNumber] = useState<string>('');
   const [mobileEmail, setMobileEmail] = useState<string>('');
   const [pcEmail, setPcEmail] = useState<string>('');
+  const [vehicleId, setVehicleId] = useState<string>('');
   const [carType, setCarType] = useState<string>('');
   const [carColor, setCarColor] = useState<string>('');
   const [carCapacity, setCarCapacity] = useState<string>('');
   const [carNumber, setCarNumber] = useState<string>('');
+  const [bathTowel, setBathTowel] = useState<string>('');
+  const [equipment, setEquipment] = useState<string>('');
 
   const [employmentStatus, setEmploymentStatus] = useState<'active' | 'inactive'>('active');
   const [employmentDate, setEmploymentDate] = useState<string>('');
@@ -71,6 +76,7 @@ export default function StaffDetailPage({ params }: StaffDetailPageProps) {
   const [etcEnabled, setEtcEnabled] = useState<boolean>(false);
   const [device, setDevice] = useState<'mobile' | 'iphone' | 'pc'>('mobile');
   const [hostessContactAllowed, setHostessContactAllowed] = useState<'yes' | 'no'>('yes');
+  const [isSaving, setIsSaving] = useState<boolean>(false);
 
   const [schedule, setSchedule] = useState<BasicSchedule>({
     mon: { work: false, start: '09:00', end: '18:00' },
@@ -100,6 +106,7 @@ export default function StaffDetailPage({ params }: StaffDetailPageProps) {
         'admin_manager','office_manager','female_manager','office_staff','pr'
       ]).optional().default('office_staff'),
       etcEnabled: z.boolean().optional().default(false),
+      vehicleId: z.string().nullable().optional(),
       sfid: z.string().optional().default(''),
       lastName: z.string().optional().default(''),
       firstName: z.string().optional().default(''),
@@ -109,6 +116,8 @@ export default function StaffDetailPage({ params }: StaffDetailPageProps) {
       phoneNumber: z.string().nullable().optional(),
       mobileEmail: z.string().nullable().optional(),
       pcEmail: z.string().nullable().optional(),
+      bathTowel: z.number().nullable().optional(),
+      equipment: z.number().nullable().optional(),
       car: z.object({
         carType: z.string().nullable().optional(),
         color: z.string().nullable().optional(),
@@ -134,6 +143,7 @@ export default function StaffDetailPage({ params }: StaffDetailPageProps) {
         setJobOffice(Boolean(data.jobOffice));
         setRole(data.role);
         setEtcEnabled(Boolean(data.etcEnabled));
+        setVehicleId(data.vehicleId ?? '');
         setSfid(data.sfid);
         setLastName(data.lastName);
         setFirstName(data.firstName);
@@ -143,6 +153,8 @@ export default function StaffDetailPage({ params }: StaffDetailPageProps) {
         setPhoneNumber(data.phoneNumber ?? '');
         setMobileEmail(data.mobileEmail ?? '');
         setPcEmail(data.pcEmail ?? '');
+        setBathTowel(data.bathTowel != null ? String(data.bathTowel) : '');
+        setEquipment(data.equipment != null ? String(data.equipment) : '');
         if (data.car) {
           setCarType(data.car.carType ?? '');
           setCarColor(data.car.color ?? '');
@@ -180,6 +192,71 @@ export default function StaffDetailPage({ params }: StaffDetailPageProps) {
     };
     fetchDetail();
   }, [id]);
+
+  const handleSave = async () => {
+    setIsSaving(true);
+    try {
+      const payload: any = {
+        sfid,
+        lastName,
+        firstName,
+        lastNameKana,
+        firstNameKana,
+        areaDivision,
+        employmentStatus: employmentStatus === 'active' ? 'active' : '',
+        employmentDate,
+        employmentType: employmentType === 'outsourced' ? 'employee' : employmentType,
+        jobDriver,
+        jobOffice,
+        role,
+        phoneNumber,
+        mobileEmail,
+        pcEmail,
+        vehicleId: vehicleId ?? '',
+        schedule: {
+          mon: schedule.mon,
+          tue: schedule.tue,
+          wed: schedule.wed,
+          thu: schedule.thu,
+          fri: schedule.fri,
+          sat: schedule.sat,
+          sun: schedule.sun,
+        },
+      };
+      if (bathTowel.trim() !== '') {
+        const n = Number(bathTowel);
+        if (!Number.isNaN(n)) payload.bathTowel = n;
+      }
+      if (equipment.trim() !== '') {
+        const n = Number(equipment);
+        if (!Number.isNaN(n)) payload.equipment = n;
+      }
+      const car: any = {};
+      if (carType) car.carType = carType;
+      if (carColor) car.color = carColor;
+      if (carCapacity) {
+        const n = Number(carCapacity);
+        if (!Number.isNaN(n)) car.capacity = n;
+      }
+      car.isETC = etcEnabled;
+      if (Object.keys(car).length > 0) payload.car = car;
+
+      const res = await fetch(`http://localhost:8080/api/staff/${id}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      });
+      if (!res.ok) {
+        toast({ title: '保存エラー', description: `保存に失敗しました（${res.status}）`, variant: 'destructive' as any });
+        return;
+      }
+      toast({ title: '保存しました', description: 'スタッフ情報を更新しました。' });
+    } catch {
+      toast({ title: '保存エラー', description: '通信に失敗しました。', variant: 'destructive' as any });
+    } finally {
+      setIsSaving(false);
+    }
+  };
 
   const dayLabels: Record<Day, string> = {
     mon: '月',
@@ -255,7 +332,7 @@ export default function StaffDetailPage({ params }: StaffDetailPageProps) {
         <h1 className="text-xl font-bold">スタッフ詳細</h1>
         <div className="flex gap-2">
           <Button variant="outline" onClick={() => window.close()}>閉じる</Button>
-          <Button disabled>保存（未実装）</Button>
+          <Button onClick={handleSave} disabled={isSaving}>{isSaving ? '保存中...' : '保存'}</Button>
         </div>
       </div>
 
@@ -292,6 +369,12 @@ export default function StaffDetailPage({ params }: StaffDetailPageProps) {
                 <Input className="col-span-4" placeholder="店舗ID" />
                 <Label className="col-span-2 text-xs">地域区分</Label>
                 <Input className="col-span-4" placeholder="地域区分" value={areaDivision} onChange={(e) => setAreaDivision(e.target.value)} />
+              </div>
+              <div className="grid grid-cols-12 gap-3 items-center">
+                <Label className="col-span-2 text-xs">バスタオル持出基礎</Label>
+                <Input className="col-span-4" type="number" placeholder="例: 1" value={bathTowel} onChange={(e) => setBathTowel(e.target.value)} />
+                <Label className="col-span-2 text-xs">備品持出基礎</Label>
+                <Input className="col-span-4" type="number" placeholder="例: 1" value={equipment} onChange={(e) => setEquipment(e.target.value)} />
               </div>
 
               <div className="grid grid-cols-12 gap-3 items-center">
