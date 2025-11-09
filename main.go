@@ -30,7 +30,8 @@ func main() {
 
 	api := router.Group("/api")
 	{
-		api.GET("/staff", staff.GetStaffHandler)
+		api.GET("/staff-ledger", staff.GetStaffLedgerHandler)
+		api.GET("/staff/:id", staff.GetStaffDetailHandler)
 	}
 
 	router.Run(":8080")

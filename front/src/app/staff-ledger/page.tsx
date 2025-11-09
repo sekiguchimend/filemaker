@@ -7,6 +7,7 @@ import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { ArrowLeft, Search, Plus, Download } from "lucide-react";
 import type { StaffLedgerRecord } from '@/types';
+import { z } from "zod";
 import {
   employmentTypeLabels,
   jobTypeLabels,
@@ -15,48 +16,91 @@ import {
   accessTypeLabels,
   accessStatusLabels
 } from '@/types';
-import { staffLedgerSampleData } from '@/data/staffLedgerSampleData';
 
 export default function StaffLedger() {
   const router = useRouter();
-  const [staffs] = useState<StaffLedgerRecord[]>(staffLedgerSampleData);
+  const [staffs, setStaffs] = useState<StaffLedgerRecord[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
-  const filteredStaffs = staffs.filter(staff =>
-    staff.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    staff.sfid.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    staff.accountName.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    roleLabels[staff.role].toLowerCase().includes(searchQuery.toLowerCase())
-  );
+  React.useEffect(() => {
+    const schema = z.object({
+      id: z.string(),
+      sfid: z.string(),
+      lastName: z.string(),
+      firstName: z.string(),
+      lastNameKana: z.string().nullable().optional(),
+      firstNameKana: z.string().nullable().optional(),
+      employmentDate: z.string(), // YYYY-MM-DD
+      retirementDate: z.string().nullable().optional(),
+      employmentType: z.enum(['employee', 'part_time']),
+      jobTypes: z.array(z.enum(['driver', 'office'])),
+      role: z.enum(['chairman','advisor','president','general_manager','manager','admin_manager','office_manager','female_manager','office_staff','pr']),
+      employmentStatus: z.enum(['active','']),
+      adjustmentRate: z.number(),
+      displayOrder: z.number(),
+      accountName: z.string(),
+      accessType: z.enum(['admin','manager','accounting_manager','staff']),
+      accessStatus: z.enum(['active','inactive']),
+      createdAt: z.string(),
+      updatedAt: z.string()
+    });
+    const fetchData = async () => {
+      try {
+        const res = await fetch('http://localhost:8080/api/staff-ledger', { cache: 'no-store' });
+        if (!res.ok) throw new Error(`failed: ${res.status}`);
+        const json = await res.json();
+        const parsed = z.array(schema).parse(json);
+        setStaffs(parsed);
+      } catch (e) {
+        setErrorMessage('データ取得に失敗しました');
+      }
+    };
+    fetchData();
+  }, []);
+
+  const filteredStaffs = staffs.filter(staff => {
+    const fullName = `${staff.lastName}${staff.firstName}`;
+    const fullNameKana = `${staff.lastNameKana ?? ''}${staff.firstNameKana ?? ''}`;
+    const q = searchQuery.toLowerCase();
+    return (
+      fullName.toLowerCase().includes(q) ||
+      fullNameKana.toLowerCase().includes(q) ||
+      staff.sfid.toLowerCase().includes(q) ||
+      staff.accountName.toLowerCase().includes(q) ||
+      roleLabels[staff.role].toLowerCase().includes(q)
+    );
+  });
 
 
-  const formatDateTime = (dateTimeString: string) => {
-    // YYYY-MM-DD HH:MM:SS形式をYYYY/MM/DD HH:MM:SS形式に変換
-    return dateTimeString.replace(/-/g, '/');
+  const formatDateOnly = (dateTimeString: string) => {
+    // 'YYYY-MM-DD HH:MM:SS' or ISO → 'YYYY/MM/DD'
+    if (!dateTimeString) return '';
+    const datePart = dateTimeString.split(/[ T]/)[0] ?? '';
+    return datePart.replace(/-/g, '/');
   };
 
   const exportToCSV = () => {
     // CSVエクスポート機能（実装例）
     const headers = [
-      'No', 'SFID', '氏名', '雇用区分', '職務', '役割', '在職', '調整率', '表示順',
+      'No', 'SFID', '氏名', '雇用区分', '職務', '役割', '在職', '調整率',
       'アカウント名', 'アクセス権', 'アクセス権ステータス', '登録日時', '更新日時'
     ];
 
     const csvData = filteredStaffs.map((staff, index) => [
       index + 1,
       staff.sfid,
-      staff.name,
+      `${staff.lastName}${staff.firstName}`,
       employmentTypeLabels[staff.employmentType],
       staff.jobTypes.map(jobType => jobTypeLabels[jobType]).join('・'),
       roleLabels[staff.role],
       staffEmploymentStatusLabels[staff.employmentStatus],
       staff.adjustmentRate,
-      staff.displayOrder,
       staff.accountName,
       accessTypeLabels[staff.accessType],
       accessStatusLabels[staff.accessStatus],
-      formatDateTime(staff.createdAt),
-      formatDateTime(staff.updatedAt)
+      formatDateOnly(staff.createdAt),
+      formatDateOnly(staff.updatedAt)
     ]);
 
     const csvContent = [headers, ...csvData]
@@ -72,6 +116,17 @@ export default function StaffLedger() {
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
+  };
+
+  const openStaffDetailWindow = (id: string) => {
+    try {
+      const url = `/staff-ledger/${id}`;
+      const features = 'noopener,noreferrer,width=1280,height=900,scrollbars=yes,resizable=yes';
+      window.open(url, `staffDetail_${id}`, features);
+    } catch (error) {
+      // UI_001: 新規ウィンドウオープン失敗（個人情報非出力）
+      console.error('UI_001: failed to open staff detail window');
+    }
   };
 
   return (
@@ -94,6 +149,9 @@ export default function StaffLedger() {
           <CardHeader className="pb-3">
             <div className="flex items-center justify-between">
               <h1 className="text-xl font-bold">スタッフ台帳</h1>
+              {errorMessage && (
+                <span className="text-red-600 text-sm">{errorMessage}</span>
+              )}
 
               <div className="flex items-center gap-4">
                 {/* 新規追加ボタン */}
@@ -142,12 +200,12 @@ export default function StaffLedger() {
                     <th className="border border-gray-300 px-2 py-2 w-20">役割</th>
                     <th className="border border-gray-300 px-2 py-2 w-12">在職</th>
                     <th className="border border-gray-300 px-2 py-2 w-16">調整率</th>
-                    <th className="border border-gray-300 px-2 py-2 w-12">表示順</th>
                     <th className="border border-gray-300 px-2 py-2 w-24">アカウント名</th>
                     <th className="border border-gray-300 px-2 py-2 w-20">アクセス権</th>
                     <th className="border border-gray-300 px-2 py-2 w-16">ステータス</th>
                     <th className="border border-gray-300 px-2 py-2 w-32">登録日時</th>
                     <th className="border border-gray-300 px-2 py-2 w-32">更新日時</th>
+                    <th className="border border-gray-300 px-2 py-2 w-20">操作</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -160,7 +218,7 @@ export default function StaffLedger() {
                         {staff.sfid}
                       </td>
                       <td className="border border-gray-300 px-2 py-2 font-semibold">
-                        {staff.name}
+                        {staff.lastName}{staff.firstName}
                       </td>
                       <td className="border border-gray-300 px-2 py-2 text-center">
                         <span className={`px-2 py-1 rounded text-xs ${
@@ -205,9 +263,6 @@ export default function StaffLedger() {
                       <td className="border border-gray-300 px-2 py-2 text-center">
                         {staff.adjustmentRate.toFixed(2)}
                       </td>
-                      <td className="border border-gray-300 px-2 py-2 text-center">
-                        {staff.displayOrder}
-                      </td>
                       <td className="border border-gray-300 px-2 py-2 font-mono text-sm">
                         {staff.accountName}
                       </td>
@@ -234,10 +289,19 @@ export default function StaffLedger() {
                         </span>
                       </td>
                       <td className="border border-gray-300 px-2 py-2 text-center font-mono text-xs">
-                        {formatDateTime(staff.createdAt)}
+                        {formatDateOnly(staff.createdAt)}
                       </td>
                       <td className="border border-gray-300 px-2 py-2 text-center font-mono text-xs">
-                        {formatDateTime(staff.updatedAt)}
+                        {formatDateOnly(staff.updatedAt)}
+                      </td>
+                      <td className="border border-gray-300 px-2 py-2 text-center">
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => openStaffDetailWindow(staff.id)}
+                        >
+                          編集
+                        </Button>
                       </td>
                     </tr>
                   ))}

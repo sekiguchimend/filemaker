@@ -130,7 +130,12 @@ export type AccessStatusType = 'active' | 'inactive';
 export interface StaffLedgerRecord {
   id: string;
   sfid: string; // 従業員番号
-  name: string;
+  lastName: string; // 姓
+  firstName: string; // 名
+  lastNameKana?: string; // 姓かな
+  firstNameKana?: string; // 名かな
+  employmentDate: string; // 就労日 YYYY-MM-DD
+  retirementDate?: string; // 退職日 YYYY-MM-DD
   employmentType: EmploymentType; // 雇用区分
   jobTypes: JobType[]; // 職務（複数選択可能）
   role: RoleType;
