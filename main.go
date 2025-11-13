@@ -2,6 +2,8 @@ package main
 
 import (
 	"log"
+	"os"
+	"strings"
 	"time"
 
 	config "nissyo/internal/config"
@@ -19,8 +21,21 @@ func main() {
 
 	router := gin.Default()
 
+	// CORS AllowOrigins を環境変数 CORS_ALLOW_ORIGINS から読み込み（カンマ区切り）
+	originsEnv := os.Getenv("CORS_ALLOW_ORIGINS")
+	if strings.TrimSpace(originsEnv) == "" {
+		originsEnv = "http://localhost:3000"
+	}
+	var allowOrigins []string
+	for _, o := range strings.Split(originsEnv, ",") {
+		t := strings.TrimSpace(o)
+		if t != "" {
+			allowOrigins = append(allowOrigins, t)
+		}
+	}
+
 	router.Use(cors.New(cors.Config{
-		AllowOrigins:     []string{"http://localhost:3000"},
+		AllowOrigins:     allowOrigins,
 		AllowMethods:     []string{"GET", "PATCH", "POST", "OPTIONS"},
 		AllowHeaders:     []string{"Authorization", "Content-Type"},
 		ExposeHeaders:    []string{"Content-Length"},

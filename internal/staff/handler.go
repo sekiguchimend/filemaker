@@ -824,7 +824,6 @@ func GetStaffDetailHandler(c *gin.Context) {
 		"sat": {Work: s.SatStart != nil && s.SatEnd != nil, Start: hhmm(s.SatStart, "10:00"), End: hhmm(s.SatEnd, "16:00")},
 		"sun": {Work: s.SunStart != nil && s.SunEnd != nil, Start: hhmm(s.SunStart, "00:00"), End: hhmm(s.SunEnd, "00:00")},
 	}
-
 	resp := StaffDetailResponse{
 		EmploymentStatus: mapEmploymentStatus(s.Status),
 		EmploymentDate:   parseDateOnly(s.JoiningDate),
