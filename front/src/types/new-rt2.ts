@@ -33,6 +33,7 @@ export interface HostessTransport {
   departureTime: string; // 出発時間（例：「00:00」）
   destination: string; // 送り場所
   returnTime?: string; // 帰宅時間（オプション）
+  count?: number; // 件数（オプション）
 }
 
 // 帰宅ホステス
@@ -66,5 +67,69 @@ export interface DriverDispatchPanel {
   location: string; // 場所（例：「セブンイレブン新町一条店」）
   hostessName1: string; // ホステス名1
   hostessName2?: string; // ホステス名2（オプション）
+}
+
+// スタッフ予定リスト
+export interface StaffSchedule {
+  id: string;
+  driverName: string; // ドライバー名（例：「吉田」）
+  destination: string; // 行き先（例：「ああああ」）
+  note: string; // 備考（例：「ほげほげほげ」）
+  isHighlighted: boolean; // ハイライト表示フラグ
+}
+
+// OUTドラ未定・接客中リスト
+export interface OutDriverUndecided {
+  id: string;
+  status: 'start' | 'hp'; // 開始/HP
+  hostessName: string; // ホステス名（例：「南 リョウナ」）
+  pickupTime: string; // 迎え時間
+  arrivalTime: string; // 到着時間
+  timeTotal: number; // 時間計（分）
+  destination: string; // 送り場所
+  station: string; // 駅名
+  option1?: string; // オプション1
+  option2?: string; // オプション2
+  hasOptions: boolean[]; // オプション表示フラグ
+}
+
+// 終了リスト
+export interface CompletedList {
+  id: string;
+  hostessName: string; // ホステス名
+  pickupTime: string; // 迎え時間
+  arrivalTime: string; // 到着時間
+  destination: string; // 送り場所
+  option1?: string; // オプション1
+}
+
+// 南IC事務所待機
+export interface OfficeWaiting {
+  id: string;
+  hostessName: string; // ホステス名
+  departureTime: string; // 出発時間
+}
+
+// FGCS他撮影中
+export interface Shooting {
+  id: string;
+  hostessName: string; // ホステス名
+  departureTime: string; // 出発時間
+}
+
+// メモ・引継事項
+export interface MemoItem {
+  id: string;
+  content: string; // 内容
+}
+
+// 南IC徒歩派遣or仮置き
+export interface WalkingDispatch {
+  id: string;
+  hostessName: string; // ホステス名（例：「南 リョウナ」）
+  departureTime: string; // 出発時間（例：「00:00」）
+  option1?: boolean; // オプション1
+  option2?: boolean; // オプション2
+  option3?: boolean; // オプション3
 }
 

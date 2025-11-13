@@ -8,6 +8,13 @@ import {
   ScheduleItem,
   InterviewSchedule,
   DriverDispatchPanel,
+  StaffSchedule,
+  OutDriverUndecided,
+  CompletedList,
+  OfficeWaiting,
+  Shooting,
+  MemoItem,
+  WalkingDispatch,
 } from '@/types/new-rt2';
 
 // 出勤予定ホステスサンプルデータ
@@ -1091,6 +1098,377 @@ export const driverDispatchPanelSampleData: DriverDispatchPanel[] = [
     location: 'セブンイレブン新町一条店',
     hostessName1: 'ああああ',
     hostessName2: 'ああああ',
+  },
+];
+
+// スタッフ予定リストサンプルデータ
+export const staffScheduleSampleData: StaffSchedule[] = [
+  {
+    id: '1',
+    driverName: '吉田',
+    destination: 'ああああ',
+    note: 'ほげほげほげ',
+    isHighlighted: true,
+  },
+  {
+    id: '2',
+    driverName: '吉田',
+    destination: 'ああああ',
+    note: 'ほげほげほげ',
+    isHighlighted: false,
+  },
+  {
+    id: '3',
+    driverName: '吉田',
+    destination: 'ああああ',
+    note: 'ほげほげほげ',
+    isHighlighted: true,
+  },
+  {
+    id: '4',
+    driverName: '吉田',
+    destination: 'ああああ',
+    note: 'ほげほげほげ',
+    isHighlighted: false,
+  },
+  {
+    id: '5',
+    driverName: '吉田',
+    destination: 'ああああ',
+    note: 'ほげほげほげ',
+    isHighlighted: true,
+  },
+  {
+    id: '6',
+    driverName: '吉田',
+    destination: 'ああああ',
+    note: 'ほげほげほげ',
+    isHighlighted: false,
+  },
+  {
+    id: '7',
+    driverName: '吉田',
+    destination: 'ああああ',
+    note: 'ほげほげほげ',
+    isHighlighted: true,
+  },
+  {
+    id: '8',
+    driverName: '吉田',
+    destination: 'ああああ',
+    note: 'ほげほげほげ',
+    isHighlighted: false,
+  },
+  {
+    id: '9',
+    driverName: '吉田',
+    destination: 'ああああ',
+    note: 'ほげほげほげ',
+    isHighlighted: true,
+  },
+  {
+    id: '10',
+    driverName: '吉田',
+    destination: 'ああああ',
+    note: 'ほげほげほげ',
+    isHighlighted: false,
+  },
+  {
+    id: '11',
+    driverName: '吉田',
+    destination: 'ああああ',
+    note: 'ほげほげほげ',
+    isHighlighted: true,
+  },
+  {
+    id: '12',
+    driverName: '吉田',
+    destination: 'ああああ',
+    note: 'ほげほげほげ',
+    isHighlighted: false,
+  },
+];
+
+// OUTドラ未定・接客中リストサンプルデータ
+export const outDriverUndecidedSampleData: OutDriverUndecided[] = [
+  {
+    id: '1',
+    status: 'start',
+    hostessName: '南 リョウナ',
+    pickupTime: '00:00',
+    arrivalTime: '00:00',
+    timeTotal: 120,
+    destination: 'ハートンホテル京都',
+    station: '烏丸御池',
+    option1: 'あああ',
+    option2: 'あああ',
+    hasOptions: [false, false, false, false, false, false],
+  },
+];
+
+// 終了リストサンプルデータ
+export const completedListSampleData: CompletedList[] = [
+  {
+    id: '1',
+    hostessName: '南 リョウナ',
+    pickupTime: '00:00',
+    arrivalTime: '00:00',
+    destination: 'ハートンホテル京都',
+    option1: 'ああああ',
+  },
+  {
+    id: '2',
+    hostessName: '南 リョウナ',
+    pickupTime: '00:00',
+    arrivalTime: '00:00',
+    destination: 'ハートンホテル京都',
+    option1: 'ああああ',
+  },
+  {
+    id: '3',
+    hostessName: '南 リョウナ',
+    pickupTime: '00:00',
+    arrivalTime: '00:00',
+    destination: 'ハートンホテル京都',
+    option1: 'ああああ',
+  },
+];
+
+// 南IC事務所待機サンプルデータ
+export const officeWaitingSampleData: OfficeWaiting[] = [
+  {
+    id: '1',
+    hostessName: '南 リョウナ',
+    departureTime: '00:00',
+  },
+  {
+    id: '2',
+    hostessName: '南 リョウナ',
+    departureTime: '00:00',
+  },
+  {
+    id: '3',
+    hostessName: '南 リョウナ',
+    departureTime: '00:00',
+  },
+];
+
+// FGCS他撮影中サンプルデータ
+export const shootingSampleData: Shooting[] = [
+  {
+    id: '1',
+    hostessName: '南 リョウナ',
+    departureTime: '00:00',
+  },
+  {
+    id: '2',
+    hostessName: '南 リョウナ',
+    departureTime: '00:00',
+  },
+  {
+    id: '3',
+    hostessName: '南 リョウナ',
+    departureTime: '00:00',
+  },
+];
+
+// メモ・引継事項サンプルデータ
+export const memoItemSampleData: MemoItem[] = [
+  {
+    id: '1',
+    content: 'ああああ\nああああ',
+  },
+  {
+    id: '2',
+    content: 'ああああ\nああああ',
+  },
+  {
+    id: '3',
+    content: 'ああああ\nああああ',
+  },
+  {
+    id: '4',
+    content: 'ああああ\nああああ',
+  },
+  {
+    id: '5',
+    content: 'ああああ\nああああ',
+  },
+  {
+    id: '6',
+    content: 'ああああ\nああああ',
+  },
+  {
+    id: '7',
+    content: 'ああああ\nああああ',
+  },
+  {
+    id: '8',
+    content: 'ああああ\nああああ',
+  },
+  {
+    id: '9',
+    content: 'ああああ\nああああ',
+  },
+  {
+    id: '10',
+    content: 'ああああ\nああああ',
+  },
+];
+
+// 南IC徒歩派遣or仮置きサンプルデータ
+export const walkingDispatchSampleData: WalkingDispatch[] = [
+  {
+    id: '1',
+    hostessName: '南 リョウナ',
+    departureTime: '00:00',
+    option1: false,
+    option2: false,
+    option3: false,
+  },
+  {
+    id: '2',
+    hostessName: '南 リョウナ',
+    departureTime: '00:00',
+    option1: false,
+    option2: false,
+    option3: false,
+  },
+  {
+    id: '3',
+    hostessName: '南 リョウナ',
+    departureTime: '00:00',
+    option1: false,
+    option2: false,
+    option3: false,
+  },
+  {
+    id: '4',
+    hostessName: '南 リョウナ',
+    departureTime: '00:00',
+    option1: false,
+    option2: false,
+    option3: false,
+  },
+  {
+    id: '5',
+    hostessName: '南 リョウナ',
+    departureTime: '00:00',
+    option1: false,
+    option2: false,
+    option3: false,
+  },
+  {
+    id: '6',
+    hostessName: '南 リョウナ',
+    departureTime: '00:00',
+    option1: false,
+    option2: false,
+    option3: false,
+  },
+  {
+    id: '7',
+    hostessName: '南 リョウナ',
+    departureTime: '00:00',
+    option1: false,
+    option2: false,
+    option3: false,
+  },
+  {
+    id: '8',
+    hostessName: '南 リョウナ',
+    departureTime: '00:00',
+    option1: false,
+    option2: false,
+    option3: false,
+  },
+  {
+    id: '9',
+    hostessName: '南 リョウナ',
+    departureTime: '00:00',
+    option1: false,
+    option2: false,
+    option3: false,
+  },
+  {
+    id: '10',
+    hostessName: '南 リョウナ',
+    departureTime: '00:00',
+    option1: false,
+    option2: false,
+    option3: false,
+  },
+  {
+    id: '11',
+    hostessName: '南 リョウナ',
+    departureTime: '00:00',
+    option1: false,
+    option2: false,
+    option3: false,
+  },
+  {
+    id: '12',
+    hostessName: '南 リョウナ',
+    departureTime: '00:00',
+    option1: false,
+    option2: false,
+    option3: false,
+  },
+  {
+    id: '13',
+    hostessName: '南 リョウナ',
+    departureTime: '00:00',
+    option1: false,
+    option2: false,
+    option3: false,
+  },
+  {
+    id: '14',
+    hostessName: '南 リョウナ',
+    departureTime: '00:00',
+    option1: false,
+    option2: false,
+    option3: false,
+  },
+  {
+    id: '15',
+    hostessName: '南 リョウナ',
+    departureTime: '00:00',
+    option1: false,
+    option2: false,
+    option3: false,
+  },
+  {
+    id: '16',
+    hostessName: '南 リョウナ',
+    departureTime: '00:00',
+    option1: false,
+    option2: false,
+    option3: false,
+  },
+  {
+    id: '17',
+    hostessName: '南 リョウナ',
+    departureTime: '00:00',
+    option1: false,
+    option2: false,
+    option3: false,
+  },
+  {
+    id: '18',
+    hostessName: '南 リョウナ',
+    departureTime: '00:00',
+    option1: false,
+    option2: false,
+    option3: false,
+  },
+  {
+    id: '19',
+    hostessName: '南 リョウナ',
+    departureTime: '00:00',
+    option1: false,
+    option2: false,
+    option3: false,
   },
 ];
 
