@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
+import { ToasterProvider } from '@/providers/ui-providers';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -46,7 +47,7 @@ type BasicDaySchedule = {
 
 type BasicSchedule = Record<Day, BasicDaySchedule>;
 
-export default function StaffDetailPage({ params }: StaffDetailPageProps) {
+function StaffDetailPageContent({ params }: StaffDetailPageProps) {
   const { id } = React.use(params);
   const { toast } = useToast();
 
@@ -726,6 +727,14 @@ export default function StaffDetailPage({ params }: StaffDetailPageProps) {
         </Card>
       </div>
     </div>
+  );
+}
+
+export default function StaffDetailPage(props: StaffDetailPageProps) {
+  return (
+    <ToasterProvider>
+      <StaffDetailPageContent {...props} />
+    </ToasterProvider>
   );
 }
 

@@ -2,6 +2,7 @@
 
 import React from 'react';
 import { useRouter } from 'next/navigation';
+import { ReactQueryProvider } from '@/providers/react-query-provider';
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -9,13 +10,13 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { ArrowLeft, Building, Plus, Settings, Users, FileText, DollarSign, 
-         Calendar, MessageSquare, TrendingUp, Award, Minus, Gift, 
+import { ArrowLeft, Building, Plus, Settings, Users, FileText, DollarSign,
+         Calendar, MessageSquare, TrendingUp, Award, Minus, Gift,
          Percent, Eye, Camera, Cog, Edit, Save, X } from "lucide-react";
 
-import { 
-  storeList, 
-  storeLedgerTabs, 
+import {
+  storeList,
+  storeLedgerTabs,
   StoreLedgerTab,
   CourseFee
   // Discount,
@@ -48,7 +49,7 @@ const tabIcons: Record<StoreLedgerTab, React.ComponentType<{ className?: string 
   'options': Cog
 };
 
-export default function StoreLedger() {
+function StoreLedgerContent() {
   const router = useRouter();
   
   // カスタムフックを使用してデータと操作を管理
@@ -1799,6 +1800,14 @@ export default function StoreLedger() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function StoreLedger() {
+  return (
+    <ReactQueryProvider>
+      <StoreLedgerContent />
+    </ReactQueryProvider>
   );
 }
 
