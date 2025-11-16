@@ -17,6 +17,24 @@ const minamiIcDispatchData = [
   { name: "南 アヤナ", nameBg: "bg-white", time: "0:48" },
 ];
 
+// 予定データ
+const scheduleData = [
+  { text: "二井ZBB話来00" },
+  { text: "南部 吉畔!!" },
+  { text: "ブレガ行、吉田" },
+  { text: "システム屋が来社で吉田*応。BY吉田" },
+  { text: "二井ZBB話来00" },
+  { text: "南部 吉畔!!" },
+  { text: "ブレガ行、吉田" },
+  { text: "システム屋が来社で吉田*応。BY吉田" },
+];
+
+// 面接予定データ
+const interviewData = [
+  { id: "1", type: "入店", time: "15:30", status: "済", statusBg: "bg-blue-500", location: "セブンイレブン●町一●店", category: "ホステス", interviewer: "南和" },
+  { id: "1", type: "入店", time: "15:30", status: "済", statusBg: "bg-blue-500", location: "セブンイレブン●町一●店", category: "ホステス", interviewer: "南和" },
+];
+
 export default function DispatchPanel2DPage() {
   const hostessList = [
     { name: "サナ", badge: "南", badgeColor: "bg-blue-400", bgColor: "bg-yellow-100", driver: "松尾", driverBgColor: "bg-orange-200", decided: true, departure: "9:00", location: "阪急桂", endTime: "16:00", returnTime: "17:30" },
@@ -504,23 +522,42 @@ export default function DispatchPanel2DPage() {
   </div>
 
   {/* Bottom section spanning 2 columns */}
-  <div className="border-r border-[#323232] col-span-2 row-span-1 flex flex-col">
-    <div className="border-b border-[#323232] flex-1 flex flex-col">
-      <div className="bg-white border-b border-[#323232] text-center text-[11px] font-semibold h-[28px] flex items-center justify-center">
-        緊急連絡
+  <div className="border-r border-[#323232] col-span-2 row-span-1 flex flex-col min-h-0">
+    <div className="border-b border-[#323232] flex-1 flex flex-col min-h-0">
+      <div className="bg-[#B3D9FF] border-b border-[#323232] text-center text-[12px] font-semibold">
+        予定(打合せ・撮影など)
       </div>
-      <div className="flex-1 overflow-auto text-[10px] p-1">
-        <div className="border-b border-[#323232] py-1">16:30 - 末枝さん延長希望</div>
-        <div className="border-b border-[#323232] py-1">17:00 - ドライバー交代必要</div>
+      <div className="flex-1 overflow-auto text-[12px] min-h-0">
+        {scheduleData.map((item, index) => (
+          <div key={index} className="border-b border-[#323232] py-1">{item.text}</div>
+        ))}
       </div>
     </div>
-    <div className="flex-1 flex flex-col bg-[#FFD7D7]">
-      <div className="bg-[#FFD7D7] border-b border-[#323232] text-center text-[11px] font-semibold h-[28px] flex items-center justify-center">
-        アラート
+    <div className="flex-1 flex flex-col min-h-0">
+      <div className="bg-[#FFB3BA] border-b border-[#323232] text-center text-[12px] font-semibold">
+        面接予定
       </div>
-      <div className="flex-1 overflow-auto text-[10px] p-1">
-        <div className="text-red-600 font-bold border-b border-[#323232] py-1">本宅送迎 3件</div>
-        <div className="border-b border-[#323232] py-1">ドライバー不足</div>
+      <div className="border-b border-[#323232] flex items-center text-[10px] bg-[#FFB3BA]">
+        <span className="w-[5%] px-1"></span>
+        <span className="w-[10%] px-1 text-center">時刻</span>
+        <span className="w-[10%] px-1 text-center">確認</span>
+        <span className="w-[5%] px-1"></span>
+        <span className="w-[35%] px-1 text-center">場所</span>
+        <span className="w-[15%] px-1 text-center">種類</span>
+        <span className="w-[15%] px-1 text-center">面接者</span>
+      </div>
+      <div className="flex-1 overflow-auto min-h-0">
+        {interviewData.map((item, index) => (
+          <div key={index} className="border-b border-[#323232] flex items-center text-[12px]">
+            <span className="w-[5%] px-1 py-1 bg-white text-center">{item.id}</span>
+            <span className="w-[10%] px-1 py-1 bg-white text-center">{item.type}</span>
+            <span className="w-[10%] px-1 py-1 bg-white text-center">{item.time}</span>
+            <span className={`w-[5%] px-1 py-1 ${item.statusBg} text-white text-center`}>{item.status}</span>
+            <span className="w-[35%] px-1 py-1 bg-white overflow-hidden text-ellipsis whitespace-nowrap">{item.location}</span>
+            <span className="w-[15%] px-1 py-1 bg-white text-center">{item.category}</span>
+            <span className="w-[15%] px-1 py-1 bg-white text-center">{item.interviewer}</span>
+          </div>
+        ))}
       </div>
     </div>
   </div>
