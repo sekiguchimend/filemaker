@@ -323,7 +323,7 @@ export default function DispatchPanel2DPage() {
   </div>
 </div>
 
-<div className="w-[29%] grid" style={{ gridTemplateColumns: '0.75fr 0.75fr 1fr', gridTemplateRows: '140px 2fr 1fr' }}>
+<div className="w-[29%] grid" style={{ gridTemplateColumns: '0.75fr 0.75fr 1fr', gridTemplateRows: '140px 4fr 2fr' }}>
 
   {/* 終了リスト */}
   <div className="border-r border-b border-[#323232] col-span-2 flex flex-col">
@@ -458,24 +458,21 @@ export default function DispatchPanel2DPage() {
   </div>
 
   {/* Middle right section */}
-  <div className="border-r border-[#323232] col-span-1 row-span-1 flex flex-col">
-    <div className="border-b border-[#323232]">
-      <div className="bg-[#FFB3BA] text-center py-1 text-[11px] font-semibold border-b border-[#323232]">
+  <div className="border-r border-[#323232] col-span-1 row-span-1 flex flex-col min-h-0">
+    <div className="flex-[2] flex flex-col min-h-0 border-b border-[#323232]">
+      <div className="bg-[#FFB3BA] text-center text-[11px] font-semibold border-b border-[#323232] h-[28px] flex items-center justify-center">
         FGCS 他撮影中
       </div>
-      <div className="h-[84px] overflow-x-auto overflow-y-scroll">
+      <div className="flex-1 overflow-x-auto overflow-y-scroll min-h-0">
         <div className="min-w-max">
-          <div className="border-b border-[#323232] text-[12px] h-[28px]"></div>
-          <div className="border-b border-[#323232] text-[12px] h-[28px]"></div>
-          <div className="border-b border-[#323232] text-[12px] h-[28px]"></div>
           <div className="border-b border-[#323232] text-[12px] h-[28px]"></div>
           <div className="border-b border-[#323232] text-[12px] h-[28px]"></div>
           <div className="border-b border-[#323232] text-[12px] h-[28px]"></div>
         </div>
       </div>
     </div>
-    <div className="flex-[3] flex flex-col min-h-0 border-b border-[#323232]">
-      <div className="bg-[#B3D9FF] border-b border-[#323232] text-center py-1 text-[12px] font-semibold">
+    <div className="flex-[5] flex flex-col min-h-0 border-b border-[#323232]">
+      <div className="bg-[#B3D9FF] border-b border-[#323232] text-center text-[12px] font-semibold h-[28px] flex items-center justify-center">
         南IC往来派遣or管直き
       </div>
       <div className="flex-1 overflow-x-auto overflow-y-auto min-h-0">
@@ -489,17 +486,11 @@ export default function DispatchPanel2DPage() {
               <span className="bg-yellow-300">⇔</span>
             </div>
           ))}
-          <div className="border-b border-[#323232] text-[12px] h-[28px]"></div>
-          <div className="border-b border-[#323232] text-[12px] h-[28px]"></div>
-          <div className="border-b border-[#323232] text-[12px] h-[28px]"></div>
-          <div className="border-b border-[#323232] text-[12px] h-[28px]"></div>
-          <div className="border-b border-[#323232] text-[12px] h-[28px]"></div>
-
         </div>
       </div>
     </div>
-    <div className="border-b border-[#323232] flex-[2] flex flex-col min-h-0">
-      <div className="bg-[#FFE0B2] text-center py-1 text-[11px] font-semibold border-b border-[#323232]">
+    <div className="flex-[3] flex flex-col min-h-0 border-b border-[#323232]">
+      <div className="bg-[#FFE0B2] text-center text-[11px] font-semibold border-b border-[#323232] h-[28px] flex items-center justify-center">
         未確定
       </div>
       <div className="flex-1 overflow-x-auto overflow-y-auto min-h-0">
@@ -514,18 +505,22 @@ export default function DispatchPanel2DPage() {
 
   {/* Bottom section spanning 2 columns */}
   <div className="border-r border-[#323232] col-span-2 row-span-1 flex flex-col">
-    <div className="border-b border-[#323232] flex-1 p-2">
-      <div className="text-[11px] font-semibold mb-1">緊急連絡</div>
-      <div className="text-[9px] overflow-auto h-[calc(100%-20px)]">
-        <div className="border-b border-gray-200 py-1">16:30 - 末枝さん延長希望</div>
-        <div className="border-b border-gray-200 py-1">17:00 - ドライバー交代必要</div>
+    <div className="border-b border-[#323232] flex-1 flex flex-col">
+      <div className="bg-white border-b border-[#323232] text-center text-[11px] font-semibold h-[28px] flex items-center justify-center">
+        緊急連絡
+      </div>
+      <div className="flex-1 overflow-auto text-[10px] p-1">
+        <div className="border-b border-[#323232] py-1">16:30 - 末枝さん延長希望</div>
+        <div className="border-b border-[#323232] py-1">17:00 - ドライバー交代必要</div>
       </div>
     </div>
-    <div className="flex-1 p-2 bg-[#FFEBEE]">
-      <div className="text-[11px] font-semibold mb-1">アラート</div>
-      <div className="text-[9px] overflow-auto h-[calc(100%-20px)]">
-        <div className="text-red-600 font-bold">未決済 3件</div>
-        <div className="text-orange-600">ドライバー不足</div>
+    <div className="flex-1 flex flex-col bg-[#FFD7D7]">
+      <div className="bg-[#FFD7D7] border-b border-[#323232] text-center text-[11px] font-semibold h-[28px] flex items-center justify-center">
+        アラート
+      </div>
+      <div className="flex-1 overflow-auto text-[10px] p-1">
+        <div className="text-red-600 font-bold border-b border-[#323232] py-1">本宅送迎 3件</div>
+        <div className="border-b border-[#323232] py-1">ドライバー不足</div>
       </div>
     </div>
   </div>
