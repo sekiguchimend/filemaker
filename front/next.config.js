@@ -41,8 +41,6 @@ const nextConfig = {
     // Enable optimistic client cache for faster navigation
     optimisticClientCache: true,
   },
-  // Enable SWC minification for better performance
-  swcMinify: true,
   // Optimize production builds
   compiler: {
     removeConsole: process.env.NODE_ENV === 'production',

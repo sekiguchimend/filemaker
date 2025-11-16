@@ -29,10 +29,10 @@ export default function StaffLedger() {
       sfid: z.string(),
       lastName: z.string(),
       firstName: z.string(),
-      lastNameKana: z.string().nullable().optional(),
-      firstNameKana: z.string().nullable().optional(),
+      lastNameKana: z.string().nullable().optional().transform(val => val ?? undefined),
+      firstNameKana: z.string().nullable().optional().transform(val => val ?? undefined),
       employmentDate: z.string(), // YYYY-MM-DD
-      retirementDate: z.string().nullable().optional(),
+      retirementDate: z.string().nullable().optional().transform(val => val ?? undefined),
       employmentType: z.enum(['employee', 'part_time']),
       jobTypes: z.array(z.enum(['driver', 'office'])),
       role: z.enum(['chairman','advisor','president','general_manager','manager','admin_manager','office_manager','female_manager','office_staff','pr']),
