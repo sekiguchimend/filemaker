@@ -63,7 +63,7 @@ export const CenterPanel = () => {
             {section.items.map((item) => {
               const route = routeMap[item.name];
               return (
-                <Link key={item.name} href={route} prefetch={true}>
+                <Link key={item.name} href={route}>
                   <BusinessCard
                     variant="gray"
                     className="flex items-center gap-3 p-3 text-sm cursor-pointer hover:bg-opacity-80 transition-colors"
