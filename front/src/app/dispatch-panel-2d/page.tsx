@@ -91,9 +91,9 @@ export default function DispatchPanel2DPage() {
     { hostess: "南 ミリア", hostessBg: "bg-blue-200", endTime1: "0:40", endTime2: "0:43", endTime2Bg: "bg-blue-500", location: "グランヴィア京都割きTel", outDriver: "森 下 光", outDriverBg: "bg-yellow-200" },
   ];
 
-  return <div className="min-h-screen w-screen flex flex-col bg-[#fff]">
+  return <div className="min-h-screen flex flex-col bg-[#fff]">
 
-<div className="h-[60px] border-b border-[#323232] flex items-center justify-center gap-2 px-4">
+<div className="h-[60px] border-b border-[#323232] flex items-center justify-center gap-2 px-4 min-w-[1400px]">
   <button className="border border-[#323232] px-3 py-1 text-[12px] bg-white">日付移動</button>
   <button className="border border-[#323232] px-3 py-1 text-[12px] bg-purple-600 text-white">ドライバ情報</button>
   <button className="border border-[#323232] px-3 py-1 text-[12px] bg-green-400">新規客検索</button>
@@ -105,7 +105,7 @@ export default function DispatchPanel2DPage() {
   <button className="border border-[#323232] px-3 py-1 text-[12px] bg-white">取消リスト</button>
 </div>
 
-<div className="h-[calc(100vh-60px)] flex">
+<div className="h-[calc(100vh-60px)] flex min-w-[1400px]">
 
 <div className="w-[16%] flex flex-col border-r border-[#323232]">
  <div className="flex-[8] min-h-0 border-b border-[#323232] flex flex-col">
@@ -341,7 +341,7 @@ export default function DispatchPanel2DPage() {
   </div>
 </div>
 
-<div className="w-[29%] grid" style={{ gridTemplateColumns: '0.75fr 0.75fr 1fr', gridTemplateRows: '140px 4fr 2fr' }}>
+<div className="w-[32%] grid" style={{ gridTemplateColumns: '0.75fr 0.75fr 1fr', gridTemplateRows: '140px 4fr 2fr' }}>
 
   {/* 終了リスト */}
   <div className="border-r border-b border-[#323232] col-span-2 flex flex-col">
@@ -379,34 +379,78 @@ export default function DispatchPanel2DPage() {
 
   {/* Top right section spanning 2 rows */}
   <div className="border-b border-[#323232] col-span-1 row-span-2 flex flex-col">
-    <div className="border-b border-[#323232] flex-[7] p-2">
-      <div className="text-[11px] font-semibold mb-2">スタッフ状況</div>
-      <div className="text-[10px] space-y-1 overflow-auto h-[calc(100%-24px)]">
-        <div className="border-b border-gray-200 py-1">松尾: 稼働中</div>
-        <div className="border-b border-gray-200 py-1">主居4: 稼働中</div>
-        <div className="border-b border-gray-200 py-1">南和: 待機中</div>
-        <div className="border-b border-gray-200 py-1">事務: 待機中</div>
-        <div className="border-b border-gray-200 py-1">準備: 休憩中</div>
+    <div className="border-b border-[#323232] flex-1 flex flex-col min-h-0">
+      <div className="bg-[#B3D9FF] border-b border-[#323232] text-center text-[14px] font-semibold py-1">
+        ホステス送り・帰宅
       </div>
-    </div>
-    <div className="flex-[3] flex flex-col min-h-0">
-      <div className="border-b border-[#323232]">
-        <div className="bg-[#E3F2FD] text-center py-1 text-[12px] font-semibold flex items-center justify-center gap-1">
-          <span>帰宅ホステス</span>
+      <div className="border-b border-[#323232] flex items-center text-[9px] bg-[#FFFF99]">
+        <span className="w-[8%] px-1 text-center">荷物</span>
+        <span className="w-[22%] px-1">ホステス</span>
+        <span className="w-[20%] px-1 text-center">送りドラ</span>
+        <span className="w-[12%] px-1 text-center">終了</span>
+        <span className="w-[12%] px-1 text-center">帰宅</span>
+        <span className="w-[20%] px-1 text-center">送り場所</span>
+        <span className="w-[6%] px-1 text-center">件数</span>
+      </div>
+      <div className="flex-1 overflow-auto min-h-0">
+        <div className="border-b border-[#323232] flex items-center text-[11px]">
+          <span className="w-[8%] flex items-center justify-center">
+            <span className="bg-gray-400 text-white px-1 text-[10px]">□</span>
+          </span>
+          <span className="w-[22%] flex items-center gap-1">
+            <span className="bg-purple-600 text-white px-1 text-[9px]">南</span>
+            <span className="bg-purple-300 px-1 flex-1">杯ー-inari-</span>
+          </span>
+          <span className="w-[20%] bg-[#FFFFCC] px-1 text-center"></span>
+          <span className="w-[12%] bg-white px-1 text-center">1:00</span>
+          <span className="w-[12%] bg-white px-1 text-center text-red-600">3:00</span>
+          <span className="w-[20%] bg-white px-1 flex items-center gap-1">
+            <span className="bg-black text-white px-[2px] text-[8px]">■</span>
+            <span>堀川五</span>
+          </span>
+          <span className="w-[6%] bg-white px-1 text-center"></span>
         </div>
-      </div>
-      <div className="border-b border-[#323232]">
-        <div className="bg-[#FFFFCC] text-center py-1 text-[12px] font-semibold flex items-center justify-center gap-1">
-          <span>自宅or客 待機</span>
-          <span className="text-[10px]">▼</span>
-          <span className="bg-yellow-400 px-1 text-[10px]">🏠</span>
+        <div className="border-b border-[#323232] flex items-center text-[11px]">
+          <span className="w-[8%] flex items-center justify-center">
+            <span className="bg-gray-400 text-white px-1 text-[10px]">□</span>
+          </span>
+          <span className="w-[22%] flex items-center gap-1">
+            <span className="bg-purple-600 text-white px-1 text-[9px]">南</span>
+            <span className="bg-purple-300 px-1 flex-1">南 さやか</span>
+          </span>
+          <span className="w-[20%] bg-[#FFFFCC] px-1 text-center"></span>
+          <span className="w-[12%] bg-white px-1 text-center">1:00</span>
+          <span className="w-[12%] bg-white px-1 text-center text-red-600">2:30</span>
+          <span className="w-[20%] bg-white px-1">南ICコイン</span>
+          <span className="w-[6%] bg-white px-1 text-center text-red-600">2</span>
         </div>
-      </div>
-      <div className="flex-1 overflow-x-auto overflow-y-auto min-h-0">
-        <div className="min-w-max">
-          <div className="border-b border-[#323232] text-[12px] h-[28px]"></div>
-          <div className="border-b border-[#323232] text-[12px] h-[28px]"></div>
-          <div className="border-b border-[#323232] text-[12px] h-[28px]"></div>
+        <div className="border-b border-[#323232] flex items-center text-[11px]">
+          <span className="w-[8%] flex items-center justify-center">
+            <span className="bg-gray-400 text-white px-1 text-[10px]">□</span>
+          </span>
+          <span className="w-[22%] flex items-center gap-1">
+            <span className="bg-green-600 text-white px-1 text-[9px]">G</span>
+            <span className="bg-pink-300 px-1 flex-1">ゆりか</span>
+          </span>
+          <span className="w-[20%] bg-[#FFFFCC] px-1 text-center"></span>
+          <span className="w-[12%] bg-white px-1 text-center">1:00</span>
+          <span className="w-[12%] bg-white px-1 text-center text-red-600">2:30</span>
+          <span className="w-[20%] bg-white px-1">ブラリア竹</span>
+          <span className="w-[6%] bg-white px-1 text-center text-red-600">2</span>
+        </div>
+        <div className="border-b border-[#323232] flex items-center text-[11px]">
+          <span className="w-[8%] flex items-center justify-center">
+            <span className="bg-gray-400 text-white px-1 text-[10px]">□</span>
+          </span>
+          <span className="w-[22%] flex items-center gap-1">
+            <span className="bg-green-600 text-white px-1 text-[9px]">G</span>
+            <span className="bg-pink-300 px-1 flex-1">ゆらら</span>
+          </span>
+          <span className="w-[20%] bg-[#FFFFCC] px-1 text-center"></span>
+          <span className="w-[12%] bg-white px-1 text-center">2:00</span>
+          <span className="w-[12%] bg-white px-1 text-center"></span>
+          <span className="w-[20%] bg-white px-1">ブラリア竹</span>
+          <span className="w-[6%] bg-white px-1 text-center"></span>
         </div>
       </div>
     </div>
