@@ -1,3 +1,22 @@
+// 南IC往来派遣データ
+const minamiIcDispatchData = [
+  { name: "G あやら", nameBg: "bg-[#FFB3BA]", time: "20:40" },
+  { name: "南くれあ", nameBg: "bg-white", time: "18:23" },
+  { name: "L すず芽", nameBg: "bg-[#FFB3BA]", time: "0:52" },
+  { name: "L ミリア", nameBg: "bg-white", time: "0:21" },
+  { name: "南 アヤナ", nameBg: "bg-white", time: "0:48" },
+  { name: "G あやら", nameBg: "bg-[#FFB3BA]", time: "20:40" },
+  { name: "南くれあ", nameBg: "bg-white", time: "18:23" },
+  { name: "L すず芽", nameBg: "bg-[#FFB3BA]", time: "0:52" },
+  { name: "L ミリア", nameBg: "bg-white", time: "0:21" },
+  { name: "南 アヤナ", nameBg: "bg-white", time: "0:48" },
+  { name: "G あやら", nameBg: "bg-[#FFB3BA]", time: "20:40" },
+  { name: "南くれあ", nameBg: "bg-white", time: "18:23" },
+  { name: "L すず芽", nameBg: "bg-[#FFB3BA]", time: "0:52" },
+  { name: "L ミリア", nameBg: "bg-white", time: "0:21" },
+  { name: "南 アヤナ", nameBg: "bg-white", time: "0:48" },
+];
+
 export default function DispatchPanel2DPage() {
   const hostessList = [
     { name: "サナ", badge: "南", badgeColor: "bg-blue-400", bgColor: "bg-yellow-100", driver: "松尾", driverBgColor: "bg-orange-200", decided: true, departure: "9:00", location: "阪急桂", endTime: "16:00", returnTime: "17:30" },
@@ -54,7 +73,7 @@ export default function DispatchPanel2DPage() {
     { hostess: "南 ミリア", hostessBg: "bg-blue-200", endTime1: "0:40", endTime2: "0:43", endTime2Bg: "bg-blue-500", location: "グランヴィア京都割きTel", outDriver: "森 下 光", outDriverBg: "bg-yellow-200" },
   ];
 
-  return <div className="h-screen w-screen flex flex-col bg-[#fff]">
+  return <div className="min-h-screen w-screen flex flex-col bg-[#fff]">
 
 <div className="h-[60px] border-b border-[#323232] flex items-center justify-center gap-2 px-4">
   <button className="border border-[#323232] px-3 py-1 text-[12px] bg-white">日付移動</button>
@@ -68,7 +87,7 @@ export default function DispatchPanel2DPage() {
   <button className="border border-[#323232] px-3 py-1 text-[12px] bg-white">取消リスト</button>
 </div>
 
-<div className="flex-1 flex overflow-hidden">
+<div className="h-[calc(100vh-60px)] flex">
 
 <div className="w-[16%] flex flex-col border-r border-[#323232]">
  <div className="flex-[8] min-h-0 border-b border-[#323232] flex flex-col">
@@ -304,7 +323,7 @@ export default function DispatchPanel2DPage() {
   </div>
 </div>
 
-<div className="w-[29%] grid" style={{ gridTemplateColumns: '0.75fr 0.75fr 1fr', gridTemplateRows: '240px 2fr 1fr' }}>
+<div className="w-[29%] grid" style={{ gridTemplateColumns: '0.75fr 0.75fr 1fr', gridTemplateRows: '140px 2fr 1fr' }}>
 
   {/* 終了リスト */}
   <div className="border-r border-b border-[#323232] col-span-2 flex flex-col">
@@ -330,7 +349,7 @@ export default function DispatchPanel2DPage() {
           <span className={`w-[25%] px-1 py-1 ${item.hostessBg}`}>{item.hostess}</span>
           <span className="w-[10%] px-1 py-1 bg-white text-center">{item.endTime1}</span>
           <span className={`w-[10%] px-1 py-1 ${item.endTime2Bg} ${item.endTime2Bg === 'bg-blue-500' ? 'text-white' : ''} text-center font-bold`}>{item.endTime2}</span>
-          <span className="w-[35%] px-1 py-1 bg-white">{item.location}</span>
+          <span className="w-[35%] px-1 py-1 bg-white overflow-hidden whitespace-nowrap text-ellipsis">{item.location}</span>
           <span className={`w-[20%] px-1 py-1 ${item.outDriverBg} text-center`}>{item.outDriver}</span>
         </div>
       ))}
@@ -342,7 +361,7 @@ export default function DispatchPanel2DPage() {
 
   {/* Top right section spanning 2 rows */}
   <div className="border-b border-[#323232] col-span-1 row-span-2 flex flex-col">
-    <div className="border-b border-[#323232] flex-[8] p-2">
+    <div className="border-b border-[#323232] flex-[7] p-2">
       <div className="text-[11px] font-semibold mb-2">スタッフ状況</div>
       <div className="text-[10px] space-y-1 overflow-auto h-[calc(100%-24px)]">
         <div className="border-b border-gray-200 py-1">松尾: 稼働中</div>
@@ -352,8 +371,26 @@ export default function DispatchPanel2DPage() {
         <div className="border-b border-gray-200 py-1">準備: 休憩中</div>
       </div>
     </div>
-    <div className="flex-[2] p-2 bg-gray-50">
-      <div className="text-[10px] text-center font-bold">合計: 13名</div>
+    <div className="flex-[3] flex flex-col min-h-0">
+      <div className="border-b border-[#323232]">
+        <div className="bg-[#E3F2FD] text-center py-1 text-[12px] font-semibold flex items-center justify-center gap-1">
+          <span>帰宅ホステス</span>
+        </div>
+      </div>
+      <div className="border-b border-[#323232]">
+        <div className="bg-[#FFFFCC] text-center py-1 text-[12px] font-semibold flex items-center justify-center gap-1">
+          <span>自宅or客 待機</span>
+          <span className="text-[10px]">▼</span>
+          <span className="bg-yellow-400 px-1 text-[10px]">🏠</span>
+        </div>
+      </div>
+      <div className="flex-1 overflow-x-auto overflow-y-auto min-h-0">
+        <div className="min-w-max">
+          <div className="border-b border-[#323232] text-[12px] h-[28px]"></div>
+          <div className="border-b border-[#323232] text-[12px] h-[28px]"></div>
+          <div className="border-b border-[#323232] text-[12px] h-[28px]"></div>
+        </div>
+      </div>
     </div>
   </div>
 
@@ -421,19 +458,57 @@ export default function DispatchPanel2DPage() {
   </div>
 
   {/* Middle right section */}
-  <div className="border-b border-[#323232] col-span-1 row-span-1 flex flex-col">
-    <div className="border-b border-[#323232] h-[60px] p-2 bg-[#E8F5E9]">
-      <div className="text-[10px] font-semibold">売上</div>
-      <div className="text-[11px] font-bold mt-1">¥125,000</div>
+  <div className="border-r border-[#323232] col-span-1 row-span-1 flex flex-col">
+    <div className="border-b border-[#323232]">
+      <div className="bg-[#FFB3BA] text-center py-1 text-[11px] font-semibold border-b border-[#323232]">
+        FGCS 他撮影中
+      </div>
+      <div className="h-[84px] overflow-x-auto overflow-y-scroll">
+        <div className="min-w-max">
+          <div className="border-b border-[#323232] text-[12px] h-[28px]"></div>
+          <div className="border-b border-[#323232] text-[12px] h-[28px]"></div>
+          <div className="border-b border-[#323232] text-[12px] h-[28px]"></div>
+          <div className="border-b border-[#323232] text-[12px] h-[28px]"></div>
+          <div className="border-b border-[#323232] text-[12px] h-[28px]"></div>
+          <div className="border-b border-[#323232] text-[12px] h-[28px]"></div>
+        </div>
+      </div>
     </div>
-    <div className="border-b border-[#323232] flex-1 p-2">
-      <div className="text-[10px] font-semibold">本日の配車</div>
-      <div className="text-[9px] mt-1">完了: 15件</div>
-      <div className="text-[9px]">進行中: 8件</div>
+    <div className="flex-[3] flex flex-col min-h-0 border-b border-[#323232]">
+      <div className="bg-[#B3D9FF] border-b border-[#323232] text-center py-1 text-[12px] font-semibold">
+        南IC往来派遣or管直き
+      </div>
+      <div className="flex-1 overflow-x-auto overflow-y-auto min-h-0">
+        <div className="min-w-max">
+          {minamiIcDispatchData.map((item, index) => (
+            <div key={index} className="flex items-center text-[12px] border-b border-[#323232] ">
+              <span className={`${item.nameBg} min-w-[80px]`}>{item.name}</span>
+              <span className="min-w-[60px]">{item.time}</span>
+              <span className="bg-green-500 text-white px-1">↑</span>
+              <span className="">▼</span>
+              <span className="bg-yellow-300">⇔</span>
+            </div>
+          ))}
+          <div className="border-b border-[#323232] text-[12px] h-[28px]"></div>
+          <div className="border-b border-[#323232] text-[12px] h-[28px]"></div>
+          <div className="border-b border-[#323232] text-[12px] h-[28px]"></div>
+          <div className="border-b border-[#323232] text-[12px] h-[28px]"></div>
+          <div className="border-b border-[#323232] text-[12px] h-[28px]"></div>
+
+        </div>
+      </div>
     </div>
-    <div className="border-b border-[#323232] h-[60px] p-2 bg-[#FFE0B2]">
-      <div className="text-[10px] font-semibold">未確定</div>
-      <div className="text-[11px] font-bold mt-1">5件</div>
+    <div className="border-b border-[#323232] flex-[2] flex flex-col min-h-0">
+      <div className="bg-[#FFE0B2] text-center py-1 text-[11px] font-semibold border-b border-[#323232]">
+        未確定
+      </div>
+      <div className="flex-1 overflow-x-auto overflow-y-auto min-h-0">
+        <div className="min-w-max">
+          <div className="border-b border-[#323232] text-[12px] h-[28px]"></div>
+          <div className="border-b border-[#323232] text-[12px] h-[28px]"></div>
+          <div className="border-b border-[#323232] text-[12px] h-[28px]"></div>
+        </div>
+      </div>
     </div>
   </div>
 
