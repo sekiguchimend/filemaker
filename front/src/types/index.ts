@@ -122,6 +122,8 @@ export const EMPLOYMENT_STATUS_LABELS: Record<EmploymentStatus, string> = {
 };
 
 // スタッフ台帳関連の型定義
+import type { EmploymentType } from './staff-attendance';
+
 export type JobType = 'driver' | 'office';
 export type RoleType = 'chairman' | 'advisor' | 'president' | 'general_manager' | 'manager' | 'admin_manager' | 'office_manager' | 'female_manager' | 'office_staff' | 'pr';
 export type EmploymentStatusType = 'active' | '';
@@ -150,9 +152,6 @@ export interface StaffLedgerRecord {
   createdAt: string; // 登録日時
   updatedAt: string; // 更新日時
 }
-
-// 雇用区分の表示ラベル（staff-attendance.tsから再エクスポート）
-export { EMPLOYMENT_TYPE_LABELS } from './staff-attendance';
 
 // 職務の表示ラベル
 export const JOB_TYPE_LABELS: Record<JobType, string> = {
@@ -226,7 +225,10 @@ export type {
   StaffAttendanceData,
   WorkType as StaffWorkType,
   EmploymentType,
-  AttendanceStatus as StaffAttendanceStatus,
+  AttendanceStatus as StaffAttendanceStatus
+} from './staff-attendance';
+
+export {
   WORK_TYPE_LABELS,
   EMPLOYMENT_TYPE_LABELS,
   ATTENDANCE_STATUS_LABELS,

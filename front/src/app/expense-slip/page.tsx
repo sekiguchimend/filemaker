@@ -17,7 +17,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { useExpenseSlips } from '@/hooks/use-accounting';
-import { ExpenseSlip } from '@/types/accounting';
+import type { ExpenseSlip } from '@/types/accounting';
 
 export default function ExpenseSlip() {
   const router = useRouter();

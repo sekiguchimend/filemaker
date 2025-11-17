@@ -1,6 +1,8 @@
 // ベースサービスインターフェース
 // 全てのサービスが実装すべき共通メソッドを定義
+// マーカータイプとして使用（将来的に共通メソッドを追加する可能性があるため）
 
+// eslint-disable-next-line @typescript-eslint/no-empty-object-type
 export interface BaseService {
   // 必要に応じて共通メソッドを追加
 }

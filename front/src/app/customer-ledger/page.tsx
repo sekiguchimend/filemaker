@@ -270,9 +270,9 @@ export default function CustomerLedger() {
                 placeholder="001"
               />
               {/* 店舗名表示 */}
-              {selectedCustomer?.storeNumber && storeMapping[selectedCustomer.storeNumber] && (
+              {selectedCustomer?.storeNumber && STORE_MAPPING[selectedCustomer.storeNumber] && (
                 <div className="text-xs text-gray-500 font-medium">
-                  {storeMapping[selectedCustomer.storeNumber]}
+                  {STORE_MAPPING[selectedCustomer.storeNumber]}
                 </div>
               )}
             </div>

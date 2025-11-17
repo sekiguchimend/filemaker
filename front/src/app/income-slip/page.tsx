@@ -17,7 +17,7 @@ import {
 } from "@/components/ui/select";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { useIncomeSlips } from '@/hooks/use-accounting';
-import { IncomeSlip } from '@/types/accounting';
+import type { IncomeSlip } from '@/types/accounting';
 
 export default function IncomeSlip() {
   const router = useRouter();
