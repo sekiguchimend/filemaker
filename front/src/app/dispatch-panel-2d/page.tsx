@@ -341,7 +341,8 @@ export default function DispatchPanel2DPage() {
   </div>
 </div>
 
-<div className="w-[32%] grid" style={{ gridTemplateColumns: '0.75fr 0.75fr 1fr', gridTemplateRows: '140px 4fr 2fr' }}>
+<div className="w-[32%] overflow-x-auto">
+  <div className="min-w-max grid" style={{ gridTemplateColumns: '280px 280px 350px', gridTemplateRows: '140px 4fr 2fr' }}>
 
   {/* 終了リスト */}
   <div className="border-r border-b border-[#323232] col-span-2 flex flex-col">
@@ -606,6 +607,7 @@ export default function DispatchPanel2DPage() {
     </div>
   </div>
 
+  </div>
 </div>
 
 </div>
