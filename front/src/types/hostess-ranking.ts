@@ -43,6 +43,7 @@ export interface RankingCardProps {
   icon: React.ElementType;
   sortKey: SortKey;
   onSortChange: (key: SortKey) => void;
+  hostessRankingData: import('@/types/hostess').HostessRanking[];
 }
 
 // ランク変動アイコンのProps型定義

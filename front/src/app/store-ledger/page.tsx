@@ -2,7 +2,6 @@
 
 import React from 'react';
 import { useRouter } from 'next/navigation';
-import { ReactQueryProvider } from '@/providers/react-query-provider';
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -10,13 +9,13 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { ArrowLeft, Building, Plus, Settings, Users, FileText, DollarSign,
-         Calendar, MessageSquare, TrendingUp, Award, Minus, Gift,
+import { ArrowLeft, Building, Plus, Settings, Users, FileText, DollarSign, 
+         Calendar, MessageSquare, TrendingUp, Award, Minus, Gift, 
          Percent, Eye, Camera, Cog, Edit, Save, X } from "lucide-react";
 
-import {
-  storeList,
-  storeLedgerTabs,
+import { 
+  STORE_LIST, 
+  storeLedgerTabs, 
   StoreLedgerTab,
   CourseFee
   // Discount,
@@ -49,7 +48,7 @@ const tabIcons: Record<StoreLedgerTab, React.ComponentType<{ className?: string 
   'options': Cog
 };
 
-function StoreLedgerContent() {
+export default function StoreLedger() {
   const router = useRouter();
   
   // カスタムフックを使用してデータと操作を管理
@@ -76,7 +75,7 @@ function StoreLedgerContent() {
     handleEditCourseFee,
     handleSaveCourseFee,
     handleCancelEdit,
-  } = useStoreLedger(storeList[0]);
+  } = useStoreLedger(STORE_LIST[0]);
 
   // 店舗一覧取得
   const { data: storeBasicInfoList } = useStoreBasicInfo();
@@ -1713,7 +1712,7 @@ function StoreLedgerContent() {
             <div className="flex-1 px-4 pb-4">
               <ScrollArea className="h-full">
                 <div className="space-y-2 pr-2">
-                  {storeList.map((storeName) => (
+                  {STORE_LIST.map((storeName) => (
                     <button
                       key={storeName}
                       onClick={() => setSelectedStore(storeName)}
@@ -1800,14 +1799,6 @@ function StoreLedgerContent() {
         </div>
       </div>
     </div>
-  );
-}
-
-export default function StoreLedger() {
-  return (
-    <ReactQueryProvider>
-      <StoreLedgerContent />
-    </ReactQueryProvider>
   );
 }
 

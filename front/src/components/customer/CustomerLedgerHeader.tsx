@@ -4,7 +4,7 @@ import React from 'react';
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Customer, storeMapping } from '@/types';
+import { Customer, STORE_MAPPING } from '@/types';
 import type { CustomerLedgerHeaderProps } from '@/types/customer-ledger';
 
 /**
@@ -87,9 +87,9 @@ export default function CustomerLedgerHeader({
               className={readOnly ? "bg-gray-50" : ""}
             />
             {/* 店舗名表示 */}
-            {customer?.storeNumber && storeMapping[customer.storeNumber] && (
+            {customer?.storeNumber && STORE_MAPPING[customer.storeNumber] && (
               <div className="text-xs text-gray-500 font-medium">
-                {storeMapping[customer.storeNumber]}
+                {STORE_MAPPING[customer.storeNumber]}
               </div>
             )}
           </div>

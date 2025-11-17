@@ -1,11 +1,11 @@
 'use client';
 
-import React from 'react';
+import React, { useMemo, useState } from 'react';
 
 import { useRouter } from 'next/navigation';
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
-import { ArrowLeft, DollarSign } from "lucide-react";
+import { ArrowLeft, DollarSign, Download, Plus } from "lucide-react";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -16,9 +16,29 @@ import {
   SelectItem,
   SelectValue,
 } from "@/components/ui/select";
+import { useExpenseSlips } from '@/hooks/use-accounting';
+import { ExpenseSlip } from '@/types/accounting';
 
 export default function ExpenseSlip() {
   const router = useRouter();
+  const [startDate, setStartDate] = useState<string>('');
+  const [endDate, setEndDate] = useState<string>('');
+  const [categoryFilter, setCategoryFilter] = useState<string>('all');
+  
+  // React Queryを使用してデータ取得
+  const { data: expenseSlips = [], isLoading, error } = useExpenseSlips(
+    startDate || undefined,
+    endDate || undefined
+  );
+
+  // フィルタリング
+  const filteredSlips = useMemo(() => {
+    let filtered = expenseSlips;
+    if (categoryFilter !== 'all') {
+      filtered = filtered.filter(slip => slip.category === categoryFilter);
+    }
+    return filtered;
+  }, [expenseSlips, categoryFilter]);
 
   return (
     <div className="min-h-screen bg-gray-100 p-4">
@@ -37,11 +57,68 @@ export default function ExpenseSlip() {
       {/* ヘッダー */}
       <Card className="mb-4">
         <CardHeader className="bg-blue-50">
-          <div className="flex items-center gap-3">
-            <DollarSign className="w-6 h-6 text-blue-600" />
-            <h1 className="text-2xl font-bold text-blue-700">出金伝票</h1>
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <DollarSign className="w-6 h-6 text-blue-600" />
+              <h1 className="text-2xl font-bold text-blue-700">出金伝票</h1>
+            </div>
+            <div className="flex items-center gap-4">
+              {error && (
+                <span className="text-red-600 text-sm">データ取得に失敗しました</span>
+              )}
+              {isLoading && (
+                <span className="text-gray-600 text-sm">読み込み中...</span>
+              )}
+              <Button variant="outline" size="sm" className="bg-green-100">
+                <Plus className="w-4 h-4 mr-1" />
+                新規作成
+              </Button>
+            </div>
           </div>
         </CardHeader>
+      </Card>
+
+      {/* フィルター */}
+      <Card className="mb-4">
+        <CardContent className="p-4">
+          <div className="flex items-center gap-4">
+            <div className="flex items-center gap-2">
+              <label className="text-sm font-medium">開始日:</label>
+              <Input
+                type="date"
+                value={startDate}
+                onChange={(e) => setStartDate(e.target.value)}
+                className="w-40"
+              />
+            </div>
+            <div className="flex items-center gap-2">
+              <label className="text-sm font-medium">終了日:</label>
+              <Input
+                type="date"
+                value={endDate}
+                onChange={(e) => setEndDate(e.target.value)}
+                className="w-40"
+              />
+            </div>
+            <div className="flex items-center gap-2">
+              <label className="text-sm font-medium">カテゴリー:</label>
+              <Select value={categoryFilter} onValueChange={setCategoryFilter}>
+                <SelectTrigger className="w-40">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">全て</SelectItem>
+                  <SelectItem value="fuel">燃料費</SelectItem>
+                  <SelectItem value="maintenance">車両維持費</SelectItem>
+                  <SelectItem value="insurance">保険料</SelectItem>
+                  <SelectItem value="salary">給与</SelectItem>
+                  <SelectItem value="toll">通行料</SelectItem>
+                  <SelectItem value="other">その他</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
+        </CardContent>
       </Card>
 
       {/* メインコンテンツ（左右2カラム） */}
@@ -169,19 +246,52 @@ export default function ExpenseSlip() {
                       </TableRow>
                     </TableHeader>
                     <TableBody>
-                      {/* サンプル行 */}
-                      <TableRow>
-                        <TableCell>現金</TableCell>
-                        <TableCell>山田商店</TableCell>
-                        <TableCell>備品購入</TableCell>
-                        <TableCell className="text-right">12,000</TableCell>
-                      </TableRow>
-                      <TableRow>
-                        <TableCell>カード</TableCell>
-                        <TableCell>ABCカード</TableCell>
-                        <TableCell>月額費用</TableCell>
-                        <TableCell className="text-right">45,800</TableCell>
-                      </TableRow>
+                      {isLoading ? (
+                        <TableRow>
+                          <TableCell colSpan={4} className="text-center py-8 text-gray-500">
+                            読み込み中...
+                          </TableCell>
+                        </TableRow>
+                      ) : error ? (
+                        <TableRow>
+                          <TableCell colSpan={4} className="text-center py-8 text-red-500">
+                            データの取得に失敗しました
+                          </TableCell>
+                        </TableRow>
+                      ) : filteredSlips.length === 0 ? (
+                        <TableRow>
+                          <TableCell colSpan={4} className="text-center py-8 text-gray-500">
+                            データが見つかりません
+                          </TableCell>
+                        </TableRow>
+                      ) : (
+                        filteredSlips.map((slip) => {
+                          const paymentMethodLabels = {
+                            cash: '現金',
+                            card: 'カード',
+                            transfer: '振込',
+                            other: 'その他',
+                          };
+                          const categoryLabels = {
+                            fuel: '燃料費',
+                            maintenance: '車両維持費',
+                            insurance: '保険料',
+                            salary: '給与',
+                            toll: '通行料',
+                            other: 'その他',
+                          };
+                          return (
+                            <TableRow key={slip.id}>
+                              <TableCell>{paymentMethodLabels[slip.paymentMethod]}</TableCell>
+                              <TableCell>{slip.vendorName}</TableCell>
+                              <TableCell>{slip.description}</TableCell>
+                              <TableCell className="text-right font-semibold text-red-600">
+                                ¥{slip.amount.toLocaleString()}
+                              </TableCell>
+                            </TableRow>
+                          );
+                        })
+                      )}
                     </TableBody>
                   </Table>
                 </div>

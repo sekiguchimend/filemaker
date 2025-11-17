@@ -5,7 +5,7 @@ import React, { useMemo, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
-import { ArrowLeft, DollarSign } from "lucide-react";
+import { ArrowLeft, DollarSign, Download, Plus } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import {
@@ -16,9 +16,29 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { useIncomeSlips } from '@/hooks/use-accounting';
+import { IncomeSlip } from '@/types/accounting';
 
 export default function IncomeSlip() {
   const router = useRouter();
+  const [startDate, setStartDate] = useState<string>('');
+  const [endDate, setEndDate] = useState<string>('');
+  const [paymentMethodFilter, setPaymentMethodFilter] = useState<string>('all');
+  
+  // React Queryを使用してデータ取得
+  const { data: incomeSlips = [], isLoading, error } = useIncomeSlips(
+    startDate || undefined,
+    endDate || undefined
+  );
+
+  // フィルタリング
+  const filteredSlips = useMemo(() => {
+    let filtered = incomeSlips;
+    if (paymentMethodFilter !== 'all') {
+      filtered = filtered.filter(slip => slip.paymentMethod === paymentMethodFilter);
+    }
+    return filtered;
+  }, [incomeSlips, paymentMethodFilter]);
 
   return (
     <div className="min-h-screen bg-gray-100 p-4">
@@ -37,11 +57,66 @@ export default function IncomeSlip() {
       {/* ヘッダー */}
       <Card className="mb-4">
         <CardHeader>
-          <div className="flex items-center gap-3">
-            <DollarSign className="w-6 h-6" />
-            <h1 className="text-2xl font-bold">入金伝票</h1>
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <DollarSign className="w-6 h-6" />
+              <h1 className="text-2xl font-bold">入金伝票</h1>
+            </div>
+            <div className="flex items-center gap-4">
+              {error && (
+                <span className="text-red-600 text-sm">データ取得に失敗しました</span>
+              )}
+              {isLoading && (
+                <span className="text-gray-600 text-sm">読み込み中...</span>
+              )}
+              <Button variant="outline" size="sm" className="bg-green-100">
+                <Plus className="w-4 h-4 mr-1" />
+                新規作成
+              </Button>
+            </div>
           </div>
         </CardHeader>
+      </Card>
+
+      {/* フィルター */}
+      <Card className="mb-4">
+        <CardContent className="p-4">
+          <div className="flex items-center gap-4">
+            <div className="flex items-center gap-2">
+              <label className="text-sm font-medium">開始日:</label>
+              <Input
+                type="date"
+                value={startDate}
+                onChange={(e) => setStartDate(e.target.value)}
+                className="w-40"
+              />
+            </div>
+            <div className="flex items-center gap-2">
+              <label className="text-sm font-medium">終了日:</label>
+              <Input
+                type="date"
+                value={endDate}
+                onChange={(e) => setEndDate(e.target.value)}
+                className="w-40"
+              />
+            </div>
+            <div className="flex items-center gap-2">
+              <label className="text-sm font-medium">支払い方法:</label>
+              <Select value={paymentMethodFilter} onValueChange={setPaymentMethodFilter}>
+                <SelectTrigger className="w-40">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">全て</SelectItem>
+                  <SelectItem value="cash">現金</SelectItem>
+                  <SelectItem value="card">カード</SelectItem>
+                  <SelectItem value="transfer">振込</SelectItem>
+                  <SelectItem value="other">その他</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
+        </CardContent>
       </Card>
 
       {/* メインコンテンツ（左右2カラム） */}
@@ -169,19 +244,44 @@ export default function IncomeSlip() {
                       </TableRow>
                     </TableHeader>
                     <TableBody>
-                      {/* サンプル行 */}
-                      <TableRow>
-                        <TableCell>現金</TableCell>
-                        <TableCell>山田商店</TableCell>
-                        <TableCell>売上入金</TableCell>
-                        <TableCell className="text-right">12,000</TableCell>
-                      </TableRow>
-                      <TableRow>
-                        <TableCell>カード</TableCell>
-                        <TableCell>ABCカード</TableCell>
-                        <TableCell>手数料控除後入金</TableCell>
-                        <TableCell className="text-right">45,800</TableCell>
-                      </TableRow>
+                      {isLoading ? (
+                        <TableRow>
+                          <TableCell colSpan={4} className="text-center py-8 text-gray-500">
+                            読み込み中...
+                          </TableCell>
+                        </TableRow>
+                      ) : error ? (
+                        <TableRow>
+                          <TableCell colSpan={4} className="text-center py-8 text-red-500">
+                            データの取得に失敗しました
+                          </TableCell>
+                        </TableRow>
+                      ) : filteredSlips.length === 0 ? (
+                        <TableRow>
+                          <TableCell colSpan={4} className="text-center py-8 text-gray-500">
+                            データが見つかりません
+                          </TableCell>
+                        </TableRow>
+                      ) : (
+                        filteredSlips.map((slip) => {
+                          const paymentMethodLabels = {
+                            cash: '現金',
+                            card: 'カード',
+                            transfer: '振込',
+                            other: 'その他',
+                          };
+                          return (
+                            <TableRow key={slip.id}>
+                              <TableCell>{paymentMethodLabels[slip.paymentMethod]}</TableCell>
+                              <TableCell>{slip.customerName || '-'}</TableCell>
+                              <TableCell>{slip.description}</TableCell>
+                              <TableCell className="text-right font-semibold">
+                                ¥{slip.amount.toLocaleString()}
+                              </TableCell>
+                            </TableRow>
+                          );
+                        })
+                      )}
                     </TableBody>
                   </Table>
                 </div>

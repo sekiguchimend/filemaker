@@ -93,6 +93,8 @@ type StaffLedgerRecord struct {
 	FirstName        string   `json:"firstName"`
 	LastNameKana     *string  `json:"lastNameKana,omitempty"`
 	FirstNameKana    *string  `json:"firstNameKana,omitempty"`
+	AreaDivision     *string  `json:"areaDivision,omitempty"`
+	Group            *string  `json:"group,omitempty"`
 	EmploymentDate   string   `json:"employmentDate"`
 	RetirementDate   *string  `json:"retirementDate,omitempty"`
 	EmploymentType   string   `json:"employmentType"`
@@ -104,8 +106,61 @@ type StaffLedgerRecord struct {
 	AccountName      string   `json:"accountName"`
 	AccessType       string   `json:"accessType"`
 	AccessStatus     string   `json:"accessStatus"`
-	CreatedAt        string   `json:"createdAt"`
-	UpdatedAt        string   `json:"updatedAt"`
+	PhoneNumber      *string  `json:"phoneNumber,omitempty"`
+	MobileEmail      *string  `json:"mobileEmail,omitempty"`
+	PcEmail          *string  `json:"pcEmail,omitempty"`
+	BathTowel        *int     `json:"bathTowel,omitempty"`
+	Equipment        *int     `json:"equipment,omitempty"`
+	Remarks          *string  `json:"remarks"`
+	Vehicle          *struct {
+		ID        string  `json:"id"`
+		CarType   *string `json:"carType,omitempty"`
+		Color     *string `json:"color,omitempty"`
+		Capacity  *int    `json:"capacity,omitempty"`
+		Area      *string `json:"area,omitempty"`
+		Character *string `json:"character,omitempty"`
+		Number    *int    `json:"number,omitempty"`
+		IsETC     *bool   `json:"isETC,omitempty"`
+	} `json:"vehicle,omitempty"`
+	Schedule *struct {
+		Mon *struct {
+			Work  bool   `json:"work"`
+			Start string `json:"start"`
+			End   string `json:"end"`
+		} `json:"mon,omitempty"`
+		Tue *struct {
+			Work  bool   `json:"work"`
+			Start string `json:"start"`
+			End   string `json:"end"`
+		} `json:"tue,omitempty"`
+		Wed *struct {
+			Work  bool   `json:"work"`
+			Start string `json:"start"`
+			End   string `json:"end"`
+		} `json:"wed,omitempty"`
+		Thu *struct {
+			Work  bool   `json:"work"`
+			Start string `json:"start"`
+			End   string `json:"end"`
+		} `json:"thu,omitempty"`
+		Fri *struct {
+			Work  bool   `json:"work"`
+			Start string `json:"start"`
+			End   string `json:"end"`
+		} `json:"fri,omitempty"`
+		Sat *struct {
+			Work  bool   `json:"work"`
+			Start string `json:"start"`
+			End   string `json:"end"`
+		} `json:"sat,omitempty"`
+		Sun *struct {
+			Work  bool   `json:"work"`
+			Start string `json:"start"`
+			End   string `json:"end"`
+		} `json:"sun,omitempty"`
+	} `json:"schedule,omitempty"`
+	CreatedAt string `json:"createdAt"`
+	UpdatedAt string `json:"updatedAt"`
 }
 
 func coalesce(ptr *string, fallback string) string {
@@ -131,12 +186,45 @@ func formatDateTimeLikeSample(iso *string) string {
 	if iso == nil || *iso == "" {
 		return ""
 	}
-	// 2024-01-10T09:00:00+09:00 -> 2024-01-10 09:00:00
 	s := *iso
+	// ISO 8601形式: 2024-01-10T09:00:00+09:00 または 2024-01-10T09:00:00Z
+	// または PostgreSQL形式: 2024-01-10 09:00:00+09
+
+	// Tをスペースに置換
 	s = strings.ReplaceAll(s, "T", " ")
-	if idx := strings.IndexAny(s, "+-Z"); idx > 0 {
-		return s[:idx]
+
+	// タイムゾーン部分を削除
+	// パターン1: +09:00 または +09:00:00 の形式
+	if idx := strings.Index(s, "+"); idx > 0 {
+		// +の位置が日付部分（YYYY-MM-DD）の後にあることを確認（インデックス10以上）
+		if idx >= 10 {
+			s = s[:idx]
+		}
 	}
+	// パターン2: -05:00 の形式（タイムゾーンがマイナスの場合）
+	// ただし、日付部分のハイフンと区別する必要がある
+	// スペースの後の-を探す
+	if spaceIdx := strings.Index(s, " "); spaceIdx > 0 && spaceIdx >= 10 {
+		timePart := s[spaceIdx+1:]
+		// 時刻部分（HH:MM:SS）の後に-がある場合、それはタイムゾーン
+		// HH:MM:SS-XX:XX の形式を探す
+		if colonCount := strings.Count(timePart, ":"); colonCount >= 2 {
+			// HH:MM:SS の形式がある場合、その後の-を探す
+			if minusIdx := strings.LastIndex(timePart, "-"); minusIdx > 8 {
+				// HH:MM:SS の後（インデックス8以上）にある-はタイムゾーン
+				s = s[:spaceIdx+1+minusIdx]
+			}
+		}
+	}
+	// パターン3: UTCのZを削除
+	if strings.HasSuffix(s, "Z") {
+		s = strings.TrimSuffix(s, "Z")
+	} else if strings.Contains(s, " Z") {
+		s = strings.ReplaceAll(s, " Z", "")
+	}
+
+	// 末尾のスペースを削除
+	s = strings.TrimSpace(s)
 	return s
 }
 
@@ -195,8 +283,18 @@ func GetStaffLedgerHandler(c *gin.Context) {
 	q := url.Values{}
 	q.Set("select", strings.Join([]string{
 		"id", "sfid", "first_name", "last_name", "first_name_furigana", "last_name_furigana",
-		"employment_type", "job_description", "position", "status",
-		"joining_date", "resignation_date", "created_at", "updated_at",
+		"area_division", "group", "status", "employment_type", "job_description", "position",
+		"joining_date", "resignation_date", "phone_number", "mobile_email_address", "pc_email_address",
+		"bath_towel", "equipment", "remarks",
+		"mon_start", "mon_end",
+		"tue_start", "tue_end",
+		"wed_start", "wed_end",
+		"thu_start", "thu_end",
+		"fri_start", "fri_end",
+		"sat_start", "sat_end",
+		"sun_start", "sun_end",
+		"created_at", "updated_at",
+		"staff_car:vehicle(id,car_type,color,capacity,area,character,number,is_etc)",
 	}, ","))
 	q.Set("order", "created_at.asc")
 	q.Set("limit", "200")
@@ -219,6 +317,172 @@ func GetStaffLedgerHandler(c *gin.Context) {
 	for i, s := range rows {
 		last := coalesce(s.LastName, "")
 		first := coalesce(s.FirstName, "")
+
+		// 電話番号をマスク（個人情報保護）
+		maskedPhone := maskPhone(s.PhoneNumber)
+
+		// 車両情報をマッピング
+		var vehicle *struct {
+			ID        string  `json:"id"`
+			CarType   *string `json:"carType,omitempty"`
+			Color     *string `json:"color,omitempty"`
+			Capacity  *int    `json:"capacity,omitempty"`
+			Area      *string `json:"area,omitempty"`
+			Character *string `json:"character,omitempty"`
+			Number    *int    `json:"number,omitempty"`
+			IsETC     *bool   `json:"isETC,omitempty"`
+		}
+		if s.StaffCar != nil {
+			vehicle = &struct {
+				ID        string  `json:"id"`
+				CarType   *string `json:"carType,omitempty"`
+				Color     *string `json:"color,omitempty"`
+				Capacity  *int    `json:"capacity,omitempty"`
+				Area      *string `json:"area,omitempty"`
+				Character *string `json:"character,omitempty"`
+				Number    *int    `json:"number,omitempty"`
+				IsETC     *bool   `json:"isETC,omitempty"`
+			}{
+				ID:        s.StaffCar.ID,
+				CarType:   s.StaffCar.CarType,
+				Color:     s.StaffCar.Color,
+				Capacity:  s.StaffCar.Capacity,
+				Area:      s.StaffCar.Area,
+				Character: s.StaffCar.Character,
+				Number:    s.StaffCar.Number,
+				IsETC:     s.StaffCar.IsETC,
+			}
+		}
+
+		// スケジュール情報をマッピング（hhmm関数を使用）
+		hhmmHelper := func(t *string, fallback string) string {
+			if t == nil || *t == "" {
+				return fallback
+			}
+			parts := strings.Split(*t, ":")
+			if len(parts) >= 2 {
+				return fmt.Sprintf("%s:%s", parts[0], parts[1])
+			}
+			return *t
+		}
+
+		schedule := &struct {
+			Mon *struct {
+				Work  bool   `json:"work"`
+				Start string `json:"start"`
+				End   string `json:"end"`
+			} `json:"mon,omitempty"`
+			Tue *struct {
+				Work  bool   `json:"work"`
+				Start string `json:"start"`
+				End   string `json:"end"`
+			} `json:"tue,omitempty"`
+			Wed *struct {
+				Work  bool   `json:"work"`
+				Start string `json:"start"`
+				End   string `json:"end"`
+			} `json:"wed,omitempty"`
+			Thu *struct {
+				Work  bool   `json:"work"`
+				Start string `json:"start"`
+				End   string `json:"end"`
+			} `json:"thu,omitempty"`
+			Fri *struct {
+				Work  bool   `json:"work"`
+				Start string `json:"start"`
+				End   string `json:"end"`
+			} `json:"fri,omitempty"`
+			Sat *struct {
+				Work  bool   `json:"work"`
+				Start string `json:"start"`
+				End   string `json:"end"`
+			} `json:"sat,omitempty"`
+			Sun *struct {
+				Work  bool   `json:"work"`
+				Start string `json:"start"`
+				End   string `json:"end"`
+			} `json:"sun,omitempty"`
+		}{}
+
+		// 各曜日のスケジュールを設定
+		if s.MonStart != nil && s.MonEnd != nil {
+			schedule.Mon = &struct {
+				Work  bool   `json:"work"`
+				Start string `json:"start"`
+				End   string `json:"end"`
+			}{
+				Work:  true,
+				Start: hhmmHelper(s.MonStart, "09:00"),
+				End:   hhmmHelper(s.MonEnd, "18:00"),
+			}
+		}
+		if s.TueStart != nil && s.TueEnd != nil {
+			schedule.Tue = &struct {
+				Work  bool   `json:"work"`
+				Start string `json:"start"`
+				End   string `json:"end"`
+			}{
+				Work:  true,
+				Start: hhmmHelper(s.TueStart, "09:00"),
+				End:   hhmmHelper(s.TueEnd, "18:00"),
+			}
+		}
+		if s.WedStart != nil && s.WedEnd != nil {
+			schedule.Wed = &struct {
+				Work  bool   `json:"work"`
+				Start string `json:"start"`
+				End   string `json:"end"`
+			}{
+				Work:  true,
+				Start: hhmmHelper(s.WedStart, "09:00"),
+				End:   hhmmHelper(s.WedEnd, "18:00"),
+			}
+		}
+		if s.ThuStart != nil && s.ThuEnd != nil {
+			schedule.Thu = &struct {
+				Work  bool   `json:"work"`
+				Start string `json:"start"`
+				End   string `json:"end"`
+			}{
+				Work:  true,
+				Start: hhmmHelper(s.ThuStart, "09:00"),
+				End:   hhmmHelper(s.ThuEnd, "18:00"),
+			}
+		}
+		if s.FriStart != nil && s.FriEnd != nil {
+			schedule.Fri = &struct {
+				Work  bool   `json:"work"`
+				Start string `json:"start"`
+				End   string `json:"end"`
+			}{
+				Work:  true,
+				Start: hhmmHelper(s.FriStart, "09:00"),
+				End:   hhmmHelper(s.FriEnd, "18:00"),
+			}
+		}
+		if s.SatStart != nil && s.SatEnd != nil {
+			schedule.Sat = &struct {
+				Work  bool   `json:"work"`
+				Start string `json:"start"`
+				End   string `json:"end"`
+			}{
+				Work:  true,
+				Start: hhmmHelper(s.SatStart, "10:00"),
+				End:   hhmmHelper(s.SatEnd, "16:00"),
+			}
+		}
+		if s.SunStart != nil && s.SunEnd != nil {
+			schedule.Sun = &struct {
+				Work  bool   `json:"work"`
+				Start string `json:"start"`
+				End   string `json:"end"`
+			}{
+				Work:  true,
+				Start: hhmmHelper(s.SunStart, "00:00"),
+				End:   hhmmHelper(s.SunEnd, "00:00"),
+			}
+		}
+
 		rec := StaffLedgerRecord{
 			ID:               s.ID,
 			SFID:             coalesce(toStringPtrFromIntPtr(s.SFID), ""),
@@ -226,6 +490,8 @@ func GetStaffLedgerHandler(c *gin.Context) {
 			FirstName:        first,
 			LastNameKana:     s.LastNameFurigana,
 			FirstNameKana:    s.FirstNameFurigana,
+			AreaDivision:     s.AreaDivision,
+			Group:            s.Group,
 			EmploymentDate:   parseDateOnly(s.JoiningDate),
 			RetirementDate:   s.ResignationDate,
 			EmploymentType:   mapEmploymentType(s.EmploymentType),
@@ -237,6 +503,14 @@ func GetStaffLedgerHandler(c *gin.Context) {
 			AccountName:      buildAccountName(last, first, s.SFID),
 			AccessType:       "staff",
 			AccessStatus:     "active",
+			PhoneNumber:      maskedPhone,
+			MobileEmail:      s.MobileEmail,
+			PcEmail:          s.PcEmail,
+			BathTowel:        s.BathTowel,
+			Equipment:        s.Equipment,
+			Remarks:          s.Remarks, // nilの場合はomitemptyでJSONに含まれない
+			Vehicle:          vehicle,
+			Schedule:         schedule,
 			CreatedAt:        formatDateTimeLikeSample(s.CreatedAt),
 			UpdatedAt:        formatDateTimeLikeSample(s.UpdatedAt),
 		}
@@ -313,6 +587,7 @@ type UpdateStaffDetailRequest struct {
 	VehicleId        *string `json:"vehicleId"`
 	BathTowel        *int    `json:"bathTowel"`
 	Equipment        *int    `json:"equipment"`
+	Remarks          *string `json:"remarks"`
 	Car              *struct {
 		CarType   *string `json:"carType"`
 		Color     *string `json:"color"`
@@ -525,6 +800,14 @@ func UpdateStaffHandler(c *gin.Context) {
 	}
 	if req.PcEmail != nil {
 		patch["pc_email_address"] = *req.PcEmail
+	}
+	// remarks
+	if req.Remarks != nil {
+		if strings.TrimSpace(*req.Remarks) == "" {
+			patch["remarks"] = nil
+		} else {
+			patch["remarks"] = *req.Remarks
+		}
 	}
 	// schedule (times)
 	if req.Schedule != nil {
@@ -740,6 +1023,7 @@ type StaffDetailResponse struct {
 	PhoneNumber      *string `json:"phoneNumber,omitempty"`
 	MobileEmail      *string `json:"mobileEmail,omitempty"`
 	PcEmail          *string `json:"pcEmail,omitempty"`
+	Remarks          *string `json:"remarks"`
 	Car              *struct {
 		CarType   *string `json:"carType,omitempty"`
 		Color     *string `json:"color,omitempty"`
@@ -784,7 +1068,7 @@ func GetStaffDetailHandler(c *gin.Context) {
 		"id", "sfid", "first_name", "last_name", "first_name_furigana", "last_name_furigana",
 		"status", "employment_type", "job_description", "position",
 		"joining_date", "area_division", "phone_number", "mobile_email_address", "pc_email_address",
-		"bath_towel", "equipment",
+		"bath_towel", "equipment", "remarks",
 		"mon_start", "mon_end",
 		"tue_start", "tue_end",
 		"wed_start", "wed_end",
@@ -843,6 +1127,7 @@ func GetStaffDetailHandler(c *gin.Context) {
 		PhoneNumber:      s.PhoneNumber,
 		MobileEmail:      s.MobileEmail,
 		PcEmail:          s.PcEmail,
+		Remarks:          s.Remarks, // nilの場合はomitemptyでJSONに含まれないが、フロントエンドでundefinedとして処理される
 		Schedule:         schedule,
 	}
 	if s.StaffCar != nil {

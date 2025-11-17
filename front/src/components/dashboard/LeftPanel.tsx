@@ -1,36 +1,51 @@
+'use client';
+
 import { BusinessCard } from "@/components/ui/business-card";
-import Link from "next/link";
-import {
-  Monitor,
-  Calendar,
-  Users,
-  FileText,
-  DollarSign,
-  BarChart3,
+import { useRouter } from "next/navigation";
+import { 
+  Monitor, 
+  Calendar, 
+  Users, 
+  FileText, 
+  DollarSign, 
+  BarChart3, 
+  // Search,
   TrendingUp,
+  // Camera,
+  // Star,
   Car,
+  // Building
 } from "lucide-react";
 
-const routeMap: { [key: string]: string } = {
-  "RTⅡパネル": "/rt2-panel",
-  "配車パネル2D": "/dispatch-panel-2d",
-  "ホステス出勤予定": "/hostess-schedule",
-  "従業員出勤予定": "/employee-schedule",
-  "手配表": "/tehai",
-  "ホステスランキング": "/hostess-ranking",
-  "入金伝票": "/income-slip",
-  "出金伝票": "/expense-slip",
-  "売上伝票": "/sales-slip",
-  "管理用リスト": "/management-list",
-  "日報": "/daily-report",
-  "集計・グラフ": "/summary-graph",
-  "従業員給与集計": "/employee-salary",
-  "会計集計": "/accounting-summary",
-  "面接リスト・集計": "/interview-list",
-  "アルバイト給与月計": "/part-time-salary"
-};
-
 export const LeftPanel = () => {
+  const router = useRouter();
+
+  const handleNavigation = (name: string) => {
+    const routeMap: { [key: string]: string } = {
+      "RTⅡパネル": "/rt2-panel",
+      "配車パネル2D": "/dispatch-panel-2d",
+      "ホステス出勤予定": "/hostess-schedule",
+      "従業員出勤予定": "/employee-schedule",
+      "手配表": "/tehai",
+      "ホステスランキング": "/hostess-ranking",
+      "入金伝票": "/income-slip",
+      "出金伝票": "/expense-slip",
+      "売上伝票": "/sales-slip",
+      "管理用リスト": "/management-list",
+      "日報": "/daily-report",
+      "集計・グラフ": "/summary-graph",
+      "従業員給与集計": "/employee-salary",
+      "会計集計": "/accounting-summary",
+      "面接リスト・集計": "/interview-list",
+      "アルバイト給与月計": "/part-time-salary"
+    };
+
+    const route = routeMap[name];
+    if (route) {
+      router.push(route);
+    }
+  };
+
   const sections = [
     {
       title: "A",
@@ -70,20 +85,17 @@ export const LeftPanel = () => {
       {sections.map((section, index) => (
         <div key={index} className="border border-border rounded-lg p-4">
           <div className="grid grid-cols-1 gap-2">
-            {section.items.map((item) => {
-              const route = routeMap[item.name];
-              return (
-                <Link key={item.name} href={route}>
-                  <BusinessCard
-                    variant="primary"
-                    className="flex items-center gap-3 p-3 text-sm cursor-pointer hover:bg-opacity-80 transition-colors"
-                  >
-                    <item.icon className="w-4 h-4 flex-shrink-0" />
-                    <span className="truncate">{item.name}</span>
-                  </BusinessCard>
-                </Link>
-              );
-            })}
+            {section.items.map((item) => (
+              <BusinessCard 
+                key={item.name} 
+                variant="primary"
+                className="flex items-center gap-3 p-3 text-sm cursor-pointer hover:bg-opacity-80 transition-colors"
+                onClick={() => handleNavigation(item.name)}
+              >
+                <item.icon className="w-4 h-4 flex-shrink-0" />
+                <span className="truncate">{item.name}</span>
+              </BusinessCard>
+            ))}
           </div>
         </div>
       ))}

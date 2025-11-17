@@ -6,7 +6,7 @@ import { AttendingStaff, AttendingHostess } from '@/types/attendance';
 export const attendingStaffSampleList: AttendingStaff[] = [
   {
     id: 'staff001',
-    employmentType: '社員',
+    employmentType: 'employee',
     staffName: '山田太郎',
     status: '出勤',
     number1: 8,
@@ -27,7 +27,7 @@ export const attendingStaffSampleList: AttendingStaff[] = [
   },
   {
     id: 'staff002',
-    employmentType: '社員',
+    employmentType: 'employee',
     staffName: '佐藤次郎',
     status: '出勤',
     number1: 7,
@@ -48,7 +48,7 @@ export const attendingStaffSampleList: AttendingStaff[] = [
   },
   {
     id: 'staff003',
-    employmentType: 'アルバイト',
+    employmentType: 'part_time',
     staffName: '田中花子',
     status: '出勤',
     number1: 6,
@@ -69,7 +69,7 @@ export const attendingStaffSampleList: AttendingStaff[] = [
   },
   {
     id: 'staff004',
-    employmentType: 'アルバイト',
+    employmentType: 'part_time',
     staffName: '鈴木一郎',
     status: '出勤',
     number1: 9,
@@ -90,7 +90,7 @@ export const attendingStaffSampleList: AttendingStaff[] = [
   },
   {
     id: 'staff005',
-    employmentType: '社員',
+    employmentType: 'employee',
     staffName: '高橋美咲',
     status: '退社',
     number1: 8,
@@ -111,7 +111,7 @@ export const attendingStaffSampleList: AttendingStaff[] = [
   },
   {
     id: 'staff006',
-    employmentType: 'アルバイト',
+    employmentType: 'part_time',
     staffName: '伊藤健太',
     status: '出勤',
     number1: 5,
@@ -132,7 +132,7 @@ export const attendingStaffSampleList: AttendingStaff[] = [
   },
   {
     id: 'staff007',
-    employmentType: '社員',
+    employmentType: 'employee',
     staffName: '渡辺由美',
     status: '出勤',
     number1: 10,
@@ -153,7 +153,7 @@ export const attendingStaffSampleList: AttendingStaff[] = [
   },
   {
     id: 'staff008',
-    employmentType: 'アルバイト',
+    employmentType: 'part_time',
     staffName: '中村誠',
     status: '出勤',
     number1: 4,
@@ -174,7 +174,7 @@ export const attendingStaffSampleList: AttendingStaff[] = [
   },
   {
     id: 'staff009',
-    employmentType: '社員',
+    employmentType: 'employee',
     staffName: '小林恵子',
     status: '出勤',
     number1: 7,
@@ -195,7 +195,7 @@ export const attendingStaffSampleList: AttendingStaff[] = [
   },
   {
     id: 'staff010',
-    employmentType: 'アルバイト',
+    employmentType: 'part_time',
     staffName: '松本大輔',
     status: '出勤',
     number1: 6,
@@ -216,7 +216,7 @@ export const attendingStaffSampleList: AttendingStaff[] = [
   },
   {
     id: 'staff011',
-    employmentType: '社員',
+    employmentType: 'employee',
     staffName: '木村沙織',
     status: '出勤',
     number1: 9,
@@ -237,7 +237,7 @@ export const attendingStaffSampleList: AttendingStaff[] = [
   },
   {
     id: 'staff012',
-    employmentType: 'アルバイト',
+    employmentType: 'part_time',
     staffName: '加藤雄也',
     status: '出勤',
     number1: 5,
@@ -258,7 +258,7 @@ export const attendingStaffSampleList: AttendingStaff[] = [
   },
   {
     id: 'staff013',
-    employmentType: '社員',
+    employmentType: 'employee',
     staffName: '橋本慎太郎',
     status: '出勤',
     number1: 11,
@@ -279,7 +279,7 @@ export const attendingStaffSampleList: AttendingStaff[] = [
   },
   {
     id: 'staff014',
-    employmentType: 'アルバイト',
+    employmentType: 'part_time',
     staffName: '斎藤里奈',
     status: '出勤',
     number1: 3,
@@ -300,7 +300,7 @@ export const attendingStaffSampleList: AttendingStaff[] = [
   },
   {
     id: 'staff015',
-    employmentType: '社員',
+    employmentType: 'employee',
     staffName: '森田賢治',
     status: '出勤',
     number1: 8,
@@ -321,7 +321,7 @@ export const attendingStaffSampleList: AttendingStaff[] = [
   },
   {
     id: 'staff016',
-    employmentType: 'アルバイト',
+    employmentType: 'part_time',
     staffName: '清水亜美',
     status: '出勤',
     number1: 6,
@@ -342,7 +342,7 @@ export const attendingStaffSampleList: AttendingStaff[] = [
   },
   {
     id: 'staff017',
-    employmentType: '社員',
+    employmentType: 'employee',
     staffName: '福田正雄',
     status: '退社',
     number1: 8,
@@ -363,7 +363,7 @@ export const attendingStaffSampleList: AttendingStaff[] = [
   },
   {
     id: 'staff018',
-    employmentType: 'アルバイト',
+    employmentType: 'part_time',
     staffName: '井上美咲',
     status: '出勤',
     number1: 5,
@@ -384,7 +384,7 @@ export const attendingStaffSampleList: AttendingStaff[] = [
   },
   {
     id: 'staff019',
-    employmentType: '社員',
+    employmentType: 'employee',
     staffName: '村田健一',
     status: '出勤',
     number1: 7,
@@ -405,7 +405,7 @@ export const attendingStaffSampleList: AttendingStaff[] = [
   },
   {
     id: 'staff020',
-    employmentType: 'アルバイト',
+    employmentType: 'part_time',
     staffName: '青木由紀',
     status: '出勤',
     number1: 4,
@@ -426,7 +426,7 @@ export const attendingStaffSampleList: AttendingStaff[] = [
   },
   {
     id: 'staff021',
-    employmentType: '社員',
+    employmentType: 'employee',
     staffName: '岡田隆司',
     status: '出勤',
     number1: 9,
@@ -447,7 +447,7 @@ export const attendingStaffSampleList: AttendingStaff[] = [
   },
   {
     id: 'staff022',
-    employmentType: 'アルバイト',
+    employmentType: 'part_time',
     staffName: '山口真理子',
     status: '出勤',
     number1: 6,
@@ -468,7 +468,7 @@ export const attendingStaffSampleList: AttendingStaff[] = [
   },
   {
     id: 'staff023',
-    employmentType: '社員',
+    employmentType: 'employee',
     staffName: '西田光男',
     status: '出勤',
     number1: 10,
@@ -489,7 +489,7 @@ export const attendingStaffSampleList: AttendingStaff[] = [
   },
   {
     id: 'staff024',
-    employmentType: 'アルバイト',
+    employmentType: 'part_time',
     staffName: '長谷川恵',
     status: '出勤',
     number1: 5,
@@ -510,7 +510,7 @@ export const attendingStaffSampleList: AttendingStaff[] = [
   },
   {
     id: 'staff025',
-    employmentType: '社員',
+    employmentType: 'employee',
     staffName: '藤井大介',
     status: '出勤',
     number1: 12,
@@ -531,7 +531,7 @@ export const attendingStaffSampleList: AttendingStaff[] = [
   },
   {
     id: 'staff026',
-    employmentType: 'アルバイト',
+    employmentType: 'part_time',
     staffName: '吉田優子',
     status: '出勤',
     number1: 4,
@@ -552,7 +552,7 @@ export const attendingStaffSampleList: AttendingStaff[] = [
   },
   {
     id: 'staff027',
-    employmentType: '社員',
+    employmentType: 'employee',
     staffName: '中島秀樹',
     status: '出勤',
     number1: 8,
@@ -573,7 +573,7 @@ export const attendingStaffSampleList: AttendingStaff[] = [
   },
   {
     id: 'staff028',
-    employmentType: 'アルバイト',
+    employmentType: 'part_time',
     staffName: '佐々木香織',
     status: '出勤',
     number1: 6,
@@ -594,7 +594,7 @@ export const attendingStaffSampleList: AttendingStaff[] = [
   },
   {
     id: 'staff029',
-    employmentType: '社員',
+    employmentType: 'employee',
     staffName: '田村雅彦',
     status: '出勤',
     number1: 9,
@@ -615,7 +615,7 @@ export const attendingStaffSampleList: AttendingStaff[] = [
   },
   {
     id: 'staff030',
-    employmentType: 'アルバイト',
+    employmentType: 'part_time',
     staffName: '石川麻衣',
     status: '退社',
     number1: 3,

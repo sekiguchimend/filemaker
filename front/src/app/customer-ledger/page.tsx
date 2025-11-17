@@ -11,7 +11,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Textarea } from "@/components/ui/textarea";
 import { FileText, User2, MapPin, Plus, Trash2, ArrowLeft } from "lucide-react";
-import { Customer, storeMapping } from '@/types';
+import { Customer, STORE_MAPPING } from '@/types';
 import type { Vehicle, UsageHistory, PreferenceForm, ReceiptForm, PetOption, WorkAreaOption } from '@/types/customer-ledger';
 import { sampleCustomers } from '@/data/customerSampleData';
 

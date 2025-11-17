@@ -1,5 +1,5 @@
 import React from 'react';
-import { Staff } from '@/types/staff';
+import { Staff, EMPLOYMENT_TYPE_LABELS } from '@/types/staff';
 import type { StaffListItemProps, StaffListProps } from '@/types/staff-list';
 
 /**
@@ -11,11 +11,11 @@ function StaffListItem({ data }: StaffListItemProps) {
       {/* 雇用形態 */}
       <div className="text-center">
         <span className={`px-2 py-1 rounded-full text-xs font-medium ${
-          data.employmentType === '社員' 
+          data.employmentType === 'employee' 
             ? 'bg-blue-100 text-blue-800' 
             : 'bg-green-100 text-green-800'
         }`}>
-          {data.employmentType}
+          {EMPLOYMENT_TYPE_LABELS[data.employmentType]}
         </span>
       </div>
       

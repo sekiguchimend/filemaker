@@ -1,616 +1,442 @@
-// 南IC往来派遣データ
-const minamiIcDispatchData = [
-  { name: "G あやら", nameBg: "bg-[#FFB3BA]", time: "20:40" },
-  { name: "南くれあ", nameBg: "bg-white", time: "18:23" },
-  { name: "L すず芽", nameBg: "bg-[#FFB3BA]", time: "0:52" },
-  { name: "L ミリア", nameBg: "bg-white", time: "0:21" },
-  { name: "南 アヤナ", nameBg: "bg-white", time: "0:48" },
-  { name: "G あやら", nameBg: "bg-[#FFB3BA]", time: "20:40" },
-  { name: "南くれあ", nameBg: "bg-white", time: "18:23" },
-  { name: "L すず芽", nameBg: "bg-[#FFB3BA]", time: "0:52" },
-  { name: "L ミリア", nameBg: "bg-white", time: "0:21" },
-  { name: "南 アヤナ", nameBg: "bg-white", time: "0:48" },
-  { name: "G あやら", nameBg: "bg-[#FFB3BA]", time: "20:40" },
-  { name: "南くれあ", nameBg: "bg-white", time: "18:23" },
-  { name: "L すず芽", nameBg: "bg-[#FFB3BA]", time: "0:52" },
-  { name: "L ミリア", nameBg: "bg-white", time: "0:21" },
-  { name: "南 アヤナ", nameBg: "bg-white", time: "0:48" },
-];
+'use client';
 
-// 予定データ
-const scheduleData = [
-  { text: "二井ZBB話来00" },
-  { text: "南部 吉畔!!" },
-  { text: "ブレガ行、吉田" },
-  { text: "システム屋が来社で吉田*応。BY吉田" },
-  { text: "二井ZBB話来00" },
-  { text: "南部 吉畔!!" },
-  { text: "ブレガ行、吉田" },
-  { text: "システム屋が来社で吉田*応。BY吉田" },
-];
+import React from 'react';
+import { Pen, Package } from 'lucide-react';
+import {
+  scheduledHostessSampleData,
+  undecidedDriverReservationSampleData,
+  hostessTransportSampleData,
+  returningHostessSampleData,
+  scheduleItemSampleData,
+  interviewScheduleSampleData,
+  driverDispatchPanelSampleData,
+  staffScheduleSampleData,
+  outDriverUndecidedSampleData,
+  completedListSampleData,
+  officeWaitingSampleData,
+  shootingSampleData,
+  memoItemSampleData,
+  walkingDispatchSampleData,
+} from '@/data/newRt2SampleData';
+import {
+  ScheduledHostess,
+  UndecidedDriverReservation,
+  HostessTransport,
+  ReturningHostess,
+  ScheduleItem,
+  InterviewSchedule,
+  DriverDispatchPanel,
+  StaffSchedule,
+  OutDriverUndecided,
+  CompletedList,
+  OfficeWaiting,
+  Shooting,
+  MemoItem,
+  WalkingDispatch,
+} from '@/types/new-rt2';
 
-// 面接予定データ
-const interviewData = [
-  { id: "1", type: "入店", time: "15:30", status: "済", statusBg: "bg-blue-500", location: "セブンイレブン●町一●店", category: "ホステス", interviewer: "南和" },
-  { id: "1", type: "入店", time: "15:30", status: "済", statusBg: "bg-blue-500", location: "セブンイレブン●町一●店", category: "ホステス", interviewer: "南和" },
-];
-
-export default function DispatchPanel2DPage() {
-  const hostessList = [
-    { name: "サナ", badge: "南", badgeColor: "bg-blue-400", bgColor: "bg-yellow-100", driver: "松尾", driverBgColor: "bg-orange-200", decided: true, departure: "9:00", location: "阪急桂", endTime: "16:00", returnTime: "17:30" },
-    { name: "すず", badge: "南", badgeColor: "bg-blue-400", bgColor: "bg-yellow-100", driver: "主居4", driverBgColor: "bg-orange-200", decided: true, departure: "9:00", location: "竹田駅", endTime: "15:30", returnTime: "17:00" },
-    { name: "セリ", badge: "L", badgeColor: "bg-red-500", bgColor: "bg-pink-200", driver: "事務", driverBgColor: "", decided: true, departure: "9:00", location: "2南ICコ", endTime: "18:00", returnTime: "19:30" },
-    { name: "なごみ", badge: "南", badgeColor: "bg-blue-400", bgColor: "bg-blue-100", driver: "松尾", driverBgColor: "bg-orange-200", decided: true, departure: "9:00", location: "阪急桂", endTime: "18:30", returnTime: "20:00" },
-    { name: "ゆう", badge: "南", badgeColor: "bg-blue-400", bgColor: "bg-yellow-100", driver: "主居4", driverBgColor: "bg-orange-200", decided: true, departure: "9:00", location: "竹田駅", endTime: "15:30", returnTime: "17:00" },
-    { name: "るか", badge: "南", badgeColor: "bg-blue-400", bgColor: "bg-pink-100", driver: "松尾", driverBgColor: "bg-orange-200", decided: true, departure: "9:30", location: "阪急桂", endTime: "16:00", returnTime: "18:00" },
-    { name: "みお", badge: "G", badgeColor: "bg-green-500", bgColor: "bg-purple-100", driver: "準備", driverBgColor: "bg-orange-200", decided: true, departure: "10:00", location: "竹田駅", endTime: "17:00", returnTime: "19:00" },
-    { name: "あい", badge: "南", badgeColor: "bg-blue-400", bgColor: "bg-yellow-100", driver: "主居4", driverBgColor: "bg-orange-200", decided: true, departure: "9:00", location: "京都イコイ", endTime: "16:30", returnTime: "18:30" },
-    { name: "さき", badge: "L", badgeColor: "bg-red-500", bgColor: "bg-pink-200", driver: "南和", driverBgColor: "", decided: true, departure: "9:30", location: "阪急桂", endTime: "15:00", returnTime: "17:00" },
-    { name: "りな", badge: "南", badgeColor: "bg-blue-400", bgColor: "bg-blue-100", driver: "松尾", driverBgColor: "bg-orange-200", decided: true, departure: "10:00", location: "竹田駅", endTime: "18:00", returnTime: "20:00" },
-    { name: "まい", badge: "南", badgeColor: "bg-blue-400", bgColor: "bg-yellow-100", driver: "主居4", driverBgColor: "bg-orange-200", decided: true, departure: "9:00", location: "阪急桂", endTime: "16:00", returnTime: "18:00" },
-    { name: "ゆき", badge: "G", badgeColor: "bg-green-500", bgColor: "bg-purple-100", driver: "準備", driverBgColor: "bg-orange-200", decided: true, departure: "9:30", location: "2南ICコ", endTime: "17:30", returnTime: "19:30" },
-    { name: "かな", badge: "南", badgeColor: "bg-blue-400", bgColor: "bg-pink-100", driver: "松尾", driverBgColor: "bg-orange-200", decided: true, departure: "10:00", location: "竹田駅", endTime: "15:30", returnTime: "17:30" },
-    { name: "えり", badge: "L", badgeColor: "bg-red-500", bgColor: "bg-pink-200", driver: "事務", driverBgColor: "", decided: true, departure: "9:00", location: "京都イコイ", endTime: "18:30", returnTime: "20:30" },
-    { name: "のあ", badge: "南", badgeColor: "bg-blue-400", bgColor: "bg-blue-100", driver: "主居4", driverBgColor: "bg-orange-200", decided: true, departure: "9:30", location: "阪急桂", endTime: "16:30", returnTime: "18:30" },
-    { name: "ひな", badge: "南", badgeColor: "bg-blue-400", bgColor: "bg-yellow-100", driver: "松尾", driverBgColor: "bg-orange-200", decided: true, departure: "9:00", location: "竹田駅", endTime: "16:00", returnTime: "17:30" },
-    { name: "もえ", badge: "G", badgeColor: "bg-green-500", bgColor: "bg-purple-100", driver: "主居4", driverBgColor: "bg-orange-200", decided: true, departure: "9:30", location: "阪急桂", endTime: "15:30", returnTime: "17:00" },
-    { name: "ちか", badge: "L", badgeColor: "bg-red-500", bgColor: "bg-pink-200", driver: "事務", driverBgColor: "", decided: true, departure: "10:00", location: "2南ICコ", endTime: "18:00", returnTime: "19:30" },
-    { name: "れい", badge: "南", badgeColor: "bg-blue-400", bgColor: "bg-blue-100", driver: "松尾", driverBgColor: "bg-orange-200", decided: true, departure: "9:00", location: "京都イコイ", endTime: "18:30", returnTime: "20:00" },
-    { name: "あや", badge: "南", badgeColor: "bg-blue-400", bgColor: "bg-yellow-100", driver: "主居4", driverBgColor: "bg-orange-200", decided: true, departure: "9:30", location: "竹田駅", endTime: "15:30", returnTime: "17:00" },
-    { name: "ゆり", badge: "南", badgeColor: "bg-blue-400", bgColor: "bg-pink-100", driver: "松尾", driverBgColor: "bg-orange-200", decided: true, departure: "10:00", location: "阪急桂", endTime: "16:00", returnTime: "18:00" },
-    { name: "ここ", badge: "G", badgeColor: "bg-green-500", bgColor: "bg-purple-100", driver: "準備", driverBgColor: "bg-orange-200", decided: true, departure: "9:00", location: "竹田駅", endTime: "17:00", returnTime: "19:00" },
-    { name: "みく", badge: "南", badgeColor: "bg-blue-400", bgColor: "bg-yellow-100", driver: "主居4", driverBgColor: "bg-orange-200", decided: true, departure: "9:30", location: "京都イコイ", endTime: "16:30", returnTime: "18:30" },
-    { name: "りお", badge: "L", badgeColor: "bg-red-500", bgColor: "bg-pink-200", driver: "南和", driverBgColor: "", decided: true, departure: "10:00", location: "阪急桂", endTime: "15:00", returnTime: "17:00" },
-    { name: "はる", badge: "南", badgeColor: "bg-blue-400", bgColor: "bg-blue-100", driver: "松尾", driverBgColor: "bg-orange-200", decided: true, departure: "9:00", location: "竹田駅", endTime: "18:00", returnTime: "20:00" },
-    { name: "みゆ", badge: "南", badgeColor: "bg-blue-400", bgColor: "bg-yellow-100", driver: "主居4", driverBgColor: "bg-orange-200", decided: true, departure: "9:30", location: "阪急桂", endTime: "16:00", returnTime: "18:00" },
-    { name: "ゆな", badge: "G", badgeColor: "bg-green-500", bgColor: "bg-purple-100", driver: "準備", driverBgColor: "bg-orange-200", decided: true, departure: "10:00", location: "2南ICコ", endTime: "17:30", returnTime: "19:30" },
-    { name: "さや", badge: "南", badgeColor: "bg-blue-400", bgColor: "bg-pink-100", driver: "松尾", driverBgColor: "bg-orange-200", decided: true, departure: "9:00", location: "竹田駅", endTime: "15:30", returnTime: "17:30" },
-    { name: "れな", badge: "L", badgeColor: "bg-red-500", bgColor: "bg-pink-200", driver: "事務", driverBgColor: "", decided: true, departure: "9:30", location: "京都イコイ", endTime: "18:30", returnTime: "20:30" },
-    { name: "あん", badge: "南", badgeColor: "bg-blue-400", bgColor: "bg-blue-100", driver: "主居4", driverBgColor: "bg-orange-200", decided: true, departure: "10:00", location: "阪急桂", endTime: "16:30", returnTime: "18:30" },
-  ];
-
-  const outDispatchList = [
-    { status: "開始", statusBg: "bg-[#E0E0E0]", source: "HP", sourceBg: "bg-[#EC407A]", hostess: "南 真麻ー", hostessBg: "bg-[#E1BEE7]", timeType: "S", duration: "180分", startTime: "21:58", endTime: "0:58", hotel: "ハードンホテル片岸野", location: "島丸御池", hasD: false, dLocation: "", inDriver: "建材１", inDriverBg: "bg-[#FFF9C4]", outDriver: "決済", outDriverBg: "bg-white" },
-    { status: "開始", statusBg: "bg-[#E0E0E0]", source: "HP", sourceBg: "bg-[#EC407A]", hostess: "南 すずな", hostessBg: "bg-[#E1BEE7]", timeType: "RHS", duration: "60分", startTime: "0:06", endTime: "1:06", hotel: "ファインガーデン仙山", location: "南IC", hasD: false, dLocation: "", inDriver: "ホテへ", inDriverBg: "bg-[#FFF9C4]", outDriver: "ホテへ", outDriverBg: "bg-[#FFF9C4]" },
-    { status: "開始", statusBg: "bg-[#E0E0E0]", source: "HP", sourceBg: "bg-[#EC407A]", hostess: "南 りの", hostessBg: "bg-[#E1BEE7]", timeType: "N", duration: "60分", startTime: "0:37", endTime: "1:37", hotel: "ラジィン(芦かけ有", location: "", hasD: true, dLocation: "東山安井", inDriver: "須賀", inDriverBg: "bg-[#FFF9C4]", outDriver: "決済", outDriverBg: "bg-white" },
-    { status: "開始", statusBg: "bg-[#E0E0E0]", source: "HP", sourceBg: "bg-[#EC407A]", hostess: "南 たれま", hostessBg: "bg-[#E1BEE7]", timeType: "S", duration: "60分", startTime: "0:50", endTime: "1:50", hotel: "マイスクラス(芦掛け", location: "南IC", hasD: false, dLocation: "", inDriver: "", inDriverBg: "bg-white", outDriver: "八階４", outDriverBg: "bg-[#FFF9C4]" },
-    { status: "開始", statusBg: "bg-[#E0E0E0]", source: "HP", sourceBg: "bg-[#EC407A]", hostess: "南 アヤナ", hostessBg: "bg-[#E1BEE7]", timeType: "S", duration: "120分", startTime: "0:46", endTime: "2:46", hotel: "グランシー八田屋番", location: "", hasD: true, dLocation: "南IC", inDriver: "", inDriverBg: "bg-white", outDriver: "八階４", outDriverBg: "bg-[#FFF9C4]" },
-    { status: "開始", statusBg: "bg-[#E0E0E0]", source: "HP", sourceBg: "bg-[#EC407A]", hostess: "南 真麻ー", hostessBg: "bg-[#E1BEE7]", timeType: "S", duration: "180分", startTime: "21:58", endTime: "0:58", hotel: "ハードンホテル片岸野", location: "島丸御池", hasD: false, dLocation: "", inDriver: "建材１", inDriverBg: "bg-[#FFF9C4]", outDriver: "決済", outDriverBg: "bg-white" },
-    { status: "開始", statusBg: "bg-[#E0E0E0]", source: "HP", sourceBg: "bg-[#EC407A]", hostess: "南 すずな", hostessBg: "bg-[#E1BEE7]", timeType: "RHS", duration: "60分", startTime: "0:06", endTime: "1:06", hotel: "ファインガーデン仙山", location: "南IC", hasD: false, dLocation: "", inDriver: "ホテへ", inDriverBg: "bg-[#FFF9C4]", outDriver: "ホテへ", outDriverBg: "bg-[#FFF9C4]" },
-    { status: "開始", statusBg: "bg-[#E0E0E0]", source: "HP", sourceBg: "bg-[#EC407A]", hostess: "南 りの", hostessBg: "bg-[#E1BEE7]", timeType: "N", duration: "60分", startTime: "0:37", endTime: "1:37", hotel: "ラジィン(芦かけ有", location: "", hasD: true, dLocation: "東山安井", inDriver: "須賀", inDriverBg: "bg-[#FFF9C4]", outDriver: "決済", outDriverBg: "bg-white" },
-    { status: "開始", statusBg: "bg-[#E0E0E0]", source: "HP", sourceBg: "bg-[#EC407A]", hostess: "南 たれま", hostessBg: "bg-[#E1BEE7]", timeType: "S", duration: "60分", startTime: "0:50", endTime: "1:50", hotel: "マイスクラス(芦掛け", location: "南IC", hasD: false, dLocation: "", inDriver: "", inDriverBg: "bg-white", outDriver: "八階４", outDriverBg: "bg-[#FFF9C4]" },
-    { status: "開始", statusBg: "bg-[#E0E0E0]", source: "HP", sourceBg: "bg-[#EC407A]", hostess: "南 アヤナ", hostessBg: "bg-[#E1BEE7]", timeType: "S", duration: "120分", startTime: "0:46", endTime: "2:46", hotel: "グランシー八田屋番", location: "", hasD: true, dLocation: "南IC", inDriver: "", inDriverBg: "bg-white", outDriver: "八階４", outDriverBg: "bg-[#FFF9C4]" },
-  ];
-
-  const finishedList = [
-    { hostess: "南 うらら", hostessBg: "bg-blue-200", endTime1: "0:55", endTime2: "0:55", endTime2Bg: "bg-blue-500", location: "グランドファイン番号のみ", outDriver: "ホテへル", outDriverBg: "bg-white" },
-    { hostess: "南 あやね", hostessBg: "bg-purple-200", endTime1: "0:51", endTime2: "0:52", endTime2Bg: "bg-white", location: "ラフイン(声かけ有り", outDriver: "須賀 5", outDriverBg: "bg-yellow-200" },
-    { hostess: "南 ミリア", hostessBg: "bg-blue-200", endTime1: "0:40", endTime2: "0:43", endTime2Bg: "bg-blue-500", location: "グランヴィア京都割きTel", outDriver: "森 下 光", outDriverBg: "bg-yellow-200" },
-    { hostess: "南 うらら", hostessBg: "bg-blue-200", endTime1: "0:55", endTime2: "0:55", endTime2Bg: "bg-blue-500", location: "グランドファイン番号のみ", outDriver: "ホテへル", outDriverBg: "bg-white" },
-    { hostess: "南 あやね", hostessBg: "bg-purple-200", endTime1: "0:51", endTime2: "0:52", endTime2Bg: "bg-white", location: "ラフイン(声かけ有り", outDriver: "須賀 5", outDriverBg: "bg-yellow-200" },
-    { hostess: "南 ミリア", hostessBg: "bg-blue-200", endTime1: "0:40", endTime2: "0:43", endTime2Bg: "bg-blue-500", location: "グランヴィア京都割きTel", outDriver: "森 下 光", outDriverBg: "bg-yellow-200" },
-  ];
-
-  return <div className="min-h-screen flex flex-col bg-[#fff]">
-
-<div className="h-[60px] border-b border-[#323232] flex items-center justify-center gap-2 px-4 min-w-[1400px]">
-  <button className="border border-[#323232] px-3 py-1 text-[12px] bg-white">日付移動</button>
-  <button className="border border-[#323232] px-3 py-1 text-[12px] bg-purple-600 text-white">ドライバ情報</button>
-  <button className="border border-[#323232] px-3 py-1 text-[12px] bg-green-400">新規客検索</button>
-  <button className="border border-[#323232] px-3 py-1 text-[12px] bg-red-500 text-white">RT止リパネル</button>
-  <button className="border border-[#323232] px-3 py-1 text-[12px] bg-orange-400">RTパネル</button>
-  <button className="border border-[#323232] px-3 py-1 text-[12px] bg-white">手配表</button>
-  <button className="border border-[#323232] px-3 py-1 text-[12px] bg-white">Menu</button>
-  <button className="border border-[#323232] px-3 py-1 text-[12px] bg-blue-500 text-white">チャット受付</button>
-  <button className="border border-[#323232] px-3 py-1 text-[12px] bg-white">取消リスト</button>
-</div>
-
-<div className="h-[calc(100vh-60px)] flex min-w-[1400px]">
-
-<div className="w-[16%] flex flex-col border-r border-[#323232]">
- <div className="flex-[8] min-h-0 border-b border-[#323232] flex flex-col">
-   {/* Title with background */}
-   <div className="border-b border-[#323232] text-center text-[13px]">
-    <div className="bg-[#CEF1F0]  p-1 font-semibold">
-     出庫予定ホステス
-    </div>
-   </div>
-
-   {/* Column headers row */}
-   <div className="border-b border-[#323232] flex items-center py-1 text-[10px] bg-gray-50">
-     <span className="w-[23%]">ホステス名</span>
-     <span className="w-[18%]">迎えドラ</span>
-     <span className="w-[11%]">決定</span>
-     <span className="w-[13%] text-left">出勤</span>
-     <span className="w-[20%]">迎え場所</span>
-     <span className="w-[13%]">終了</span>
-     <span className="w-[13%]">帰宅</span>
-   </div>
-
-   {/* Reservation list */}
-   <div className="flex-1 overflow-auto">
-     {hostessList.map((hostess, index) => (
-       <div key={index} className="flex border-b border-[#323232] text-[10px]">
-         <span className={`w-[23%] ${hostess.bgColor} py-1 px-1 flex items-center gap-1`}>
-           <span className={`${hostess.badgeColor} text-white px-1 text-[8px]`}>{hostess.badge}</span>
-           <span>{hostess.name}</span>
-         </span>
-         <span className={`w-[14%] py-1 px-1 ${hostess.driverBgColor}`}>{hostess.driver}</span>
-         <span className="w-[11%] py-1 px-1 bg-gray-400 text-white text-center">i</span>
-         <span className="w-[13%] py-1 px-1 bg-gray-300 text-center">{hostess.departure}</span>
-         <span className="w-[24%] py-1 px-1 bg-gray-300 text-center">{hostess.location}</span>
-         <span className="w-[13%] py-1 px-1 bg-gray-300 text-center text-red-600">{hostess.endTime}</span>
-         <span className="w-[13%] py-1 px-1 bg-gray-300 text-center text-red-600">{hostess.returnTime}</span>
-       </div>
-     ))}
-   </div>
- </div>
-  <div className="flex-[2] flex flex-col">
-    {/* Title with background */}
-    <div className="border-b border-[#323232] text-center text-[13px]">
-      <div className="bg-[#D4E157] p-1 font-semibold flex items-center justify-center gap-1">
-        <span>▲</span>
-        <span>スタッフ予定リスト</span>
-      </div>
-    </div>
-
-    {/* Staff schedule list */}
-    <div className="flex-1 overflow-auto text-[10px]">
-      <div className="border-b border-[#323232] p-1 bg-white">
-        朝一→ホンマ受話す(翠川C) ドメイン支払 #当座出金予備南
-      </div>
-      <div className="border-b border-[#323232] p-1 bg-white">
-        諸経すぅえび店に受代→工事ム諾在す文諸費者全下
-      </div>
-      <div className="border-b border-[#323232] p-1 bg-white">
-        未、令1回な。ニストの人数出す。営、就時間で事務下
-      </div>
-      <div className="border-b border-[#323232] p-1 bg-white">
-        寮、シト確む林下
-      </div>
-      <div className="border-b border-[#323232] p-1 bg-[#C8E6C9]">
-        哲良、調整9.5H　2000迄。決済
-      </div>
-      <div className="border-b border-[#323232] p-1 bg-white">
-        ※門後自宅乗余済み
-      </div>
-      <div className="border-b border-[#323232] p-1 bg-white">
-        システムの方が宿泊自予定
-      </div>
-      <div className="border-b border-[#323232] p-1 bg-[#E0E0E0]">
-        率一写真連走1名訪問連走4名。南
-      </div>
-      <div className="border-b border-[#323232] p-1 bg-white">
-        ドライバー足り村井は再話干弐、決済
-      </div>
-      <div className="border-b border-[#323232] p-1 bg-[#C8E6C9]">
-        土同、調整16H 1700迄。決済
-      </div>
-      <div className="border-b border-[#323232] p-1 bg-[#C8E6C9]">
-        ササ村、調整9.5H 1700出勤け。決済
-      </div>
-    </div>
-  </div>
-</div>
-
-<div className="w-[23%] flex flex-col border-r border-[#323232]">
-  <div className="flex-1 border-b border-[#323232] flex flex-col min-h-0">
-    {/* Title with background */}
-    <div className="border-b border-[#323232] text-center text-[13px]">
-      <div className="bg-[#C8E6C9] p-1 font-semibold">
-        IN未定予定リスト
-      </div>
-    </div>
-
-    {/* Column headers */}
-    <div className="border-b border-[#323232] flex items-center py-1 text-[10px] bg-gray-50">
-      <span className="w-[15%] px-1">開始</span>
-      <span className="w-[15%] px-1">場所</span>
-      <span className="w-[30%] px-1">ホステス名</span>
-      <span className="w-[40%] px-1">時間計</span>
-    </div>
-
-    {/* Data rows */}
-    <div className="flex-1 overflow-auto">
-      <div className="flex border-b border-[#323232] text-[10px] items-center">
-        <span className="w-[15%] px-1 py-1 bg-[#E8EAF6] text-right font-bold">2-00 確</span>
-        <span className="w-[15%] px-1 py-1">南IC</span>
-        <span className="w-[30%] px-1 py-1 bg-[#BBDEFB] flex items-center gap-1">
-          <span className="bg-purple-600 text-white px-1 text-[8px]">D</span>
-          <span>南々ほ</span>
-        </span>
-        <span className="w-[40%] px-1 py-1 flex items-center gap-1">
-          <span>S</span>
-          <span>120分</span>
-        </span>
-      </div>
-      <div className="border-b border-[#323232] h-[30px]"></div>
-      <div className="border-b border-[#323232] h-[30px]"></div>
-      <div className="border-b border-[#323232] h-[30px]"></div>
-      <div className="border-b border-[#323232] h-[30px]"></div>
-      <div className="border-b border-[#323232] h-[30px]"></div>
-      <div className="border-b border-[#323232] h-[30px]"></div>
-      <div className="border-b border-[#323232] h-[30px]"></div>
-      <div className="border-b border-[#323232] h-[30px]"></div>
-      <div className="border-b border-[#323232] h-[30px]"></div>
-      <div className="border-b border-[#323232] h-[30px]"></div>
-      <div className="border-b border-[#323232] h-[30px]"></div>
-      <div className="border-b border-[#323232] h-[30px]"></div>
-      <div className="border-b border-[#323232] h-[30px]"></div>
-      <div className="border-b border-[#323232] h-[30px]"></div>
-      <div className="border-b border-[#323232] h-[30px]"></div>
-      <div className="border-b border-[#323232] h-[30px]"></div>
-      <div className="border-b border-[#323232] h-[30px]"></div>
-      <div className="border-b border-[#323232] h-[30px]"></div>
-      <div className="border-b border-[#323232] h-[30px]"></div>
-      <div className="border-b border-[#323232] h-[30px]"></div>
-    </div>
-  </div>
-  <div className="h-[180px] flex flex-col">
-    {/* Title with background */}
-    <div className="border-b border-[#323232] text-center text-[11px]">
-      <div className="bg-[#E1BEE7] p-1 font-semibold">
-        メモ・引継事項 ドラ体題
-      </div>
-    </div>
-
-    {/* Memo list */}
-    <div className="flex-1 overflow-auto text-[10px]">
-      <div className="border-b border-[#323232] p-2 bg-white flex items-center justify-between">
-        <span>大妻えみさん→15:45位の子約の後早くなってもも仕事取らない事。by 杉本</span>
-        <span className="ml-2 border border-[#323232] px-1 text-[12px] grayscale brightness-0 rounded-sm">✏️</span>
-      </div>
-      <div className="border-b border-[#323232] p-2 bg-gray-200 flex items-center justify-between">
-        <span>大妻まい子約討辰する</span>
-        <span className="ml-2 border border-[#323232] px-1 text-[12px] grayscale brightness-0 rounded-sm">✏️</span>
-      </div>
-      <div className="border-b border-[#323232] p-2 bg-white flex items-center justify-between">
-        <span>【9月9日ヤマモト 詩】キャンセル料回収予定</span>
-        <span className="ml-2 border border-[#323232] px-1 text-[12px] grayscale brightness-0 rounded-sm">✏️</span>
-      </div>
-      <div className="border-b border-[#323232] p-2 bg-gray-200 flex items-center justify-between">
-        <span>ミリア海峡</span>
-        <span className="ml-2 border border-[#323232] px-1 text-[12px] grayscale brightness-0 rounded-sm">✏️</span>
-      </div>
-      <div className="border-b border-[#323232] p-2 bg-gray-200 flex items-center justify-between">
-        <span>Firstナチ RC</span>
-        <span className="ml-2 border border-[#323232] px-1 text-[12px] grayscale brightness-0 rounded-sm">✏️</span>
-      </div>
-    </div>
-  </div>
-</div>
-
-<div className="w-[32%] flex flex-col border-r border-[#323232]">
-  {/* Title */}
-  <div className="border-b border-[#323232] text-center text-[13px]">
-    <div className="bg-[#C8E6C9] p-1 font-semibold">
-      OUT矢未生+複合ゼリスト
-    </div>
-  </div>
-
-  {/* Header row */}
-  <div className="border-b border-[#323232] flex items-center text-[11px] bg-gray-50">
-    <span className="w-[5%]"></span>
-    <span className="w-[3%]"></span>
-    <span className="w-[10%]">ホステス名</span>
-    <span className="w-[6%]"></span>
-    <span className="w-[7%]">時間計</span>
-    <span className="w-[6%]">開始</span>
-    <span className="w-[5%]">終了</span>
-    <span className="w-[17%]"></span>
-    <span className="w-[10%]">場所</span>
-    <span className="w-[6%]"></span>
-    <span className="w-[5%]"></span>
-    <span className="w-[7%]">INドラ</span>
-    <span className="w-[9%]">OUTドラ</span>
-    <span className="w-[2%]"></span>
-  </div>
-
-  {/* Data rows */}
-  <div className="flex-1 overflow-y-auto">
-    {outDispatchList.map((item, index) => (
-      <div key={index} className="border-b border-[#323232] flex items-center text-[12px]">
-        <span className={`w-[5%] ${item.statusBg} text-center`}>{item.status}</span>
-        <span className={`w-[3%] ${item.sourceBg} text-white text-center`}>{item.source}</span>
-        <span className={`w-[10%] ${item.hostessBg}`}>{item.hostess}</span>
-        <span className="w-[6%] bg-white">{item.timeType}</span>
-        <span className="w-[7%] bg-white">{item.duration}</span>
-        <span className="w-[6%] bg-white text-center">{item.startTime}</span>
-        <span className="w-[5%] bg-white text-center text-red-600 font-bold">{item.endTime}</span>
-        <span className="w-[17%] bg-white overflow-hidden text-ellipsis whitespace-nowrap">{item.hotel}</span>
-        {item.hasD ? (
-          <span className="w-[10%] bg-white flex items-center gap-[2px]">
-            <span className="bg-purple-600 text-white px-[2px] text-[8px]">D</span>
-            <span className="text-[9px]">{item.dLocation}</span>
-          </span>
-        ) : (
-          <span className="w-[10%] bg-white">{item.location}</span>
-        )}
-        <span className="w-[6%] bg-white"></span>
-        <span className="w-[5%] bg-white text-center"></span>
-        <span className={`w-[7%] ${item.inDriverBg} text-center`}>{item.inDriver}</span>
-        <span className={`w-[8%] ${item.outDriverBg} text-center`}>{item.outDriver}</span>
-        <span className="w-[3%] bg-white flex justify-center">
-          <span className="border border-[#323232] px-1 rounded-sm grayscale brightness-0">📋</span>
-        </span>
-      </div>
-    ))}
-    {[...Array(30)].map((_, index) => (
-      <div key={`empty-${index}`} className="border-b border-[#323232] h-[30px]"></div>
-    ))}
-  </div>
-</div>
-
-<div className="w-[32%] overflow-x-auto">
-  <div className="min-w-max grid" style={{ gridTemplateColumns: '280px 280px 350px', gridTemplateRows: '140px 4fr 2fr' }}>
-
-  {/* 終了リスト */}
-  <div className="border-r border-b border-[#323232] col-span-2 flex flex-col">
-    {/* Title */}
-    <div className="border-b border-[#323232] text-center text-[13px]">
-      <div className="bg-[#FFB3BA] p-1 font-semibold">
-        終了リスト
-      </div>
-    </div>
-
-    {/* Header row */}
-    <div className="border-b border-[#323232] flex items-center text-[10px] bg-gray-50 py-1">
-      <span className="w-[25%] px-1">ホステス名</span>
-      <span className="w-[20%] px-1 text-center">終了</span>
-      <span className="w-[35%] px-1">場所</span>
-      <span className="w-[20%] px-1 text-center">OUTドラ</span>
-    </div>
-
-    {/* Data rows */}
-    <div className="flex-1 overflow-y-auto">
-      {finishedList.map((item, index) => (
-        <div key={index} className="border-b border-[#323232] flex items-center text-[11px]">
-          <span className={`w-[25%] px-1 py-1 ${item.hostessBg}`}>{item.hostess}</span>
-          <span className="w-[10%] px-1 py-1 bg-white text-center">{item.endTime1}</span>
-          <span className={`w-[10%] px-1 py-1 ${item.endTime2Bg} ${item.endTime2Bg === 'bg-blue-500' ? 'text-white' : ''} text-center font-bold`}>{item.endTime2}</span>
-          <span className="w-[35%] px-1 py-1 bg-white overflow-hidden whitespace-nowrap text-ellipsis">{item.location}</span>
-          <span className={`w-[20%] px-1 py-1 ${item.outDriverBg} text-center`}>{item.outDriver}</span>
-        </div>
-      ))}
-      {[...Array(20)].map((_, index) => (
-        <div key={`empty-${index}`} className="border-b border-[#323232] h-[30px]"></div>
-      ))}
-    </div>
-  </div>
-
-  {/* Top right section spanning 2 rows */}
-  <div className="border-b border-[#323232] col-span-1 row-span-2 flex flex-col">
-    <div className="border-b border-[#323232] flex-1 flex flex-col min-h-0">
-      <div className="bg-[#B3D9FF] border-b border-[#323232] text-center text-[14px] font-semibold py-1">
-        ホステス送り・帰宅
-      </div>
-      <div className="border-b border-[#323232] flex items-center text-[9px] bg-[#FFFF99]">
-        <span className="w-[8%] px-1 text-center">荷物</span>
-        <span className="w-[22%] px-1">ホステス</span>
-        <span className="w-[20%] px-1 text-center">送りドラ</span>
-        <span className="w-[12%] px-1 text-center">終了</span>
-        <span className="w-[12%] px-1 text-center">帰宅</span>
-        <span className="w-[20%] px-1 text-center">送り場所</span>
-        <span className="w-[6%] px-1 text-center">件数</span>
-      </div>
-      <div className="flex-1 overflow-auto min-h-0">
-        <div className="border-b border-[#323232] flex items-center text-[11px]">
-          <span className="w-[8%] flex items-center justify-center">
-            <span className="bg-gray-400 text-white px-1 text-[10px]">□</span>
-          </span>
-          <span className="w-[22%] flex items-center gap-1">
-            <span className="bg-purple-600 text-white px-1 text-[9px]">南</span>
-            <span className="bg-purple-300 px-1 flex-1">杯ー-inari-</span>
-          </span>
-          <span className="w-[20%] bg-[#FFFFCC] px-1 text-center"></span>
-          <span className="w-[12%] bg-white px-1 text-center">1:00</span>
-          <span className="w-[12%] bg-white px-1 text-center text-red-600">3:00</span>
-          <span className="w-[20%] bg-white px-1 flex items-center gap-1">
-            <span className="bg-black text-white px-[2px] text-[8px]">■</span>
-            <span>堀川五</span>
-          </span>
-          <span className="w-[6%] bg-white px-1 text-center"></span>
-        </div>
-        <div className="border-b border-[#323232] flex items-center text-[11px]">
-          <span className="w-[8%] flex items-center justify-center">
-            <span className="bg-gray-400 text-white px-1 text-[10px]">□</span>
-          </span>
-          <span className="w-[22%] flex items-center gap-1">
-            <span className="bg-purple-600 text-white px-1 text-[9px]">南</span>
-            <span className="bg-purple-300 px-1 flex-1">南 さやか</span>
-          </span>
-          <span className="w-[20%] bg-[#FFFFCC] px-1 text-center"></span>
-          <span className="w-[12%] bg-white px-1 text-center">1:00</span>
-          <span className="w-[12%] bg-white px-1 text-center text-red-600">2:30</span>
-          <span className="w-[20%] bg-white px-1">南ICコイン</span>
-          <span className="w-[6%] bg-white px-1 text-center text-red-600">2</span>
-        </div>
-        <div className="border-b border-[#323232] flex items-center text-[11px]">
-          <span className="w-[8%] flex items-center justify-center">
-            <span className="bg-gray-400 text-white px-1 text-[10px]">□</span>
-          </span>
-          <span className="w-[22%] flex items-center gap-1">
-            <span className="bg-green-600 text-white px-1 text-[9px]">G</span>
-            <span className="bg-pink-300 px-1 flex-1">ゆりか</span>
-          </span>
-          <span className="w-[20%] bg-[#FFFFCC] px-1 text-center"></span>
-          <span className="w-[12%] bg-white px-1 text-center">1:00</span>
-          <span className="w-[12%] bg-white px-1 text-center text-red-600">2:30</span>
-          <span className="w-[20%] bg-white px-1">ブラリア竹</span>
-          <span className="w-[6%] bg-white px-1 text-center text-red-600">2</span>
-        </div>
-        <div className="border-b border-[#323232] flex items-center text-[11px]">
-          <span className="w-[8%] flex items-center justify-center">
-            <span className="bg-gray-400 text-white px-1 text-[10px]">□</span>
-          </span>
-          <span className="w-[22%] flex items-center gap-1">
-            <span className="bg-green-600 text-white px-1 text-[9px]">G</span>
-            <span className="bg-pink-300 px-1 flex-1">ゆらら</span>
-          </span>
-          <span className="w-[20%] bg-[#FFFFCC] px-1 text-center"></span>
-          <span className="w-[12%] bg-white px-1 text-center">2:00</span>
-          <span className="w-[12%] bg-white px-1 text-center"></span>
-          <span className="w-[20%] bg-white px-1">ブラリア竹</span>
-          <span className="w-[6%] bg-white px-1 text-center"></span>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  {/* Middle left section - 予定一覧 */}
-  <div className="border-r border-b border-[#323232] col-span-1 row-span-2 flex flex-col">
-    {/* Title */}
-    <div className="border-b border-[#323232] text-center text-[12px] bg-[#BBDEFB] font-semibold py-1">
-      南IC事務所 待機
-    </div>
-
-    {/* Data rows */}
-    <div className="flex-1 overflow-y-auto">
-      <div className="border-b border-[#323232] flex items-center text-[12px]">
-        <span className="w-[45%] bg-white">南近 -inar-</span>
-        <span className="w-[25%] bg-white text-center">18:07</span>
-        <span className="w-[10%] bg-green-500 flex justify-center items-center text-white font-bold">↑</span>
-        <span className="w-[10%] bg-white flex justify-center items-center">▼</span>
-        <span className="w-[10%] bg-yellow-400 flex justify-center items-center">⇔</span>
-      </div>
-
-      <div className="border-b border-[#323232] flex items-center text-[12px]">
-        <span className="w-[45%] bg-white">南 すず一</span>
-        <span className="w-[25%] bg-white text-center">21:51</span>
-        <span className="w-[10%] bg-green-500 flex justify-center items-center text-white font-bold">↑</span>
-        <span className="w-[10%] bg-white flex justify-center items-center">▼</span>
-        <span className="w-[10%] bg-yellow-400 flex justify-center items-center">⇔</span>
-      </div>
-
-      <div className="border-b border-[#323232] flex items-center text-[12px]">
-        <span className="w-[45%] bg-white">S ゆりか</span>
-        <span className="w-[25%] bg-white text-center">23:08</span>
-        <span className="w-[10%] bg-green-500 flex justify-center items-center text-white font-bold">↑</span>
-        <span className="w-[10%] bg-white flex justify-center items-center">▼</span>
-        <span className="w-[10%] bg-yellow-400 flex justify-center items-center">⇔</span>
-      </div>
-
-      <div className="border-b border-[#323232] flex items-center text-[12px]">
-        <span className="w-[45%] bg-white">南いず</span>
-        <span className="w-[25%] bg-white text-center">23:46</span>
-        <span className="w-[10%] bg-green-500 flex justify-center items-center text-white font-bold">↑</span>
-        <span className="w-[10%] bg-white flex justify-center items-center">▼</span>
-        <span className="w-[10%] bg-yellow-400 flex justify-center items-center">⇔</span>
-      </div>
-
-      <div className="border-b border-[#323232] flex items-center text-[12px]">
-        <span className="w-[45%] bg-white">南さやか</span>
-        <span className="w-[25%] bg-white text-center">0:18</span>
-        <span className="w-[10%] bg-green-500 flex justify-center items-center text-white font-bold">↑</span>
-        <span className="w-[10%] bg-white flex justify-center items-center">▼</span>
-        <span className="w-[10%] bg-yellow-400 flex justify-center items-center">⇔</span>
-      </div>
-
-      <div className="border-b border-[#323232] flex items-center text-[12px]">
-        <span className="w-[45%] bg-white">L つばさ</span>
-        <span className="w-[25%] bg-white text-center">0:27</span>
-        <span className="w-[10%] bg-green-500 flex justify-center items-center text-white font-bold">↑</span>
-        <span className="w-[10%] bg-white flex justify-center items-center">▼</span>
-        <span className="w-[10%] bg-yellow-400 flex justify-center items-center">⇔</span>
-      </div>
-
-      {[...Array(20)].map((_, index) => (
-        <div key={`empty-${index}`} className="border-b border-[#323232] h-[30px]"></div>
-      ))}
-    </div>
-  </div>
-
-  {/* Middle right section */}
-  <div className="border-r border-[#323232] col-span-1 row-span-1 flex flex-col min-h-0">
-    <div className="flex-[2] flex flex-col min-h-0 border-b border-[#323232]">
-      <div className="bg-[#FFB3BA] text-center text-[11px] font-semibold border-b border-[#323232] h-[28px] flex items-center justify-center">
-        FGCS 他撮影中
-      </div>
-      <div className="flex-1 overflow-x-auto overflow-y-scroll min-h-0">
-        <div className="min-w-max">
-          <div className="border-b border-[#323232] text-[12px] h-[28px]"></div>
-          <div className="border-b border-[#323232] text-[12px] h-[28px]"></div>
-          <div className="border-b border-[#323232] text-[12px] h-[28px]"></div>
-        </div>
-      </div>
-    </div>
-    <div className="flex-[5] flex flex-col min-h-0 border-b border-[#323232]">
-      <div className="bg-[#B3D9FF] border-b border-[#323232] text-center text-[12px] font-semibold h-[28px] flex items-center justify-center">
-        南IC往来派遣or管直き
-      </div>
-      <div className="flex-1 overflow-x-auto overflow-y-auto min-h-0">
-        <div className="min-w-max">
-          {minamiIcDispatchData.map((item, index) => (
-            <div key={index} className="flex items-center text-[12px] border-b border-[#323232] ">
-              <span className={`${item.nameBg} min-w-[80px]`}>{item.name}</span>
-              <span className="min-w-[60px]">{item.time}</span>
-              <span className="bg-green-500 text-white px-1">↑</span>
-              <span className="">▼</span>
-              <span className="bg-yellow-300">⇔</span>
+export default function Original() {
+  return (
+    <div className="w-[2400px] h-[1080px] relative overflow-hidden">
+  
+    {/* スタッフ予定リスト */}
+    <div className="w-80 h-5 left-[5px] top-[593px] absolute bg-lime-200" />
+    <div className="w-28 left-[121px] top-[595px] absolute text-center justify-end text-black text-xs font-normal font-['Inter']">スタッフ予定リスト</div>
+    <div className="w-80 h-96 left-[5px] top-[612px] absolute outline outline-1 outline-offset-[-1px] outline-zinc-300 overflow-y-auto relative">
+      {staffScheduleSampleData.map((schedule: StaffSchedule, index: number) => {
+        const topPosition = index * 34;
+        return (
+          <div key={schedule.id} className="w-80 h-8 left-0 absolute" style={{ top: `${topPosition}px` }}>
+            <div className={`w-80 h-8 left-0 top-0 absolute ${schedule.isHighlighted ? 'bg-lime-200' : 'bg-white'}`} />
+            <div className="w-80 h-8 left-0 top-0 absolute justify-center text-black text-xs font-normal font-['Inter']">
+              {schedule.driverName}→{schedule.destination}<br />{schedule.note}
             </div>
-          ))}
-        </div>
-      </div>
-    </div>
-    <div className="flex-[3] flex flex-col min-h-0 border-b border-[#323232]">
-      <div className="bg-[#FFE0B2] text-center text-[11px] font-semibold border-b border-[#323232] h-[28px] flex items-center justify-center">
-        未確定
-      </div>
-      <div className="flex-1 overflow-x-auto overflow-y-auto min-h-0">
-        <div className="min-w-max">
-          <div className="border-b border-[#323232] text-[12px] h-[28px]"></div>
-          <div className="border-b border-[#323232] text-[12px] h-[28px]"></div>
-          <div className="border-b border-[#323232] text-[12px] h-[28px]"></div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  {/* Bottom section spanning 2 columns */}
-  <div className="border-r border-[#323232] col-span-2 row-span-1 flex flex-col min-h-0">
-    <div className="border-b border-[#323232] flex-1 flex flex-col min-h-0">
-      <div className="bg-[#B3D9FF] border-b border-[#323232] text-center text-[12px] font-semibold">
-        予定(打合せ・撮影など)
-      </div>
-      <div className="flex-1 overflow-auto text-[12px] min-h-0">
-        {scheduleData.map((item, index) => (
-          <div key={index} className="border-b border-[#323232] py-1">{item.text}</div>
-        ))}
-      </div>
-    </div>
-    <div className="flex-1 flex flex-col min-h-0">
-      <div className="bg-[#FFB3BA] border-b border-[#323232] text-center text-[12px] font-semibold">
-        面接予定
-      </div>
-      <div className="border-b border-[#323232] flex items-center text-[10px] bg-[#FFB3BA]">
-        <span className="w-[5%] px-1"></span>
-        <span className="w-[10%] px-1 text-center">時刻</span>
-        <span className="w-[10%] px-1 text-center">確認</span>
-        <span className="w-[5%] px-1"></span>
-        <span className="w-[35%] px-1 text-center">場所</span>
-        <span className="w-[15%] px-1 text-center">種類</span>
-        <span className="w-[15%] px-1 text-center">面接者</span>
-      </div>
-      <div className="flex-1 overflow-auto min-h-0">
-        {interviewData.map((item, index) => (
-          <div key={index} className="border-b border-[#323232] flex items-center text-[12px]">
-            <span className="w-[5%] px-1 py-1 bg-white text-center">{item.id}</span>
-            <span className="w-[10%] px-1 py-1 bg-white text-center">{item.type}</span>
-            <span className="w-[10%] px-1 py-1 bg-white text-center">{item.time}</span>
-            <span className={`w-[5%] px-1 py-1 ${item.statusBg} text-white text-center`}>{item.status}</span>
-            <span className="w-[35%] px-1 py-1 bg-white overflow-hidden text-ellipsis whitespace-nowrap">{item.location}</span>
-            <span className="w-[15%] px-1 py-1 bg-white text-center">{item.category}</span>
-            <span className="w-[15%] px-1 py-1 bg-white text-center">{item.interviewer}</span>
           </div>
-        ))}
-      </div>
+        );
+      })}
+  </div>
+  {/* INドラ未定予約リスト */}
+  <div className="w-3 left-[731px] top-[25px] absolute text-center justify-center text-black text-[8px] font-normal font-['Inter']">オプション</div>
+  <div className="w-3 left-[713px] top-[45px] absolute text-center justify-center text-black text-[8px] font-normal font-['Inter']">カード</div>
+  <div className="w-3 left-[695px] top-[35px] absolute text-center justify-center text-black text-[8px] font-normal font-['Inter']">着T<br/>E<br/>L</div>
+  <div className="w-3 left-[677px] top-[45px] absolute text-center justify-center text-black text-[8px] font-normal font-['Inter']">待合せ</div>
+  <div className="w-3 left-[659px] top-[45px] absolute text-center justify-center text-black text-[8px] font-normal font-['Inter']">領収書</div>
+  <div className="w-6 left-[637px] top-[65px] absolute text-center justify-end text-black text-[8px] font-normal font-['Inter']">時間計</div>
+  <div className="w-8 left-[425px] top-[65px] absolute text-center justify-end text-black text-[8px] font-normal font-['Inter']">迎え場所</div>
+  <div className="w-4 left-[361px] top-[65px] absolute text-center justify-end text-black text-[8px] font-normal font-['Inter']">出勤</div>
+  <div className="w-10 left-[531px] top-[65px] absolute justify-end text-black text-[8px] font-normal font-['Inter']">ホステス名</div>
+  <div className="w-32 h-5 left-[499px] top-[45px] absolute bg-lime-200" />
+  <div className="w-32 left-[502px] top-[47px] absolute text-center justify-end text-black text-xs font-normal font-['Inter']">INドラ未定予約リスト</div>
+  <div className="w-[413px] h-[600px] left-[348px] top-[78px] absolute outline outline-1 outline-offset-[-1px] outline-zinc-300 overflow-y-auto">
+    {undecidedDriverReservationSampleData.map((reservation: UndecidedDriverReservation, index: number) => {
+      const topPosition = index * 20;
+      return (
+        <div key={reservation.id} className="w-[404px] h-5 left-0 absolute" style={{ top: `${topPosition}px` }}>
+          {reservation.hasOption5 && (
+            <div className="w-4 h-5 left-[388px] top-0 absolute border border-rose-300/60" />
+          )}
+          {reservation.hasOption4 && (
+            <div className="w-4 h-5 left-[372px] top-0 absolute border border-indigo-200/60" />
+          )}
+          {reservation.hasOption3 && (
+            <div className="w-4 h-5 left-[356px] top-0 absolute border border-rose-300/60" />
+          )}
+          {reservation.hasOption2 && (
+            <div className="w-4 h-5 left-[340px] top-0 absolute border border-indigo-200/60" />
+          )}
+          {reservation.hasOption1 && (
+            <div className="w-4 h-5 left-[324px] top-0 absolute border border-rose-300/60" />
+          )}
+          <div className="w-10 h-5 left-[284px] top-0 absolute border border-indigo-200/60" />
+          <div className="w-3 left-[307px] top-[2px] absolute text-center justify-end text-black text-xs font-normal font-['Inter']">分</div>
+          <div className="w-5 left-[283px] top-[2px] absolute text-right justify-end text-black text-xs font-normal font-['Inter']">{reservation.timeTotal}</div>
+          <div className="w-12 h-5 left-[236px] top-0 absolute border border-neutral-300" />
+          <div className="w-10 left-[233px] top-[2px] absolute text-center justify-end text-black text-xs font-normal font-['Inter']">{reservation.sColumn}</div>
+          {reservation.isConfirmed && (
+            <>
+              <div className="w-[20px] h-5 left-[40px] top-0 absolute bg-purple-300 border border-neutral-300" />
+              <div className="w-3 left-[44px] top-[2px] absolute text-center justify-end text-black text-xs font-normal font-['Inter']">確</div>
+            </>
+          )}
+          <div className="w-24 h-5 left-[140px] top-0 absolute bg-yellow-200 border border-rose-300/60" />
+          <div className="w-20 left-[147px] top-[2px] absolute justify-end text-black text-xs font-normal font-['Inter']">{reservation.area} {reservation.hostessName}</div>
+          <div className="w-16 h-5 left-[60px] top-0 absolute border border-indigo-200/60" />
+          <div className="w-14 left-[63px] top-[2px] absolute justify-end text-black text-xs font-normal font-['Inter']">{reservation.pickupLocation}</div>
+          <div className="w-4 h-[20px] left-[124px] top-0 absolute bg-purple-300 border border-neutral-300"/>
+          <div className="w-10 h-5 left-0 top-0 absolute bg-purple-300" />
+          <div className="w-9 left-[3px] top-[2px] absolute text-center justify-end text-black text-xs font-normal font-['Inter']">{reservation.departureTime}</div>
+        </div>
+      );
+    })}
+  </div>
+  {/* メモ・引継事項　ドラ休憩 */}
+  <div className="w-[416px] h-5 left-[348px] top-[692px] absolute bg-fuchsia-300" />
+  <div className="w-36 left-[500px] top-[694px] absolute text-center justify-end text-black text-xs font-normal font-['Inter']">メモ・引継事項　ドラ休憩</div>
+  <div className="w-[416px] h-[384px] left-[348px] top-[711px] absolute outline outline-1 outline-offset-[-1px] outline-zinc-300 overflow-y-auto">
+    {memoItemSampleData.map((memo: MemoItem, index: number) => {
+      const topPosition = index === 0 ? 1 : index === 1 ? 37 : index === 2 ? 73 : index === 3 ? 109 : index === 4 ? 145 : index === 5 ? 181 : index === 6 ? 217 : index === 7 ? 253 : index === 8 ? 289 : 325;
+      return (
+        <div key={memo.id} className="w-[416px] h-8 left-0 absolute" style={{ top: `${topPosition}px` }}>
+          
+          <div className="w-[416px] h-8 left-0 top-0 absolute bg-zinc-300" />
+          <button
+            type="button"
+            onClick={() => {
+              // TODO: 編集機能を実装
+            }}
+            className="size-6 p-1 left-[384px] top-[2px] absolute bg-white rounded-[3px] inline-flex flex-col justify-center items-center gap-2.5 overflow-hidden hover:bg-gray-100 cursor-pointer transition-colors"
+            aria-label="編集"
+          >
+            <Pen className="w-4 h-4 text-black" />
+          </button>
+          <div className="w-[416px] h-8 left-0 top-0 absolute justify-center text-black text-xs font-normal font-['Inter']">
+            {memo.content.split('\n').map((line, i) => (
+              <React.Fragment key={i}>
+                {line}
+                {i < memo.content.split('\n').length - 1 && <br />}
+              </React.Fragment>
+            ))}
+          </div>
+        </div>
+      );
+    })}
+  </div>
+  {/* 出勤予定ホステス */}
+  <div className="w-4 left-[1753px] top-[66px] absolute text-center justify-end text-black text-[8px] font-normal font-['Inter']">荷物</div>
+  <div className="w-4 left-[1838px] top-[66px] absolute text-center justify-end text-black text-[8px] font-normal font-['Inter']">終了</div>
+  <div className="w-4 left-[1880px] top-[66px] absolute text-center justify-end text-black text-[8px] font-normal font-['Inter']">帰宅</div>
+  <div className="w-4 left-[1977px] top-[66px] absolute text-center justify-end text-black text-[8px] font-normal font-['Inter']">件数</div>
+  <div className="w-10 left-[1778px] top-[66px] absolute justify-end text-black text-[8px] font-normal font-['Inter']">ホステス名</div>
+  <div className="w-8 left-[1926px] top-[66px] absolute justify-end text-black text-[8px] font-normal font-['Inter']">送り場所</div>
+  <div className="w-24 h-5 left-[124px] top-[45px] absolute bg-cyan-200" />
+  <div className="w-24 left-[126px] top-[47px] absolute text-center justify-end text-black text-xs font-normal font-['Inter']">出勤予定ホステス</div>
+  <div className="w-[334px] h-[501px] left-[4px] top-[78px] absolute outline outline-1 outline-offset-[-1px] outline-zinc-300 overflow-y-auto">
+    {scheduledHostessSampleData.map((hostess: ScheduledHostess, index: number) => {
+      const topPosition = index * 20;
+      return (
+        <div key={hostess.id} className="w-[333px] h-5 left-[1px] absolute" style={{ top: `${topPosition}px` }}>
+          
+          <div className="w-[194px] h-5 left-[138px] top-0 absolute bg-zinc-300" />
+          <div className="w-4 h-5 left-[122px] top-0 absolute bg-zinc-400" />
+          <div className="w-[70px] h-5 left-[10px] top-0 absolute bg-yellow-200" />
+          <div className="w-2.5 h-5 left-0 top-0 absolute bg-zinc-300" />
+          <div className="w-9 left-[293px] top-[2px] absolute text-center justify-end text-pink-500 text-xs font-normal font-['Inter']">{hostess.endTime}</div>
+          <div className="w-9 left-[251px] top-[2px] absolute text-center justify-end text-orange-500 text-xs font-normal font-['Inter']">{hostess.startTime}</div>
+          <div className="w-20 left-[185px] top-[2px] absolute justify-end text-black text-xs font-normal font-['Inter']">{hostess.location}</div>
+          <div className="w-9 left-[143px] top-[2px] absolute text-center justify-end text-lime-500 text-xs font-normal font-['Inter']">{hostess.arrivalTime}</div>
+          <div className="w-3 left-[125px] top-[2px] absolute text-center justify-end text-white text-xs font-normal font-['Inter']">{hostess.count}</div>
+          <div className="w-9 left-[83px] top-[2px] absolute justify-end text-black text-xs font-normal font-['Inter']">{hostess.driverName}</div>
+          <div className="w-12 left-[29px] top-[2px] absolute justify-end text-black text-xs font-normal font-['Inter']">{hostess.hostessName}</div>
+          <div className="left-[12px] top-[2px] absolute text-center justify-end text-black text-xs font-normal font-['Inter']">{hostess.area}</div>
+          <div className="w-3.5 h-1.5 left-[8px] top-[4px] absolute origin-top-left rotate-90 bg-rose-300/60" />
+        </div>
+      );
+    })}
+    <div className="w-[334px] h-5 left-[1px] top-[80px] absolute">
+      
     </div>
   </div>
-
+  <div className="w-4 left-[308px] top-[65px] absolute text-center justify-end text-black text-[8px] font-normal font-['Inter']">帰宅</div>
+  <div className="w-4 left-[266px] top-[65px] absolute text-center justify-end text-black text-[8px] font-normal font-['Inter']">終了</div>
+  <div className="w-8 left-[204px] top-[65px] absolute text-center justify-end text-black text-[8px] font-normal font-['Inter']">迎え場所</div>
+  <div className="w-4 left-[158px] top-[65px] absolute text-center justify-end text-black text-[8px] font-normal font-['Inter']">出勤</div>
+  <div className="w-4 left-[128px] top-[65px] absolute text-center justify-end text-black text-[8px] font-normal font-['Inter']">決定</div>
+  <div className="w-8 left-[90px] top-[65px] absolute text-center justify-end text-black text-[8px] font-normal font-['Inter']">迎えドラ</div>
+  <div className="w-10 left-[38px] top-[65px] absolute justify-end text-black text-[8px] font-normal font-['Inter']">ホステス名</div>
+  <div className="w-3 left-[1356px] top-[25px] absolute text-center justify-center text-black text-[8px] font-normal font-['Inter']">オプション</div>
+  <div className="w-3 left-[1338px] top-[45px] absolute text-center justify-center text-black text-[8px] font-normal font-['Inter']">カード</div>
+  <div className="w-3 left-[1320px] top-[35px] absolute text-center justify-center text-black text-[8px] font-normal font-['Inter']">着T<br/>E<br/>L</div>
+  <div className="w-3 left-[1302px] top-[45px] absolute text-center justify-center text-black text-[8px] font-normal font-['Inter']">待合せ</div>
+  <div className="w-3 left-[1284px] top-[45px] absolute text-center justify-center text-black text-[8px] font-normal font-['Inter']">領収書</div>
+  <div className="w-[646px] h-[501px] left-[774px] top-[78px] absolute outline outline-1 outline-offset-[-1px] outline-zinc-300 overflow-y-auto">
+    {outDriverUndecidedSampleData.map((item: OutDriverUndecided, index: number) => (
+      <div key={item.id} className="w-[646px] h-5 left-0 absolute" style={{ top: `${index * 20}px` }}>
+      <div className={`w-7 h-5 px-[3px] pt-0.5 pb-[3px] left-0 top-0 absolute ${item.status === 'start' ? 'bg-cyan-100' : 'bg-rose-500'} inline-flex justify-center items-center gap-2.5`}>
+        <div className={`justify-center text-xs font-normal font-['Inter'] ${item.status === 'start' ? 'text-black' : 'text-white'}`}>
+          {item.status === 'start' ? '開始' : 'HP'}
+        </div>
+      </div>
+      <div className="w-24 h-5 left-[53px] top-0 absolute bg-yellow-200 border border-rose-300/60" />
+      <div className="w-20 left-[56px] top-[2px] absolute justify-end text-black text-xs font-normal font-['Inter']">{item.hostessName}</div>
+      <div className="w-28 h-5 left-[269px] top-0 absolute border border-rose-300/60" />
+      <div className="w-14 h-5 left-[401px] top-0 absolute border border-rose-300/60" />
+      <div className="w-28 left-[272px] top-[2px] absolute justify-end text-black text-xs font-normal font-['Inter']">{item.destination}</div>
+      <div className="w-12 h-3.5 left-[404px] top-[2px] absolute justify-end text-black text-xs font-normal font-['Inter']">{item.station}</div>
+      {item.option1 && (
+        <div className="w-10 h-5 left-[455px] top-0 absolute bg-yellow-200 border border-rose-300/60" />
+      )}
+      {item.option2 && (
+        <div className="w-10 h-5 left-[497px] top-0 absolute bg-yellow-200 border border-indigo-200/60" />
+      )}
+      {item.option1 && (
+        <div className="w-9 left-[458px] top-[2px] absolute justify-end text-black text-xs font-normal font-['Inter']">{item.option1}</div>
+      )}
+      {item.option2 && (
+        <div className="w-9 left-[500px] top-[2px] absolute justify-end text-black text-xs font-normal font-['Inter']">{item.option2}</div>
+      )}
+      <div className="w-10 h-5 left-[227px] top-0 absolute border border-indigo-200/60" />
+      <div className="w-9 left-[230px] top-[2px] absolute text-center justify-end text-black text-xs font-normal font-['Inter']">{item.arrivalTime}</div>
+      <div className="w-10 h-5 left-[185px] top-0 absolute border border-rose-300/60" />
+      <div className="w-9 left-[188px] top-[2px] absolute text-center justify-end text-black text-xs font-normal font-['Inter']">{item.pickupTime}</div>
+      <div className="w-10 h-5 left-[143px] top-0 absolute border border-indigo-200/60" />
+      <div className="w-3 left-[170px] top-[2px] absolute text-center justify-end text-black text-xs font-normal font-['Inter']">分</div>
+      <div className="w-5 left-[146px] top-[2px] absolute text-right justify-end text-black text-xs font-normal font-['Inter']">{item.timeTotal}</div>
+      {item.hasOptions.map((hasOption, optIndex) => {
+        const optionPositions = [539, 557, 575, 383, 593, 611];
+        const relativePosition = optionPositions[optIndex] - 774; // 774px is the left position of the container
+        return hasOption ? (
+          <div key={optIndex} className={`w-4 h-5 absolute border ${optIndex % 2 === 0 ? 'border-rose-300/60' : 'border-indigo-200/60'}`} style={{ left: `${relativePosition}px`, top: '0px' }} />
+        ) : null;
+      })}
+      <div className="size-4 absolute bg-purple-300" style={{ left: '630px', top: '1px' }} />
+      </div>
+    ))}
+  </div>
+  <div className="w-80 h-5 left-[1431px] top-[45px] absolute bg-fuchsia-300" />
+  <div className="w-40 h-5 left-[1605px] top-[253px] absolute bg-cyan-100" />
+  <div className="w-36 left-[1498px] top-[47px] absolute text-center justify-end text-black text-xs font-normal font-['Inter']">終了リスト</div>
+  <div className="w-28 left-[1596px] top-[255px] absolute text-center justify-end text-black text-xs font-normal font-['Inter']">南IC徒歩派遣or仮置き</div>
+  <div className="w-[342px] h-[501px] left-[1431px] top-[78px] absolute outline outline-1 outline-offset-[-1px] outline-zinc-300 overflow-y-auto">
+    {completedListSampleData.map((item: CompletedList, index: number) => {
+    const topPosition = index * 20;
+    return (
+      <React.Fragment key={item.id}>
+        {item.option1 && (
+          <>
+            <div className="w-[54px] h-5 absolute bg-yellow-200 border border-indigo-200/60" style={{ left: 288, top: topPosition }} />
+            <div className="w-12 absolute justify-end text-black text-xs font-normal font-['Inter']" style={{ left: 290, top: topPosition + 2 }}>{item.option1}</div>
+          </>
+        )}
+        <div className="w-24 h-5 absolute bg-yellow-200 border border-rose-300/60" style={{ left: 0, top: topPosition }} />
+        <div className="w-20 absolute justify-end text-black text-xs font-normal font-['Inter']" style={{ left: 2, top: topPosition + 2 }}>{item.hostessName}</div>
+        <div className="w-10 h-5 absolute border border-indigo-200/60" style={{ left: 136, top: topPosition }} />
+        <div className="w-9 absolute text-center justify-end text-black text-xs font-normal font-['Inter']" style={{ left: 138, top: topPosition + 2 }}>{item.arrivalTime}</div>
+        <div className="w-10 h-5 absolute border border-rose-300/60" style={{ left: 96, top: topPosition }} />
+        <div className="w-9 absolute text-center justify-end text-black text-xs font-normal font-['Inter']" style={{ left: 98, top: topPosition + 2 }}>{item.pickupTime}</div>
+        <div className="w-28 h-5 absolute border border-rose-300/60" style={{ left: 176, top: topPosition }} />
+        <div className="w-28 absolute justify-end text-black text-xs font-normal font-['Inter']" style={{ left: 179, top: topPosition + 2 }}>{item.destination}</div>
+      </React.Fragment>
+    );
+    })}
+  </div>
+  <div className="w-40 h-5 left-[984px] top-[45px] absolute bg-lime-200" />
+  <div className="w-40 left-[987px] top-[47px] absolute text-center justify-end text-black text-xs font-normal font-['Inter']">OUTドラ未定・接客中リスト</div>
+  <div className="w-40 h-5 left-[1605px] top-[532px] absolute bg-yellow-200" />
+  <div className="w-40 h-5 left-[1431px] top-[713px] absolute bg-yellow-200" />
+  <div className="w-60 h-5 left-[1783px] top-[45px] absolute bg-yellow-200" />
+  <div className="w-60 h-5 left-[1783px] top-[548px] absolute bg-cyan-100" />
+  <div className="w-28 left-[1422px] top-[715px] absolute text-center justify-end text-black text-xs font-normal font-['Inter']">南IC待機　ドライバー</div>
+  <div className="w-32 left-[1590px] top-[534px] absolute text-center justify-end text-black text-xs font-normal font-['Inter']">精算告知済　ドライバー</div>
+  <div className="w-32 left-[1807px] top-[47px] absolute text-center justify-end text-black text-xs font-normal font-['Inter']">ホステス送り・帰宅</div>
+  {/* 南IC事務所　待機 */}
+  <div className="w-[166px] h-5 left-[1431px] top-[154px] absolute bg-cyan-100" />
+  <div className="w-24 left-[1466px] top-[156px] absolute text-center justify-end text-black text-xs font-normal font-['Inter']">南IC事務所　待機</div>
+  <div className="w-[166px] h-[60px] left-[1431px] top-[177px] absolute outline outline-1 outline-offset-[-1px] outline-zinc-300 overflow-y-auto">
+    {officeWaitingSampleData.map((item: OfficeWaiting, index: number) => {
+      const topPosition = index * 20;
+      return (
+        <React.Fragment key={item.id}>
+          <div className="w-[18px] h-5 left-[148px] absolute border border-rose-300/60" style={{ top: `${topPosition}px` }} />
+          <div className="w-[18px] h-5 left-[130px] absolute border border-rose-300/60" style={{ top: `${topPosition}px` }} />
+          <div className="w-[18px] h-5 left-[112px] absolute border border-rose-300/60" style={{ top: `${topPosition}px` }} />
+          <div className="w-[70px] h-5 left-0 absolute bg-yellow-200 border border-rose-300/60" style={{ top: `${topPosition}px` }} />
+          <div className="w-16 left-[3px] absolute justify-end text-black text-xs font-normal font-['Inter']" style={{ top: `${topPosition + 2}px` }}>{item.hostessName}</div>
+          <div className="w-[42px] h-5 left-[70px] absolute border border-rose-300/60" style={{ top: `${topPosition}px` }} />
+          <div className="w-9 left-[73px] absolute text-center justify-end text-black text-xs font-normal font-['Inter']" style={{ top: `${topPosition + 2}px` }}>{item.departureTime}</div>
+        </React.Fragment>
+      );
+    })}
+  </div>
+  
+  {/* FGCS　他撮影中 */}
+  <div className="w-[166px] h-5 left-[1605px] top-[154px] absolute bg-fuchsia-300" />
+  <div className="w-24 left-[1637px] top-[156px] absolute text-center justify-end text-black text-xs font-normal font-['Inter']">FGCS　他撮影中</div>
+  <div className="w-[166px] h-[60px] left-[1605px] top-[177px] absolute outline outline-1 outline-offset-[-1px] outline-zinc-300 overflow-y-auto">
+    {shootingSampleData.map((item: Shooting, index: number) => {
+      const topPosition = index * 20;
+      return (
+        <React.Fragment key={item.id}>
+          <div className="w-[18px] h-5 left-[148px] absolute border border-rose-300/60" style={{ top: `${topPosition}px` }} />
+          <div className="w-[18px] h-5 left-[130px] absolute border border-rose-300/60" style={{ top: `${topPosition}px` }} />
+          <div className="w-[18px] h-5 left-[112px] absolute border border-rose-300/60" style={{ top: `${topPosition}px` }} />
+          <div className="w-[70px] h-5 left-0 absolute bg-yellow-200 border border-rose-300/60" style={{ top: `${topPosition}px` }} />
+          <div className="w-16 left-[3px] absolute justify-end text-black text-xs font-normal font-['Inter']" style={{ top: `${topPosition + 2}px` }}>{item.hostessName}</div>
+          <div className="w-[42px] h-5 left-[70px] absolute border border-rose-300/60" style={{ top: `${topPosition}px` }} />
+          <div className="w-9 left-[73px] absolute text-center justify-end text-black text-xs font-normal font-['Inter']" style={{ top: `${topPosition + 2}px` }}>{item.departureTime}</div>
+        </React.Fragment>
+      );
+    })}
+  </div>
+  <div className="w-40 h-60 left-[1605px] top-[10px] absolute outline outline-1 outline-offset-[-1px] outline-zinc-300 overflow-y-auto relative">
+    {walkingDispatchSampleData.map((item: WalkingDispatch, index: number) => {
+      const topPosition = index * 20;
+      return (
+        <React.Fragment key={item.id}>
+          <div className="w-16 h-5 left-0 absolute bg-yellow-200 border border-rose-300/60" style={{ top: `${topPosition}px` }} />
+          <div className="w-16 left-[3px] absolute justify-end text-black text-xs font-normal font-['Inter']" style={{ top: `${topPosition + 2}px` }}>{item.hostessName}</div>
+          <div className="w-10 h-5 left-[70px] absolute border border-rose-300/60" style={{ top: `${topPosition}px` }} />
+          <div className="w-9 left-[73px] absolute text-center justify-end text-black text-xs font-normal font-['Inter']" style={{ top: `${topPosition + 2}px` }}>{item.departureTime}</div>
+          <div className="w-4 h-5 left-[112px] absolute border border-rose-300/60" style={{ top: `${topPosition}px` }} />
+          <div className="w-4 h-5 left-[130px] absolute border border-rose-300/60" style={{ top: `${topPosition}px` }} />
+          <div className="w-4 h-5 left-[148px] absolute border border-rose-300/60" style={{ top: `${topPosition}px` }} />
+        </React.Fragment>
+      );
+    })}
+  </div>
+  <div className="w-40 h-44 left-[1431px] top-[736px] absolute outline outline-1 outline-offset-[-1px] outline-rose-300/60 overflow-y-auto">
+    <div className="w-40 h-5 left-0 top-0 absolute bg-zinc-300" />
+    <div className="w-40 h-5 left-0 top-[20px] absolute bg-zinc-300" />
+    <div className="w-40 h-5 left-0 top-[40px] absolute bg-zinc-300" />
+    <div className="w-40 h-5 left-0 top-[60px] absolute bg-zinc-300" />
+    <div className="w-40 h-5 left-0 top-[80px] absolute bg-zinc-300" />
+    <div className="w-40 h-5 left-0 top-[100px] absolute bg-zinc-300" />
+    <div className="w-40 h-5 left-0 top-[120px] absolute bg-zinc-300" />
+    <div className="w-40 h-5 left-0 top-[140px] absolute bg-zinc-300" />
+    <div className="w-40 h-5 left-0 top-[160px] absolute bg-zinc-300" />
+  </div>
+  <div className="w-40 h-24 left-[1605px] top-[555px] absolute outline outline-1 outline-offset-[-1px] outline-rose-300/60 overflow-y-auto">
+    <div className="w-40 h-5 left-0 top-0 absolute bg-zinc-300" />
+    <div className="w-40 h-5 left-0 top-[20px] absolute bg-zinc-300" />
+    <div className="w-40 h-5 left-0 top-[40px] absolute bg-zinc-300" />
+    <div className="w-40 h-5 left-0 top-[60px] absolute bg-zinc-300" />
+    <div className="w-40 h-5 left-0 top-[80px] absolute bg-zinc-300" />
+  </div>
+  <div className="w-60 h-14 left-[1783px] top-[595px] absolute outline outline-1 outline-offset-[-1px] outline-rose-300/60 overflow-y-auto">
+    {returningHostessSampleData.map((item: ReturningHostess, index: number) => {
+      const topPosition = index * 20;
+      return (
+        <div key={item.id} className="w-60 h-5 left-0 absolute bg-zinc-300" style={{ top: `${topPosition}px` }}>
+          <div className="w-60 h-5 left-0 top-0 absolute justify-center text-black text-xs font-normal font-['Inter']">
+            {item.hostessName} - {item.returnTime} - {item.location}
+          </div>
+        </div>
+      );
+    })}
+  </div>
+  <div className="w-[243px] h-[460px] left-[1783px] top-[78px] absolute outline outline-1 outline-offset-[-1px] outline-zinc-300 overflow-y-auto">
+    {hostessTransportSampleData.map((item: HostessTransport, index: number) => {
+      const topPosition = index * 20;
+      return (
+        <React.Fragment key={item.id}>
+          <div className="w-[42px] h-5 left-[116px] absolute bg-zinc-300 border border-indigo-200/60" style={{ top: `${topPosition}px` }} />
+          <div className="w-9 left-[119px] absolute text-center justify-end text-pink-500 text-xs font-normal font-['Inter']" style={{ top: `${topPosition + 2}px` }}>{item.returnTime}</div>
+          <div className="w-[42px] h-5 left-[74px] absolute bg-zinc-300 border border-rose-300/60" style={{ top: `${topPosition}px` }} />
+          <div className="w-9 left-[77px] absolute text-center justify-end text-orange-500 text-xs font-normal font-['Inter']" style={{ top: `${topPosition + 2}px` }}>{item.departureTime}</div>
+          <div className="w-[66px] h-5 left-[158px] absolute bg-zinc-300 border border-rose-300/60" style={{ top: `${topPosition}px` }} />
+          <div className="w-[69px] left-[161px] absolute justify-end text-black text-xs font-normal font-['Inter']" style={{ top: `${topPosition + 2}px` }}>{item.destination}</div>
+          <div className="w-[19px] h-5 left-[224px] absolute bg-zinc-300 border border-indigo-200/60" style={{ top: `${topPosition}px` }} />
+          <div className="w-3 h-3.5 left-[227px] absolute text-center justify-end text-black text-xs font-normal font-['Inter']" style={{ top: `${topPosition + 2}px` }}>{item.count}</div>
+          <div className="w-[54px] h-5 left-[20px] absolute bg-zinc-300 border border-indigo-200/60" style={{ top: `${topPosition}px` }} />
+          <div className="w-12 left-[23px] absolute justify-end text-black text-xs font-normal font-['Inter']" style={{ top: `${topPosition + 2}px` }}>{item.hostessName.split(' ')[1] || item.hostessName}</div>
+          <div className="size-5 left-0 absolute flex items-center justify-center" style={{ top: `${topPosition}px` }}>
+            <Package className={`size-3.5 ${(item.count ?? 0) === 0 ? 'text-stone-500' : 'text-red-500'}`} />
+          </div>
+        </React.Fragment>
+      );
+    })}
+  </div>
+  <div className="w-60 h-5 left-[1783px] top-[572px] absolute bg-yellow-200" />
+  <div className="w-32 left-[1807px] top-[574px] absolute text-center justify-end text-black text-xs font-normal font-['Inter']">自宅or寮　待機</div>
+  <div className="w-32 left-[1807px] top-[551px] absolute text-center justify-end text-black text-xs font-normal font-['Inter']">帰宅ホステス</div>
+  <div className="w-96 h-4 left-[1605px] top-[671px] absolute bg-purple-300" />
+  <div className="w-96 h-3.5 left-[1605px] top-[809px] absolute bg-rose-300/60" />
+  <div className="w-96 left-[1605px] top-[671px] absolute text-center justify-end text-black text-xs font-normal font-['Inter']">予定(打ち合わせ・撮影など)</div>
+  <div className="w-96 left-[1605px] top-[809px] absolute text-center justify-end text-black text-xs font-normal font-['Inter']">面接予定</div>
+  <div className="w-96 h-24 left-[1605px] top-[691px] absolute outline outline-1 outline-offset-[-1px] outline-zinc-300 overflow-y-auto">
+    {scheduleItemSampleData.map((item: ScheduleItem, index: number) => {
+      const topPosition = index * 34;
+      return (
+        <div key={item.id} className="w-96 h-8 left-0 absolute" style={{ top: `${topPosition}px` }}>
+          <button
+            type="button"
+            onClick={() => {
+              // TODO: 編集機能を実装
+            }}
+            className="size-6 p-1 left-[370px] top-[2px] absolute bg-white rounded-[3px] inline-flex flex-col justify-center items-center gap-2.5 overflow-hidden hover:bg-gray-100 cursor-pointer transition-colors"
+            aria-label="編集"
+          >
+            <Pen className="w-4 h-4 text-black" />
+          </button>
+          <div className="w-96 h-8 left-0 top-0 absolute bg-zinc-300" />
+          <div className="w-96 h-8 left-0 top-0 absolute justify-center text-black text-xs font-normal font-['Inter']">
+            {item.title}<br/>{item.description}
+          </div>
+        </div>
+      );
+    })}
+  </div>
+  <div className="w-40 h-20 left-[1431px] top-[948px] absolute bg-rose-300/60" />
+  <div className="w-40 h-20 left-[1431px] top-[948px] absolute text-center justify-center text-black text-xs font-normal font-['Inter']">ドライバ配車パネル</div>
+  <div className="w-96 h-48 left-[1600px] top-[828px] absolute outline outline-1 outline-offset-[-1px] outline-zinc-300 overflow-y-auto">
+    {driverDispatchPanelSampleData.map((item: DriverDispatchPanel, index: number) => {
+      const topPosition = index * 20;
+      return (
+        <React.Fragment key={item.id}>
+          <div className="w-4 h-5 left-[78px] absolute bg-purple-300 border border-neutral-300" style={{ top: `${topPosition}px` }} />
+          <div className="w-9 h-5 left-0 absolute bg-purple-300 border border-neutral-300" style={{ top: `${topPosition}px` }} />
+          <div className="w-3 left-[81px] absolute text-center justify-end text-black text-xs font-normal font-['Inter']" style={{ top: `${topPosition + 2}px` }}>{item.status === 'completed' ? '済' : ''}</div>
+          <div className="w-6 left-[6px] absolute text-center justify-end text-black text-xs font-normal font-['Inter']" style={{ top: `${topPosition + 2}px` }}>{item.type === 'entry' ? '入店' : ''}</div>
+          <div className="w-10 h-5 left-[36px] absolute border border-rose-300/60" style={{ top: `${topPosition}px` }} />
+          <div className="w-9 left-[39px] absolute text-center justify-end text-black text-xs font-normal font-['Inter']" style={{ top: `${topPosition + 2}px` }}>{item.time}</div>
+          <div className="w-7 h-5 left-[-27px] absolute bg-zinc-300" style={{ top: `${topPosition}px` }} />
+          <div className="w-48 h-5 left-[96px] absolute bg-purple-300 border border-neutral-300" style={{ top: `${topPosition}px` }} />
+          <div className="w-44 left-[101px] absolute justify-end text-black text-xs font-normal font-['Inter']" style={{ top: `${topPosition + 2}px` }}>{item.location}</div>
+          {item.hostessName1 && (
+            <>
+              <div className="w-14 h-5 left-[286px] absolute bg-yellow-200 border border-indigo-200/60" style={{ top: `${topPosition}px` }} />
+              <div className="w-12 left-[289px] absolute justify-end text-black text-xs font-normal font-['Inter']" style={{ top: `${topPosition + 2}px` }}>{item.hostessName1}</div>
+            </>
+          )}
+          {item.hostessName2 && (
+            <>
+              <div className="w-14 h-5 left-[340px] absolute bg-yellow-200 border border-indigo-200/60" style={{ top: `${topPosition}px` }} />
+              <div className="w-12 left-[343px] absolute justify-end text-black text-xs font-normal font-['Inter']" style={{ top: `${topPosition + 2}px` }}>{item.hostessName2}</div>
+            </>
+          )}
+        </React.Fragment>
+      );
+    })}
   </div>
 </div>
-
-</div>
-
-  </div>;
-}   
+  );
+}

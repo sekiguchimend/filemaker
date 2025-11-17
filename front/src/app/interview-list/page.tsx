@@ -8,7 +8,7 @@ import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
 import { ArrowLeft, Search, Plus, Download } from "lucide-react";
 import type { InterviewRecord } from '@/types';
-import { interviewTypeLabels, interviewResultLabels, employmentStatusLabels } from '@/types';
+import { INTERVIEW_TYPE_LABELS, INTERVIEW_RESULT_LABELS, EMPLOYMENT_STATUS_LABELS } from '@/types';
 import { interviewSampleData } from '@/data/interviewSampleData';
 
 export default function InterviewList() {
@@ -44,7 +44,7 @@ export default function InterviewList() {
       index + 1,
       formatDate(interview.date),
       interview.startTime,
-      interviewTypeLabels[interview.interviewType],
+      INTERVIEW_TYPE_LABELS[interview.interviewType],
       interview.isRemoteWork ? '○' : '',
       interview.name,
       interview.age,
@@ -174,7 +174,7 @@ export default function InterviewList() {
                           interview.interviewType === 'staff' ? 'bg-green-100 text-green-800' :
                           'bg-pink-100 text-pink-800'
                         }`}>
-                          {interviewTypeLabels[interview.interviewType]}
+                          {INTERVIEW_TYPE_LABELS[interview.interviewType]}
                         </span>
                       </td>
                       <td className="border border-gray-300 px-2 py-2 text-center">
@@ -203,7 +203,7 @@ export default function InterviewList() {
                           interview.result === 'pending' ? 'bg-yellow-100 text-yellow-800' :
                           'bg-gray-100 text-gray-800'
                         }`}>
-                          {interviewResultLabels[interview.result]}
+                          {INTERVIEW_RESULT_LABELS[interview.result]}
                         </span>
                       </td>
                       <td className="border border-gray-300 px-2 py-2">

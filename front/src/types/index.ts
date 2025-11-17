@@ -28,11 +28,12 @@ export * from './employee';
 export * from './area-division';
 export * from './hotel-division';
 
-// dispatch-extendedの型定義（DispatchAreaTransportFeeの重複を避けるため明示的エクスポート）
+// dispatch-extendedの型定義
 export type {
   DispatchPanel2D,
   RT2Panel,
   DispatchAreaDivision,
+  DispatchAreaTransportFee,
   Tehai
 } from './dispatch-extended';
 
@@ -41,7 +42,7 @@ export * from './management';
 export * from './vehicle';
 export * from './cast';
 
-// dispatchの型定義（DispatchAreaTransportFeeを含む）
+// dispatchの型定義（DispatchPostalCodeTransportFeeを含む）
 export * from './dispatch';
 
 // 面接管理関連の型定義
@@ -73,7 +74,7 @@ export interface InterviewRecord {
 }
 
 // 店舗リスト
-export const storeList = [
+export const STORE_LIST = [
   '本店',
   '2F店舗',
   'VIPルーム',
@@ -83,10 +84,10 @@ export const storeList = [
   '新宿支店',
   '渋谷支店',
   '池袋支店'
-];
+] as const;
 
 // 店舗番号と店舗名のマッピング
-export const storeMapping: Record<string, string> = {
+export const STORE_MAPPING: Record<string, string> = {
   '001': '本店',
   '002': '2F店舗',
   '003': 'VIPルーム',
@@ -99,14 +100,14 @@ export const storeMapping: Record<string, string> = {
 };
 
 // 面接種類の表示ラベル
-export const interviewTypeLabels: Record<InterviewType, string> = {
+export const INTERVIEW_TYPE_LABELS: Record<InterviewType, string> = {
   driver: 'ドライバー',
   staff: 'スタッフ',
   hostess: 'ホステス'
 };
 
 // 面接結果の表示ラベル
-export const interviewResultLabels: Record<InterviewResult, string> = {
+export const INTERVIEW_RESULT_LABELS: Record<InterviewResult, string> = {
   hired: '入店',
   cancelled: '取消',
   pending: '保留',
@@ -114,13 +115,12 @@ export const interviewResultLabels: Record<InterviewResult, string> = {
 };
 
 // 在職状態の表示ラベル
-export const employmentStatusLabels: Record<EmploymentStatus, string> = {
+export const EMPLOYMENT_STATUS_LABELS: Record<EmploymentStatus, string> = {
   '': '在職',
   'retired': '退職'
 };
 
 // スタッフ台帳関連の型定義
-export type EmploymentType = 'employee' | 'part_time';
 export type JobType = 'driver' | 'office';
 export type RoleType = 'chairman' | 'advisor' | 'president' | 'general_manager' | 'manager' | 'admin_manager' | 'office_manager' | 'female_manager' | 'office_staff' | 'pr';
 export type EmploymentStatusType = 'active' | '';
@@ -145,24 +145,22 @@ export interface StaffLedgerRecord {
   accountName: string; // アカウント名（英語）
   accessType: AccessType; // アクセス権
   accessStatus: AccessStatusType; // アクセス権のステータス
+  remarks?: string; // 備考
   createdAt: string; // 登録日時
   updatedAt: string; // 更新日時
 }
 
-// 雇用区分の表示ラベル
-export const employmentTypeLabels: Record<EmploymentType, string> = {
-  employee: '社員',
-  part_time: 'アルバイト'
-};
+// 雇用区分の表示ラベル（staff-attendance.tsから再エクスポート）
+export { EMPLOYMENT_TYPE_LABELS } from './staff-attendance';
 
 // 職務の表示ラベル
-export const jobTypeLabels: Record<JobType, string> = {
+export const JOB_TYPE_LABELS: Record<JobType, string> = {
   driver: 'ドライバ',
   office: '内勤'
 };
 
 // 役割の表示ラベル
-export const roleLabels: Record<RoleType, string> = {
+export const ROLE_LABELS: Record<RoleType, string> = {
   chairman: '会長',
   advisor: '顧問',
   president: '社長',
@@ -176,13 +174,13 @@ export const roleLabels: Record<RoleType, string> = {
 };
 
 // 在職状態の表示ラベル（スタッフ台帳用）
-export const staffEmploymentStatusLabels: Record<EmploymentStatusType, string> = {
+export const STAFF_EMPLOYMENT_STATUS_LABELS: Record<EmploymentStatusType, string> = {
   active: '在職',
   '': ''
 };
 
 // アクセス権の表示ラベル
-export const accessTypeLabels: Record<AccessType, string> = {
+export const ACCESS_TYPE_LABELS: Record<AccessType, string> = {
   admin: '管理者',
   manager: '責任者',
   accounting_manager: '会計責任者',
@@ -190,7 +188,7 @@ export const accessTypeLabels: Record<AccessType, string> = {
 };
 
 // アクセス権ステータスの表示ラベル
-export const accessStatusLabels: Record<AccessStatusType, string> = {
+export const ACCESS_STATUS_LABELS: Record<AccessStatusType, string> = {
   active: '有効',
   inactive: '無効'
 };
@@ -226,7 +224,7 @@ export * from './tehai';
 export type {
   StaffAttendanceData,
   WorkType as StaffWorkType,
-  EmploymentType as StaffEmploymentType,
+  EmploymentType,
   AttendanceStatus as StaffAttendanceStatus,
   WORK_TYPE_LABELS,
   EMPLOYMENT_TYPE_LABELS,
@@ -272,7 +270,7 @@ export const hostessAttendanceStatusLabels: Record<HostessAttendanceStatus, stri
 };
 
 // ステータスの色設定
-export const hostessAttendanceStatusColors: Record<HostessAttendanceStatus, string> = {
+export const HOSTESS_ATTENDANCE_STATUS_COLORS: Record<HostessAttendanceStatus, string> = {
   scheduled: 'bg-yellow-100 text-yellow-800',
   confirmed: 'bg-blue-100 text-blue-800',
   working: 'bg-green-100 text-green-800',

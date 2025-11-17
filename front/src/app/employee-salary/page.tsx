@@ -9,6 +9,7 @@ import { ArrowLeft, ChevronLeft, ChevronRight, Search, Calendar, Users, FileText
 import type { EmployeeWeeklyShift, ShiftType } from '@/types/employee';
 import { shiftTypeSettings } from '@/types/employee';
 import { sampleEmployeeWeeklyShifts } from '@/data/employeeSampleData';
+import { useEmployeeWeeklyShifts } from '@/hooks/use-employee';
 
 // 今週の日付を取得する関数
 const getCurrentWeekDates = (baseDate: Date = new Date()) => {
@@ -36,12 +37,30 @@ export default function EmployeeSalary() {
   const [currentWeekStart, setCurrentWeekStart] = useState(new Date());
   const [weekDates, setWeekDates] = useState<Date[]>([]);
   const [activeTab, setActiveTab] = useState<TabType>('weekly_schedule');
-  const [shifts] = useState<EmployeeWeeklyShift[]>(sampleEmployeeWeeklyShifts);
   const [searchQuery, setSearchQuery] = useState('');
 
   useEffect(() => {
     setWeekDates(getCurrentWeekDates(currentWeekStart));
   }, [currentWeekStart]);
+
+  // 週の開始日と終了日を計算
+  const weekStartDateStr = useMemo(() => {
+    if (weekDates.length === 0) return '';
+    const date = weekDates[0];
+    return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
+  }, [weekDates]);
+
+  const weekEndDateStr = useMemo(() => {
+    if (weekDates.length === 0) return '';
+    const date = weekDates[6];
+    return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
+  }, [weekDates]);
+
+  // React Queryを使用してデータ取得（フォールバックとしてサンプルデータを使用）
+  const { data: shiftsData = sampleEmployeeWeeklyShifts, isLoading, error } = useEmployeeWeeklyShifts(
+    weekStartDateStr || '2025-01-27',
+    weekEndDateStr || '2025-02-02'
+  );
 
   const navigateWeek = (direction: 'prev' | 'next') => {
     const newDate = new Date(currentWeekStart);
@@ -79,7 +98,7 @@ export default function EmployeeSalary() {
   //   return settings ? settings.label : '不明';
   // };
 
-  const filteredShifts = shifts.filter(shift =>
+  const filteredShifts = shiftsData.filter(shift =>
     shift.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
     shift.employeeNumber.toLowerCase().includes(searchQuery.toLowerCase()) ||
     shift.position.toLowerCase().includes(searchQuery.toLowerCase())
@@ -115,6 +134,12 @@ export default function EmployeeSalary() {
               <h1 className="text-xl font-bold">従業員週間出勤予定</h1>
 
               <div className="flex items-center gap-4">
+                {error && (
+                  <span className="text-red-600 text-sm">データ取得に失敗しました</span>
+                )}
+                {isLoading && (
+                  <span className="text-gray-600 text-sm">読み込み中...</span>
+                )}
                 {/* 週移動ボタン */}
                 <div className="flex items-center gap-2">
                   <Button

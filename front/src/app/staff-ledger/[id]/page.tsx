@@ -1,7 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
-import { ToasterProvider } from '@/providers/ui-providers';
+import React, { useState, useCallback, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -20,10 +19,10 @@ import { Separator } from '@/components/ui/separator';
 import { Textarea } from '@/components/ui/textarea';
 import { useToast } from '@/hooks/use-toast';
 import {
-  employmentTypeLabels,
-  jobTypeLabels,
-  roleLabels,
-  staffEmploymentStatusLabels,
+  EMPLOYMENT_TYPE_LABELS,
+  JOB_TYPE_LABELS,
+  ROLE_LABELS,
+  STAFF_EMPLOYMENT_STATUS_LABELS,
 } from '@/types';
 
 type StaffDetailPageProps = {
@@ -47,7 +46,7 @@ type BasicDaySchedule = {
 
 type BasicSchedule = Record<Day, BasicDaySchedule>;
 
-function StaffDetailPageContent({ params }: StaffDetailPageProps) {
+export default function StaffDetailPage({ params }: StaffDetailPageProps) {
   const { id } = React.use(params);
   const { toast } = useToast();
 
@@ -67,6 +66,7 @@ function StaffDetailPageContent({ params }: StaffDetailPageProps) {
   const [carNumber, setCarNumber] = useState<string>('');
   const [bathTowel, setBathTowel] = useState<string>('');
   const [equipment, setEquipment] = useState<string>('');
+  const [remarks, setRemarks] = useState<string>('');
 
   const [employmentStatus, setEmploymentStatus] = useState<'active' | 'inactive'>('active');
   const [employmentDate, setEmploymentDate] = useState<string>('');
@@ -119,6 +119,7 @@ function StaffDetailPageContent({ params }: StaffDetailPageProps) {
       pcEmail: z.string().nullable().optional(),
       bathTowel: z.number().nullable().optional(),
       equipment: z.number().nullable().optional(),
+      remarks: z.string().nullable().optional(),
       car: z.object({
         carType: z.string().nullable().optional(),
         color: z.string().nullable().optional(),
@@ -135,6 +136,10 @@ function StaffDetailPageContent({ params }: StaffDetailPageProps) {
         const res = await fetch(`http://localhost:8080/api/staff/${id}`, { cache: 'no-store' });
         if (!res.ok) throw new Error(`failed: ${res.status}`);
         const json = await res.json();
+        // remarksフィールドが存在しない場合はnullを設定（omitemptyでJSONに含まれない場合の対応）
+        if (json.remarks === undefined) {
+          json.remarks = null;
+        }
         const data = ResponseSchema.parse(json);
 
         setEmploymentStatus(data.employmentStatus === 'active' ? 'active' : 'inactive');
@@ -156,6 +161,7 @@ function StaffDetailPageContent({ params }: StaffDetailPageProps) {
         setPcEmail(data.pcEmail ?? '');
         setBathTowel(data.bathTowel != null ? String(data.bathTowel) : '');
         setEquipment(data.equipment != null ? String(data.equipment) : '');
+        setRemarks(data.remarks ?? '');
         if (data.car) {
           setCarType(data.car.carType ?? '');
           setCarColor(data.car.color ?? '');
@@ -214,6 +220,7 @@ function StaffDetailPageContent({ params }: StaffDetailPageProps) {
         mobileEmail,
         pcEmail,
         vehicleId: vehicleId ?? '',
+        remarks: remarks.trim() !== '' ? remarks : null,
         schedule: {
           mon: schedule.mon,
           tue: schedule.tue,
@@ -252,6 +259,8 @@ function StaffDetailPageContent({ params }: StaffDetailPageProps) {
         return;
       }
       toast({ title: '保存しました', description: 'スタッフ情報を更新しました。' });
+      // 保存後に最新データを再取得
+      window.location.reload();
     } catch {
       toast({ title: '保存エラー', description: '通信に失敗しました。', variant: 'destructive' as any });
     } finally {
@@ -423,11 +432,11 @@ function StaffDetailPageContent({ params }: StaffDetailPageProps) {
                   >
                     <div className="flex items-center space-x-2">
                       <RadioGroupItem id="emp-employee" value="employee" />
-                      <Label htmlFor="emp-employee" className="text-xs">{employmentTypeLabels.employee}</Label>
+                      <Label htmlFor="emp-employee" className="text-xs">{EMPLOYMENT_TYPE_LABELS.employee}</Label>
                     </div>
                     <div className="flex items-center space-x-2">
                       <RadioGroupItem id="emp-parttime" value="part_time" />
-                      <Label htmlFor="emp-parttime" className="text-xs">{employmentTypeLabels.part_time}</Label>
+                      <Label htmlFor="emp-parttime" className="text-xs">{EMPLOYMENT_TYPE_LABELS.part_time}</Label>
                     </div>
                     <div className="flex items-center space-x-2">
                       <RadioGroupItem id="emp-outsourced" value="outsourced" />
@@ -443,8 +452,8 @@ function StaffDetailPageContent({ params }: StaffDetailPageProps) {
                       <SelectValue placeholder="選択してください" />
                     </SelectTrigger>
                     <SelectContent>
-                      {Object.entries(roleLabels).map(([key, label]) => (
-                        <SelectItem key={key} value={key}>{label}</SelectItem>
+                      {Object.entries(ROLE_LABELS).map(([key, label]) => (
+                        <SelectItem key={key} value={key}>{label as string}</SelectItem>
                       ))}
                     </SelectContent>
                   </Select>
@@ -456,11 +465,11 @@ function StaffDetailPageContent({ params }: StaffDetailPageProps) {
                 <div className="col-span-10 flex items-center gap-6">
                   <div className="flex items-center space-x-2">
                     <Checkbox id="job-driver" checked={jobDriver} onCheckedChange={(v) => setJobDriver(Boolean(v))} />
-                    <Label htmlFor="job-driver" className="text-xs">{jobTypeLabels.driver}</Label>
+                    <Label htmlFor="job-driver" className="text-xs">{JOB_TYPE_LABELS.driver}</Label>
                   </div>
                   <div className="flex items-center space-x-2">
                     <Checkbox id="job-office" checked={jobOffice} onCheckedChange={(v) => setJobOffice(Boolean(v))} />
-                    <Label htmlFor="job-office" className="text-xs">{jobTypeLabels.office}</Label>
+                    <Label htmlFor="job-office" className="text-xs">{JOB_TYPE_LABELS.office}</Label>
                   </div>
                 </div>
               </div>
@@ -574,7 +583,12 @@ function StaffDetailPageContent({ params }: StaffDetailPageProps) {
               <h2 className="font-semibold">備考</h2>
             </CardHeader>
             <CardContent>
-              <Textarea rows={4} placeholder="備考を入力" />
+              <Textarea 
+                rows={4} 
+                placeholder="備考を入力" 
+                value={remarks}
+                onChange={(e) => setRemarks(e.target.value)}
+              />
             </CardContent>
           </Card>
         </div>
@@ -727,14 +741,6 @@ function StaffDetailPageContent({ params }: StaffDetailPageProps) {
         </Card>
       </div>
     </div>
-  );
-}
-
-export default function StaffDetailPage(props: StaffDetailPageProps) {
-  return (
-    <ToasterProvider>
-      <StaffDetailPageContent {...props} />
-    </ToasterProvider>
   );
 }
 

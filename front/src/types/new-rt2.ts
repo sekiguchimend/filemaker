@@ -24,6 +24,11 @@ export interface UndecidedDriverReservation {
   sColumn: string; // S列（例：「S」）
   timeTotal: number; // 時間計（分）（例：120）
   isHighlighted: boolean; // ハイライト表示フラグ（背景色）
+  hasOption1?: boolean; // オプション1（領収書）
+  hasOption2?: boolean; // オプション2（待合せ）
+  hasOption3?: boolean; // オプション3（着TEL）
+  hasOption4?: boolean; // オプション4（カード）
+  hasOption5?: boolean; // オプション5（オプション）
 }
 
 // ホステス送り・帰宅
@@ -32,8 +37,8 @@ export interface HostessTransport {
   hostessName: string; // ホステス名（例：「南 リョウナ」）
   departureTime: string; // 出発時間（例：「00:00」）
   destination: string; // 送り場所
-  returnTime?: string; // 帰宅時間（オプション）
-  count?: number; // 件数（オプション）
+  returnTime?: string; // 帰宅時間
+  count?: number; // 件数
 }
 
 // 帰宅ホステス
@@ -128,8 +133,5 @@ export interface WalkingDispatch {
   id: string;
   hostessName: string; // ホステス名（例：「南 リョウナ」）
   departureTime: string; // 出発時間（例：「00:00」）
-  option1?: boolean; // オプション1
-  option2?: boolean; // オプション2
-  option3?: boolean; // オプション3
 }
 

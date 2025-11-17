@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { AttendingStaff, AttendingHostess } from '@/types/attendance';
+import { AttendingStaff, AttendingHostess, EMPLOYMENT_TYPE_LABELS } from '@/types/attendance';
 import type { AttendingStaffItemProps, AttendingHostessItemProps, AttendanceTabProps } from '@/types/attendance-tab';
 
 /**
@@ -24,11 +24,11 @@ function AttendingStaffItem({ data }: AttendingStaffItemProps) {
       {/* 雇用形態 */}
       <td className="px-2 py-2 text-center">
         <span className={`px-2 py-1 rounded-full text-xs font-medium ${
-          data.employmentType === '社員' 
+          data.employmentType === 'employee' 
             ? 'bg-blue-100 text-blue-800' 
             : 'bg-green-100 text-green-800'
         }`}>
-          {data.employmentType}
+          {EMPLOYMENT_TYPE_LABELS[data.employmentType]}
         </span>
       </td>
       

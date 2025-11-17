@@ -1,7 +1,6 @@
 'use client';
 
 import React, { useState, useMemo } from 'react';
-import dynamic from 'next/dynamic';
 import { useRouter } from 'next/navigation';
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -17,11 +16,8 @@ import { sampleHostessRanking } from "@/data/hostessSampleData";
 import type { HostessRanking } from "@/types/hostess";
 import type { SortKey, RankingCardProps, RankChangeIconProps } from "@/types/hostess-ranking";
 import { SORT_OPTIONS } from "@/types/hostess-ranking";
-
-const RankingTransitionChart = dynamic(
-  () => import("@/components/hostess/ranking-transition-chart"),
-  { ssr: false, loading: () => <div className="h-[320px] bg-card rounded-lg animate-pulse" /> }
-);
+import RankingTransitionChart from "@/components/hostess/ranking-transition-chart";
+import { useHostessRanking } from '@/hooks/use-hostess';
 
 // ランク変動アイコン
 const RankChangeIcon = ({ change }: RankChangeIconProps) => {
@@ -42,17 +38,18 @@ const RankingCard = ({
   title, 
   icon: Icon,
   sortKey, 
-  onSortChange 
+  onSortChange,
+  hostessRankingData
 }: RankingCardProps) => {
   const [selectedStore, setSelectedStore] = useState<string>('all');
   
   // 店舗でフィルタリング
   const filteredData = useMemo(() => {
     if (selectedStore === 'all') {
-      return sampleHostessRanking;
+      return hostessRankingData;
     }
-    return sampleHostessRanking.filter(item => item.storeId === selectedStore);
-  }, [selectedStore]);
+    return hostessRankingData.filter(item => item.storeId === selectedStore);
+  }, [selectedStore, hostessRankingData]);
 
   // データをソート
   const sortedData = useMemo(() => {
@@ -66,13 +63,13 @@ const RankingCard = ({
   // 店舗リストを取得
   const stores = useMemo(() => {
     const storeMap = new Map<string, string>();
-    sampleHostessRanking.forEach(item => {
+    hostessRankingData.forEach(item => {
       if (item.storeId && item.storeName) {
         storeMap.set(item.storeId, item.storeName);
       }
     });
     return Array.from(storeMap.entries()).map(([id, name]) => ({ id, name }));
-  }, []);
+  }, [hostessRankingData]);
 
   // 現在のソート基準のラベルを取得
   const currentSortLabel = SORT_OPTIONS.find(opt => opt.value === sortKey)?.label || '';
@@ -226,16 +223,19 @@ export default function HostessRanking() {
   const [transitionMonths, setTransitionMonths] = useState<number>(6);
   const [transitionTopN, setTransitionTopN] = useState<number>(5);
 
+  // React Queryを使用してデータ取得（フォールバックとしてサンプルデータを使用）
+  const { data: hostessRankingData = sampleHostessRanking, isLoading, error } = useHostessRanking('monthly');
+
   // 店舗一覧（共通）
   const allStores = useMemo(() => {
     const storeMap = new Map<string, string>();
-    sampleHostessRanking.forEach(item => {
+    hostessRankingData.forEach(item => {
       if (item.storeId && item.storeName) {
         storeMap.set(item.storeId, item.storeName);
       }
     });
     return Array.from(storeMap.entries()).map(([id, name]) => ({ id, name }));
-  }, []);
+  }, [hostessRankingData]);
 
   const handleSortChange = (index: number, key: SortKey) => {
     const newSortKeys = [...sortKeys] as [SortKey, SortKey, SortKey, SortKey];
@@ -334,13 +334,19 @@ export default function HostessRanking() {
           </div>
         </CardHeader>
         <CardContent>
-          <RankingTransitionChart
-            sourceData={sampleHostessRanking as HostessRanking[]}
-            metric={transitionMetric}
-            storeId={transitionStore}
-            months={transitionMonths}
-            topN={transitionTopN}
-          />
+          {isLoading ? (
+            <div className="text-center py-8 text-gray-500">読み込み中...</div>
+          ) : error ? (
+            <div className="text-center py-8 text-red-500">データの取得に失敗しました</div>
+          ) : (
+            <RankingTransitionChart
+              sourceData={hostessRankingData as HostessRanking[]}
+              metric={transitionMetric}
+              storeId={transitionStore}
+              months={transitionMonths}
+              topN={transitionTopN}
+            />
+          )}
         </CardContent>
       </Card>
 
@@ -351,7 +357,7 @@ export default function HostessRanking() {
             <div className="text-center">
               <Crown className="w-8 h-8 mx-auto mb-2 text-yellow-600" />
               <p className="text-sm text-gray-600">総ホステス数</p>
-              <p className="text-2xl font-bold">{sampleHostessRanking.length}名</p>
+              <p className="text-2xl font-bold">{hostessRankingData.length}名</p>
             </div>
           </CardContent>
         </Card>
@@ -361,7 +367,7 @@ export default function HostessRanking() {
               <TrendingUp className="w-8 h-8 mx-auto mb-2 text-blue-600" />
               <p className="text-sm text-gray-600">平均月間売上</p>
               <p className="text-2xl font-bold">
-                ¥{Math.round(sampleHostessRanking.reduce((sum, h) => sum + h.monthlyEarnings, 0) / sampleHostessRanking.length).toLocaleString()}
+                ¥{hostessRankingData.length > 0 ? Math.round(hostessRankingData.reduce((sum, h) => sum + h.monthlyEarnings, 0) / hostessRankingData.length).toLocaleString() : '0'}
               </p>
             </div>
           </CardContent>
@@ -372,7 +378,7 @@ export default function HostessRanking() {
               <Award className="w-8 h-8 mx-auto mb-2 text-green-600" />
               <p className="text-sm text-gray-600">総指名数</p>
               <p className="text-2xl font-bold">
-                {sampleHostessRanking.reduce((sum, h) => sum + h.regularNominationCount + h.panelNominationCount, 0)}件
+                {hostessRankingData.reduce((sum, h) => sum + h.regularNominationCount + h.panelNominationCount, 0)}件
               </p>
             </div>
           </CardContent>
@@ -383,7 +389,7 @@ export default function HostessRanking() {
               <Star className="w-8 h-8 mx-auto mb-2 text-purple-600" />
               <p className="text-sm text-gray-600">平均満足度</p>
               <p className="text-2xl font-bold">
-                {(sampleHostessRanking.reduce((sum, h) => sum + h.customerSatisfactionScore, 0) / sampleHostessRanking.length).toFixed(1)}
+                {hostessRankingData.length > 0 ? (hostessRankingData.reduce((sum, h) => sum + h.customerSatisfactionScore, 0) / hostessRankingData.length).toFixed(1) : '0'}
               </p>
             </div>
           </CardContent>
@@ -397,24 +403,28 @@ export default function HostessRanking() {
           icon={Crown}
           sortKey={sortKeys[0]}
           onSortChange={(key) => handleSortChange(0, key)}
+          hostessRankingData={hostessRankingData}
         />
         <RankingCard
           title="ランキング2"
           icon={TrendingUp}
           sortKey={sortKeys[1]}
           onSortChange={(key) => handleSortChange(1, key)}
+          hostessRankingData={hostessRankingData}
         />
         <RankingCard
           title="ランキング3"
           icon={Award}
           sortKey={sortKeys[2]}
           onSortChange={(key) => handleSortChange(2, key)}
+          hostessRankingData={hostessRankingData}
         />
         <RankingCard
           title="ランキング4"
           icon={Star}
           sortKey={sortKeys[3]}
           onSortChange={(key) => handleSortChange(3, key)}
+          hostessRankingData={hostessRankingData}
         />
       </div>
     </div>

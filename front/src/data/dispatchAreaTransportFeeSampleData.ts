@@ -1,7 +1,7 @@
-import { DispatchAreaTransportFee } from '@/types/dispatch';
+import { DispatchPostalCodeTransportFee } from '@/types/dispatch';
 
-// 派遣地区別交通費サンプルデータ
-export const dispatchAreaTransportFeeSampleData: DispatchAreaTransportFee[] = [
+// 派遣地区別交通費サンプルデータ（郵便番号ベース）
+export const dispatchAreaTransportFeeSampleData: DispatchPostalCodeTransportFee[] = [
   {
     id: '1',
     no: 1,

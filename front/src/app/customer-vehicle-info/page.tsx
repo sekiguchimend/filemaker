@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 
 import { useRouter } from 'next/navigation';
 import { Button } from "@/components/ui/button";
@@ -9,24 +9,31 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Badge } from "@/components/ui/badge";
 import { ArrowLeft, Car, Settings, Search } from "lucide-react";
 import { Input } from "@/components/ui/input";
-import { customerVehicleSampleData } from "@/data/customerVehicleSampleData";
 import type { CustomerVehicle } from "@/types/customer-vehicle";
 import CustomerVehicleEditModal from "@/components/modals/CustomerVehicleEditModal";
+import { useCustomerVehicles, useUpdateCustomerVehicle } from '@/hooks/use-customer-vehicle';
 
 export default function CustomerVehicleInfo() {
   const router = useRouter();
-  const [vehicleData, setVehicleData] = useState<CustomerVehicle[]>(customerVehicleSampleData);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [editingVehicle, setEditingVehicle] = useState<CustomerVehicle | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
 
+  // React Queryを使用してデータ取得
+  const { data: vehicleData = [], isLoading, error } = useCustomerVehicles();
+  const updateVehicle = useUpdateCustomerVehicle();
+
   // 検索フィルター
-  const filteredVehicles = vehicleData.filter(vehicle =>
-    vehicle.ctNo.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    vehicle.customerName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    vehicle.vehicleType.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    vehicle.plateNumber.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  const filteredVehicles = useMemo(() => {
+    if (!searchTerm) return vehicleData;
+    const q = searchTerm.toLowerCase();
+    return vehicleData.filter(vehicle =>
+      vehicle.ctNo.toLowerCase().includes(q) ||
+      vehicle.customerName.toLowerCase().includes(q) ||
+      vehicle.vehicleType.toLowerCase().includes(q) ||
+      vehicle.plateNumber.toLowerCase().includes(q)
+    );
+  }, [vehicleData, searchTerm]);
 
   // 編集ボタンクリック
   const handleEditClick = (vehicle: CustomerVehicle) => {
@@ -35,12 +42,18 @@ export default function CustomerVehicleInfo() {
   };
 
   // 編集保存
-  const handleSaveEdit = (updatedVehicle: CustomerVehicle) => {
-    setVehicleData(prev =>
-      prev.map(vehicle =>
-        vehicle.id === updatedVehicle.id ? updatedVehicle : vehicle
-      )
-    );
+  const handleSaveEdit = async (updatedVehicle: CustomerVehicle) => {
+    try {
+      await updateVehicle.mutateAsync({
+        id: updatedVehicle.id,
+        updates: updatedVehicle,
+      });
+      setIsEditModalOpen(false);
+      setEditingVehicle(null);
+    } catch (error) {
+      // エラーハンドリング
+      console.error('Failed to update vehicle:', error);
+    }
   };
 
   // ステータスバッジの色取得
@@ -93,7 +106,13 @@ export default function CustomerVehicleInfo() {
               <Car className="w-6 h-6" />
               <h1 className="text-2xl font-bold">顧客車情報</h1>
             </div>
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-4">
+              {error && (
+                <span className="text-red-600 text-sm">データ取得に失敗しました</span>
+              )}
+              {isLoading && (
+                <span className="text-gray-600 text-sm">読み込み中...</span>
+              )}
               <div className="relative">
                 <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
                 <Input
@@ -117,25 +136,41 @@ export default function CustomerVehicleInfo() {
             </p>
           </div>
           
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead className="w-16">No</TableHead>
-                <TableHead>CTNo</TableHead>
-                <TableHead>顧客名</TableHead>
-                <TableHead>車種</TableHead>
-                <TableHead>車色</TableHead>
-                <TableHead>地域</TableHead>
-                <TableHead>車種番号</TableHead>
-                <TableHead>記号</TableHead>
-                <TableHead>車番号</TableHead>
-                <TableHead>ナンバープレート</TableHead>
-                <TableHead>ステータス</TableHead>
-                <TableHead className="text-right">操作</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {filteredVehicles.map((vehicle) => (
+          {isLoading ? (
+            <div className="text-center py-8 text-gray-500">
+              読み込み中...
+            </div>
+          ) : error ? (
+            <div className="text-center py-8 text-red-500">
+              データの取得に失敗しました
+            </div>
+          ) : (
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead className="w-16">No</TableHead>
+                  <TableHead>CTNo</TableHead>
+                  <TableHead>顧客名</TableHead>
+                  <TableHead>車種</TableHead>
+                  <TableHead>車色</TableHead>
+                  <TableHead>地域</TableHead>
+                  <TableHead>車種番号</TableHead>
+                  <TableHead>記号</TableHead>
+                  <TableHead>車番号</TableHead>
+                  <TableHead>ナンバープレート</TableHead>
+                  <TableHead>ステータス</TableHead>
+                  <TableHead className="text-right">操作</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {filteredVehicles.length === 0 ? (
+                  <TableRow>
+                    <TableCell colSpan={12} className="text-center py-8 text-gray-500">
+                      データが見つかりません
+                    </TableCell>
+                  </TableRow>
+                ) : (
+                  filteredVehicles.map((vehicle) => (
                 <TableRow key={vehicle.id}>
                   <TableCell className="font-medium">{vehicle.serialNumber}</TableCell>
                   <TableCell className="font-mono">{vehicle.ctNo}</TableCell>
@@ -166,9 +201,11 @@ export default function CustomerVehicleInfo() {
                     </Button>
                   </TableCell>
                 </TableRow>
-              ))}
-            </TableBody>
-          </Table>
+                  ))
+                )}
+              </TableBody>
+            </Table>
+          )}
         </CardContent>
       </Card>
 

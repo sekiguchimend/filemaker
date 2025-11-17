@@ -1,83 +1,64 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { ArrowLeft, Search, Plus, Download } from "lucide-react";
 import type { StaffLedgerRecord } from '@/types';
-import { z } from "zod";
 import {
-  employmentTypeLabels,
-  jobTypeLabels,
-  roleLabels,
-  staffEmploymentStatusLabels,
-  accessTypeLabels,
-  accessStatusLabels
+  JOB_TYPE_LABELS,
+  ROLE_LABELS,
+  STAFF_EMPLOYMENT_STATUS_LABELS,
+  ACCESS_TYPE_LABELS,
+  ACCESS_STATUS_LABELS
 } from '@/types';
+import { EMPLOYMENT_TYPE_LABELS, type EmploymentType } from '@/types/staff-attendance';
+import { useStaffLedger } from '@/hooks/use-staff';
 
 export default function StaffLedger() {
   const router = useRouter();
-  const [staffs, setStaffs] = useState<StaffLedgerRecord[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
-  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  
+  // React Queryを使用してデータ取得
+  const { data: staffs = [], isLoading, error } = useStaffLedger();
 
-  React.useEffect(() => {
-    const schema = z.object({
-      id: z.string(),
-      sfid: z.string(),
-      lastName: z.string(),
-      firstName: z.string(),
-      lastNameKana: z.string().nullable().optional().transform(val => val ?? undefined),
-      firstNameKana: z.string().nullable().optional().transform(val => val ?? undefined),
-      employmentDate: z.string(), // YYYY-MM-DD
-      retirementDate: z.string().nullable().optional().transform(val => val ?? undefined),
-      employmentType: z.enum(['employee', 'part_time']),
-      jobTypes: z.array(z.enum(['driver', 'office'])),
-      role: z.enum(['chairman','advisor','president','general_manager','manager','admin_manager','office_manager','female_manager','office_staff','pr']),
-      employmentStatus: z.enum(['active','']),
-      adjustmentRate: z.number(),
-      displayOrder: z.number(),
-      accountName: z.string(),
-      accessType: z.enum(['admin','manager','accounting_manager','staff']),
-      accessStatus: z.enum(['active','inactive']),
-      createdAt: z.string(),
-      updatedAt: z.string()
-    });
-    const fetchData = async () => {
-      try {
-        const res = await fetch('http://localhost:8080/api/staff-ledger', { cache: 'no-store' });
-        if (!res.ok) throw new Error(`failed: ${res.status}`);
-        const json = await res.json();
-        const parsed = z.array(schema).parse(json);
-        setStaffs(parsed);
-      } catch (e) {
-        setErrorMessage('データ取得に失敗しました');
-      }
-    };
-    fetchData();
-  }, []);
-
-  const filteredStaffs = staffs.filter(staff => {
-    const fullName = `${staff.lastName}${staff.firstName}`;
-    const fullNameKana = `${staff.lastNameKana ?? ''}${staff.firstNameKana ?? ''}`;
+  // 検索フィルタリング
+  const filteredStaffs = useMemo(() => {
+    if (!searchQuery) return staffs;
+    
     const q = searchQuery.toLowerCase();
-    return (
-      fullName.toLowerCase().includes(q) ||
-      fullNameKana.toLowerCase().includes(q) ||
-      staff.sfid.toLowerCase().includes(q) ||
-      staff.accountName.toLowerCase().includes(q) ||
-      roleLabels[staff.role].toLowerCase().includes(q)
-    );
-  });
+    return staffs.filter(staff => {
+      const fullName = `${staff.lastName}${staff.firstName}`;
+      const fullNameKana = `${staff.lastNameKana ?? ''}${staff.firstNameKana ?? ''}`;
+      return (
+        fullName.toLowerCase().includes(q) ||
+        fullNameKana.toLowerCase().includes(q) ||
+        staff.sfid.toLowerCase().includes(q) ||
+        staff.accountName.toLowerCase().includes(q) ||
+        ROLE_LABELS[staff.role].toLowerCase().includes(q)
+      );
+    });
+  }, [staffs, searchQuery]);
 
 
-  const formatDateOnly = (dateTimeString: string) => {
-    // 'YYYY-MM-DD HH:MM:SS' or ISO → 'YYYY/MM/DD'
+  const formatDateTime = (dateTimeString: string) => {
+    // 'YYYY-MM-DD HH:MM:SS' or ISO → 'YYYY/MM/DD HH:MM:SS'
     if (!dateTimeString) return '';
-    const datePart = dateTimeString.split(/[ T]/)[0] ?? '';
-    return datePart.replace(/-/g, '/');
+    // ISO形式の場合（2024-01-10T09:00:00+09:00）
+    if (dateTimeString.includes('T')) {
+      const [datePart, timePart] = dateTimeString.split('T');
+      const timeOnly = timePart ? timePart.split(/[+\-Z]/)[0] : '';
+      return `${datePart.replace(/-/g, '/')} ${timeOnly}`;
+    }
+    // すでに 'YYYY-MM-DD HH:MM:SS' 形式の場合
+    const [datePart, timePart] = dateTimeString.split(' ');
+    if (datePart && timePart) {
+      return `${datePart.replace(/-/g, '/')} ${timePart}`;
+    }
+    // 日付のみの場合
+    return dateTimeString.replace(/-/g, '/');
   };
 
   const exportToCSV = () => {
@@ -91,16 +72,16 @@ export default function StaffLedger() {
       index + 1,
       staff.sfid,
       `${staff.lastName}${staff.firstName}`,
-      employmentTypeLabels[staff.employmentType],
-      staff.jobTypes.map(jobType => jobTypeLabels[jobType]).join('・'),
-      roleLabels[staff.role],
-      staffEmploymentStatusLabels[staff.employmentStatus],
+      EMPLOYMENT_TYPE_LABELS[staff.employmentType as EmploymentType],
+      staff.jobTypes.map(jobType => JOB_TYPE_LABELS[jobType]).join('・'),
+      ROLE_LABELS[staff.role],
+      STAFF_EMPLOYMENT_STATUS_LABELS[staff.employmentStatus],
       staff.adjustmentRate,
       staff.accountName,
-      accessTypeLabels[staff.accessType],
-      accessStatusLabels[staff.accessStatus],
-      formatDateOnly(staff.createdAt),
-      formatDateOnly(staff.updatedAt)
+      ACCESS_TYPE_LABELS[staff.accessType],
+      ACCESS_STATUS_LABELS[staff.accessStatus],
+      formatDateTime(staff.createdAt),
+      formatDateTime(staff.updatedAt)
     ]);
 
     const csvContent = [headers, ...csvData]
@@ -149,8 +130,11 @@ export default function StaffLedger() {
           <CardHeader className="pb-3">
             <div className="flex items-center justify-between">
               <h1 className="text-xl font-bold">スタッフ台帳</h1>
-              {errorMessage && (
-                <span className="text-red-600 text-sm">{errorMessage}</span>
+              {error && (
+                <span className="text-red-600 text-sm">データ取得に失敗しました</span>
+              )}
+              {isLoading && (
+                <span className="text-gray-600 text-sm">読み込み中...</span>
               )}
 
               <div className="flex items-center gap-4">
@@ -226,7 +210,7 @@ export default function StaffLedger() {
                             ? 'bg-blue-100 text-blue-800'
                             : 'bg-green-100 text-green-800'
                         }`}>
-                          {employmentTypeLabels[staff.employmentType]}
+                          {EMPLOYMENT_TYPE_LABELS[staff.employmentType as EmploymentType]}
                         </span>
                       </td>
                       <td className="border border-gray-300 px-2 py-2 text-center">
@@ -237,7 +221,7 @@ export default function StaffLedger() {
                                 ? 'bg-orange-100 text-orange-800'
                                 : 'bg-purple-100 text-purple-800'
                             }`}>
-                              {jobTypeLabels[jobType]}
+                              {JOB_TYPE_LABELS[jobType]}
                             </span>
                           ))}
                         </div>
@@ -250,7 +234,7 @@ export default function StaffLedger() {
                             ? 'bg-blue-100 text-blue-800'
                             : 'bg-gray-100 text-gray-800'
                         }`}>
-                          {roleLabels[staff.role]}
+                          {ROLE_LABELS[staff.role]}
                         </span>
                       </td>
                       <td className="border border-gray-300 px-2 py-2 text-center">
@@ -276,7 +260,7 @@ export default function StaffLedger() {
                             ? 'bg-green-100 text-green-800'
                             : 'bg-gray-100 text-gray-800'
                         }`}>
-                          {accessTypeLabels[staff.accessType]}
+                          {ACCESS_TYPE_LABELS[staff.accessType]}
                         </span>
                       </td>
                       <td className="border border-gray-300 px-2 py-2 text-center">
@@ -285,14 +269,14 @@ export default function StaffLedger() {
                             ? 'bg-green-100 text-green-800'
                             : 'bg-red-100 text-red-800'
                         }`}>
-                          {accessStatusLabels[staff.accessStatus]}
+                          {ACCESS_STATUS_LABELS[staff.accessStatus]}
                         </span>
                       </td>
                       <td className="border border-gray-300 px-2 py-2 text-center font-mono text-xs">
-                        {formatDateOnly(staff.createdAt)}
+                        {formatDateTime(staff.createdAt)}
                       </td>
                       <td className="border border-gray-300 px-2 py-2 text-center font-mono text-xs">
-                        {formatDateOnly(staff.updatedAt)}
+                        {formatDateTime(staff.updatedAt)}
                       </td>
                       <td className="border border-gray-300 px-2 py-2 text-center">
                         <Button

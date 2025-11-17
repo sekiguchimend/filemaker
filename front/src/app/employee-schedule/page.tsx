@@ -10,6 +10,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { ArrowLeft, ChevronLeft, ChevronRight, Search, Calendar, Users, FileText, Calculator, BookOpen, Plus, Edit, Check } from "lucide-react";
 import type { DailyShift, EmployeeWeeklyShift } from '@/types/employee';
 import { sampleEmployeeWeeklyShifts } from '@/data/employeeSampleData';
+import { useEmployeeWeeklyShifts, useUpdateEmployeeWeeklyShift, useUpdateEmployeeWeeklyShifts } from '@/hooks/use-employee';
 
 // 今週の日付を取得する関数
 const getCurrentWeekDates = (baseDate: Date = new Date()) => {
@@ -37,7 +38,6 @@ export default function EmployeeSchedule() {
   const [currentWeekStart, setCurrentWeekStart] = useState(new Date());
   const [weekDates, setWeekDates] = useState<Date[]>([]);
   const [activeTab, setActiveTab] = useState<TabType>('weekly_schedule');
-  const [shifts, setShifts] = useState<EmployeeWeeklyShift[]>(sampleEmployeeWeeklyShifts);
   const [searchQuery, setSearchQuery] = useState('');
   const [editingRowId, setEditingRowId] = useState<string | null>(null);
   const [filterDepartment, setFilterDepartment] = useState<string>('');
@@ -47,6 +47,28 @@ export default function EmployeeSchedule() {
   useEffect(() => {
     setWeekDates(getCurrentWeekDates(currentWeekStart));
   }, [currentWeekStart]);
+
+  // 週の開始日と終了日を計算
+  const weekStartDateStr = useMemo(() => {
+    if (weekDates.length === 0) return '';
+    const date = weekDates[0];
+    return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
+  }, [weekDates]);
+
+  const weekEndDateStr = useMemo(() => {
+    if (weekDates.length === 0) return '';
+    const date = weekDates[6];
+    return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
+  }, [weekDates]);
+
+  // React Queryを使用してデータ取得（フォールバックとしてサンプルデータを使用）
+  const { data: shiftsData = sampleEmployeeWeeklyShifts, isLoading, error } = useEmployeeWeeklyShifts(
+    weekStartDateStr || '2025-01-27',
+    weekEndDateStr || '2025-02-02'
+  );
+  
+  const updateShift = useUpdateEmployeeWeeklyShift();
+  const updateShiftsBatch = useUpdateEmployeeWeeklyShifts();
 
   const navigateWeek = (direction: 'prev' | 'next') => {
     const newDate = new Date(currentWeekStart);
@@ -71,18 +93,18 @@ export default function EmployeeSchedule() {
 
   const departmentOptions = useMemo(() => {
     const set = new Set<string>();
-    shifts.forEach(s => { if (s.department) set.add(s.department); });
+    shiftsData.forEach(s => { if (s.department) set.add(s.department); });
     return Array.from(set);
-  }, [shifts]);
+  }, [shiftsData]);
 
   const positionOptions = useMemo(() => {
     const set = new Set<string>();
-    shifts.forEach(s => { if (s.position) set.add(s.position); });
+    shiftsData.forEach(s => { if (s.position) set.add(s.position); });
     return Array.from(set);
-  }, [shifts]);
+  }, [shiftsData]);
 
   const filteredShifts = useMemo(() => {
-    return shifts.filter(shift => {
+    return shiftsData.filter(shift => {
       const matchesSearch = shift.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
         shift.employeeNumber.toLowerCase().includes(searchQuery.toLowerCase()) ||
         shift.position.toLowerCase().includes(searchQuery.toLowerCase());
@@ -91,7 +113,7 @@ export default function EmployeeSchedule() {
       if (filterPosition && shift.position !== filterPosition) return false;
       return true;
     });
-  }, [shifts, searchQuery, filterDepartment, filterPosition]);
+  }, [shiftsData, searchQuery, filterDepartment, filterPosition]);
 
   const tabConfig = [
     { key: 'weekly_schedule', label: '従業員週間出勤予定', icon: Calendar },
@@ -113,72 +135,67 @@ export default function EmployeeSchedule() {
     notes: ''
   });
 
-  const updateScheduleCell = (scheduleId: string, day: keyof EmployeeWeeklyShift['weeklySchedule'], updates: Partial<DailyShift>) => {
-    setShifts(prev => prev.map(schedule => {
-      if (schedule.id !== scheduleId) return schedule;
-      const updated = {
-        ...schedule,
-        weeklySchedule: {
-          ...schedule.weeklySchedule,
-          [day]: {
-            ...schedule.weeklySchedule[day],
-            ...updates
-          }
+  const updateScheduleCell = async (scheduleId: string, day: keyof EmployeeWeeklyShift['weeklySchedule'], updates: Partial<DailyShift>) => {
+    const schedule = shiftsData.find(s => s.id === scheduleId);
+    if (!schedule) return;
+    
+    const updatedSchedule = {
+      ...schedule,
+      weeklySchedule: {
+        ...schedule.weeklySchedule,
+        [day]: {
+          ...schedule.weeklySchedule[day],
+          ...updates
         }
-      } as EmployeeWeeklyShift;
+      }
+    } as EmployeeWeeklyShift;
 
-      const values = Object.values(updated.weeklySchedule);
-      const totalWorkDays = values.filter(d => d.isWorkDay).length;
-      const totalWorkHours = values.reduce((sum, d) => sum + (d.workHours || 0), 0);
-      const totalBreakTime = values.reduce((sum, d) => sum + (d.breakTime || 0), 0);
-      const regularHours = values.reduce((sum, d) => sum + Math.min(d.workHours || 0, 8), 0);
-      const overtimeHours = values.reduce((sum, d) => sum + Math.max((d.workHours || 0) - 8, 0), 0);
-      const holidayHours = values.reduce((sum, d) => sum + (d.shiftType === 'holiday' ? (d.workHours || 0) : 0), 0);
+    const values = Object.values(updatedSchedule.weeklySchedule);
+    const totalWorkDays = values.filter(d => d.isWorkDay).length;
+    const totalWorkHours = values.reduce((sum, d) => sum + (d.workHours || 0), 0);
+    const totalBreakTime = values.reduce((sum, d) => sum + (d.breakTime || 0), 0);
+    const regularHours = values.reduce((sum, d) => sum + Math.min(d.workHours || 0, 8), 0);
+    const overtimeHours = values.reduce((sum, d) => sum + Math.max((d.workHours || 0) - 8, 0), 0);
+    const holidayHours = values.reduce((sum, d) => sum + (d.shiftType === 'holiday' ? (d.workHours || 0) : 0), 0);
 
-      updated.weeklyStats = {
-        totalWorkDays,
-        totalWorkHours,
-        totalBreakTime,
-        regularHours,
-        overtimeHours,
-        nightHours: updated.weeklyStats.nightHours,
-        holidayHours,
-      };
-      return updated;
-    }));
+    updatedSchedule.weeklyStats = {
+      totalWorkDays,
+      totalWorkHours,
+      totalBreakTime,
+      regularHours,
+      overtimeHours,
+      nightHours: schedule.weeklyStats.nightHours,
+      holidayHours,
+    };
+
+    try {
+      await updateShift.mutateAsync({
+        id: scheduleId,
+        shift: updatedSchedule,
+      });
+    } catch (error) {
+      console.error('Failed to update schedule:', error);
+    }
   };
 
   const addNewSchedule = () => {
-    const newSchedule: EmployeeWeeklyShift = {
-      id: Date.now().toString(),
-      employeeId: `emp${String(shifts.length + 1).padStart(3, '0')}`,
-      employeeNumber: `E-${String(shifts.length + 1).padStart(3, '0')}`,
-      name: '',
-      position: '',
-      department: '',
-      weeklySchedule: {
-        monday: createEmptyDailyShift(),
-        tuesday: createEmptyDailyShift(),
-        wednesday: createEmptyDailyShift(),
-        thursday: createEmptyDailyShift(),
-        friday: createEmptyDailyShift(),
-        saturday: createEmptyDailyShift(),
-        sunday: createEmptyDailyShift(),
-      },
-      weeklyStats: {
-        totalWorkDays: 0,
-        totalWorkHours: 0,
-        totalBreakTime: 0,
-        regularHours: 0,
-        overtimeHours: 0,
-        nightHours: 0,
-        holidayHours: 0,
-      },
-      weekStartDate: '',
-      weekEndDate: '',
-      lastUpdated: new Date().toISOString(),
-    };
-    setShifts(prev => [...prev, newSchedule]);
+    // 新規スケジュール追加の処理（実装はモーダルなどで行う想定）
+  };
+
+  const handleBatchSave = async () => {
+    // 一括保存の処理
+    const updates = filteredShifts.map(shift => ({
+      id: shift.id,
+      shift: shift,
+    }));
+    
+    try {
+      await updateShiftsBatch.mutateAsync(updates);
+      setIsEditAll(false);
+      setEditingRowId(null);
+    } catch (error) {
+      console.error('Failed to batch update schedules:', error);
+    }
   };
 
   return (
@@ -203,6 +220,12 @@ export default function EmployeeSchedule() {
               <h1 className="text-xl font-bold">従業員スケジュール管理</h1>
 
               <div className="flex items-center gap-2">
+                {error && (
+                  <span className="text-red-600 text-sm">データ取得に失敗しました</span>
+                )}
+                {isLoading && (
+                  <span className="text-gray-600 text-sm">読み込み中...</span>
+                )}
                 <Button
                   variant="outline"
                   size="sm"
@@ -221,7 +244,7 @@ export default function EmployeeSchedule() {
                   <Calendar className="w-4 h-4 mr-1" />
                   {isEditAll ? '全員編集: ON' : '全員編集: OFF'}
                 </Button>
-                <Button variant="outline" size="sm" className="bg-blue-100">
+                <Button variant="outline" size="sm" className="bg-blue-100" onClick={handleBatchSave}>
                   一括保存
                 </Button>
                 <Button variant="outline" size="sm" className="bg-purple-100">

@@ -1,7 +1,11 @@
 import type { Metadata } from 'next'
 import { Inter } from 'next/font/google'
 import './globals.css'
-import { AppProviders } from '@/providers/app-providers'
+import { Toaster } from "@/components/ui/toaster"
+import { Toaster as Sonner } from "@/components/ui/sonner"
+import { TooltipProvider } from "@/components/ui/tooltip"
+// import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
+import { ReactQueryProvider } from "@/providers/react-query-provider"
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -18,9 +22,13 @@ export default function RootLayout({
   return (
     <html lang="ja">
       <body className={inter.className}>
-        <AppProviders>
-          {children}
-        </AppProviders>
+        <ReactQueryProvider>
+          <TooltipProvider>
+            {children}
+            <Toaster />
+            <Sonner />
+          </TooltipProvider>
+        </ReactQueryProvider>
       </body>
     </html>
   )

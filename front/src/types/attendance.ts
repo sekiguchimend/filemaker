@@ -11,7 +11,15 @@ export type AttendanceStaffStatus = '出勤' | '退社';
 /**
  * 雇用形態の型定義
  */
-export type EmploymentType = '社員' | 'アルバイト';
+export type EmploymentType = 'employee' | 'part_time';
+
+/**
+ * 雇用形態の表示ラベル
+ */
+export const EMPLOYMENT_TYPE_LABELS: Record<EmploymentType, string> = {
+  employee: '社員',
+  part_time: 'アルバイト'
+};
 
 /**
  * 色別数量の型定義（バスタオル・備品用）
@@ -31,7 +39,7 @@ export interface ColorQuantity {
 export interface AttendingStaff {
   /** スタッフID */
   id: string;
-  /** 雇用形態（社員またはアルバイト） */
+  /** 雇用形態（employee: 社員, part_time: アルバイト） */
   employmentType: EmploymentType;
   /** スタッフ名 */
   staffName: string;

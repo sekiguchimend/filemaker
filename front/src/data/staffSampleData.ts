@@ -5,7 +5,7 @@ import { Staff } from '@/types/staff';
  */
 export const staffSampleList: Staff[] = [
   {
-    employmentType: '社員',
+    employmentType: 'employee',
     staffName: '山田太郎',
     status: '出勤',
     numericValue: 8,
@@ -14,7 +14,7 @@ export const staffSampleList: Staff[] = [
     amount3: 4000,
   },
   {
-    employmentType: 'アルバイト',
+    employmentType: 'part_time',
     staffName: '佐藤花子',
     status: '希望',
     numericValue: 6,
@@ -23,7 +23,7 @@ export const staffSampleList: Staff[] = [
     amount3: 3000,
   },
   {
-    employmentType: '社員',
+    employmentType: 'employee',
     staffName: '田中一郎',
     status: '出勤',
     numericValue: 7,
@@ -32,7 +32,7 @@ export const staffSampleList: Staff[] = [
     amount3: 3500,
   },
   {
-    employmentType: 'アルバイト',
+    employmentType: 'part_time',
     staffName: '鈴木美咲',
     status: '希望',
     numericValue: 5,
@@ -41,7 +41,7 @@ export const staffSampleList: Staff[] = [
     amount3: 2500,
   },
   {
-    employmentType: '社員',
+    employmentType: 'employee',
     staffName: '伊藤雄介',
     status: '出勤',
     numericValue: 9,
@@ -50,7 +50,7 @@ export const staffSampleList: Staff[] = [
     amount3: 4500,
   },
   {
-    employmentType: 'アルバイト',
+    employmentType: 'part_time',
     staffName: '高橋さくら',
     status: '出勤',
     numericValue: 4,
@@ -59,7 +59,7 @@ export const staffSampleList: Staff[] = [
     amount3: 2000,
   },
   {
-    employmentType: '社員',
+    employmentType: 'employee',
     staffName: '渡辺健太',
     status: '希望',
     numericValue: 6,
@@ -68,7 +68,7 @@ export const staffSampleList: Staff[] = [
     amount3: 3000,
   },
   {
-    employmentType: 'アルバイト',
+    employmentType: 'part_time',
     staffName: '林麻衣',
     status: '出勤',
     numericValue: 3,
