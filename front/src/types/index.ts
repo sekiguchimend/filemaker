@@ -41,6 +41,7 @@ export * from './reports';
 export * from './management';
 export * from './vehicle';
 export * from './cast';
+export * from './shop';
 
 // dispatchの型定義（DispatchPostalCodeTransportFeeを含む）
 export * from './dispatch';

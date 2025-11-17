@@ -7,6 +7,7 @@ import (
 	"time"
 
 	config "nissyo/internal/config"
+	shop "nissyo/internal/shop"
 	staff "nissyo/internal/staff"
 
 	"github.com/gin-contrib/cors"
@@ -48,6 +49,8 @@ func main() {
 		api.GET("/staff-ledger", staff.GetStaffLedgerHandler)
 		api.GET("/staff/:id", staff.GetStaffDetailHandler)
 		api.PATCH("/staff/:id", staff.UpdateStaffHandler)
+		api.GET("/shops", shop.GetShopListHandler)
+		api.GET("/shops/:id", shop.GetShopDetailHandler)
 	}
 
 	router.Run(":8080")

@@ -14,7 +14,6 @@ import { ArrowLeft, Building, Plus, Settings, Users, FileText, DollarSign,
          Percent, Eye, Camera, Cog, Edit, Save, X } from "lucide-react";
 
 import { 
-  STORE_LIST, 
   storeLedgerTabs, 
   StoreLedgerTab,
   CourseFee
@@ -25,6 +24,7 @@ import {
 import { useStoreLedger, useStoreBasicInfo } from '@/hooks/use-store-ledger';
 import { calculateCourseFeeShares } from '@/lib/utils';
 import { discountSampleData, storeOptionsSampleData } from '@/data/storeLedgerSampleData';
+import { useShopList } from '@/hooks/use-shop';
 
 // 各タブのアイコンマッピング
 const tabIcons: Record<StoreLedgerTab, React.ComponentType<{ className?: string }>> = {
@@ -51,6 +51,11 @@ const tabIcons: Record<StoreLedgerTab, React.ComponentType<{ className?: string 
 export default function StoreLedger() {
   const router = useRouter();
   
+  // shopテーブルから店舗一覧を取得
+  const { data: shops = [] } = useShopList();
+  const storeList = shops.map(shop => shop.store_name || '').filter(Boolean);
+  const initialStore = storeList[0] || '';
+
   // カスタムフックを使用してデータと操作を管理
   const {
     selectedStore,
@@ -75,7 +80,7 @@ export default function StoreLedger() {
     handleEditCourseFee,
     handleSaveCourseFee,
     handleCancelEdit,
-  } = useStoreLedger(STORE_LIST[0]);
+  } = useStoreLedger(initialStore);
 
   // 店舗一覧取得
   const { data: storeBasicInfoList } = useStoreBasicInfo();
@@ -1712,27 +1717,31 @@ export default function StoreLedger() {
             <div className="flex-1 px-4 pb-4">
               <ScrollArea className="h-full">
                 <div className="space-y-2 pr-2">
-                  {STORE_LIST.map((storeName) => (
-                    <button
-                      key={storeName}
-                      onClick={() => setSelectedStore(storeName)}
-                      className={`w-full text-left p-3 rounded-lg transition-colors ${
-                        selectedStore === storeName
-                          ? 'bg-blue-50 border border-blue-200 text-blue-700'
-                          : 'hover:bg-gray-50 border border-transparent'
-                      }`}
-                    >
-                      <div className="flex items-center gap-3">
-                        <Building className="w-4 h-4" />
-                        <div>
-                          <div className="font-medium">{storeName}</div>
-                          <div className="text-xs text-gray-500">
-                            {storeBasicInfoList?.find(s => s.storeName === storeName)?.storeCode || ''}
+                  {storeList.length === 0 ? (
+                    <div className="text-center text-gray-500 py-4">店舗データがありません</div>
+                  ) : (
+                    storeList.map((storeName) => (
+                      <button
+                        key={storeName}
+                        onClick={() => setSelectedStore(storeName)}
+                        className={`w-full text-left p-3 rounded-lg transition-colors ${
+                          selectedStore === storeName
+                            ? 'bg-blue-50 border border-blue-200 text-blue-700'
+                            : 'hover:bg-gray-50 border border-transparent'
+                        }`}
+                      >
+                        <div className="flex items-center gap-3">
+                          <Building className="w-4 h-4" />
+                          <div>
+                            <div className="font-medium">{storeName}</div>
+                            <div className="text-xs text-gray-500">
+                              {storeBasicInfoList?.find(s => s.storeName === storeName)?.storeCode || ''}
+                            </div>
                           </div>
                         </div>
-                      </div>
-                    </button>
-                  ))}
+                      </button>
+                    ))
+                  )}
                 </div>
               </ScrollArea>
             </div>

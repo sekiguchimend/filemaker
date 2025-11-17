@@ -4,10 +4,13 @@
 // React Queryを使用してデータの状態管理を行う
 
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { storeLedgerService } from '@/services/store-ledger-service';
 import { CourseFee, StoreLedgerTab } from '@/types';
 import { calculateCourseFeeShares } from '@/lib/utils';
+import { useShopList } from './use-shop';
+import { Shop } from '@/types/shop';
+import { BasicTag } from '@/types/basic-tag';
 
 // クエリキー定数
 const QUERY_KEYS = {
@@ -19,42 +22,158 @@ const QUERY_KEYS = {
   SALES_DATA: 'sales-data',
 } as const;
 
-// 店舗一覧取得フック
+// shopデータをBasicTag形式に変換する関数
+function convertShopToBasicTag(shop: Shop): BasicTag {
+  return {
+    spid: shop.spid || 0,
+    dailyReportDisplay: true, // shopテーブルにないためデフォルト値
+    departmentNo: shop.department_no?.toString() || '',
+    accountingCategory: (shop.accounting_category as 'A' | 'B' | 'C' | 'D' | 'E') || 'A',
+    nonSameDayWorkGroup: '', // shopテーブルにないため空文字
+    storeName: shop.store_name || '',
+    storeNameKana: shop.store_name_furigana || '',
+    storeNameAbbr: shop.store_name_short || '',
+    phoneNumber: shop.phone_number || '',
+    url: shop.url || '',
+    email: shop.mail || '',
+    webLinkage: shop.is_web || false,
+    webSendMode: '本', // shopテーブルにないためデフォルト値
+    webManageId: shop.web_management_id || '',
+    webManagePassword: '', // セキュリティのため空文字
+    webManageUrl: shop.web_management_url || '',
+    hostessPageUrl: shop.hostess_page_url || '',
+    webHostessListUrl: shop.hostess_list_url || '',
+    hostessAttendanceManageUrl: shop.hostess_attendance_management_url || '',
+    hostessManageUrl: shop.hostess_management_url || '',
+    webSendUrls: {
+      hsprofile: shop.send_hsprofile || '',
+      hsattend: shop.send_hsattend || '',
+      hsjob: shop.send_hsjob || '',
+      ctpoint: shop.send_ctpoint || '',
+      hstattendweek: '', // shopテーブルにないため空文字
+      hsstart: shop.send_hsstart || '',
+      hsranking: shop.send_hsranking || '',
+    },
+    webSendUrlsTemp: {
+      hsprofile: '',
+      hsattend: '',
+      hsjob: '',
+      ctpoint: '',
+      hstattendweek: '',
+      hsstart: '',
+      hsranking: '',
+    },
+    coursePricingMethod: shop.course_fee_style ? '定額制' : '割合制',
+    nominationMethod: shop.nomination_fee_style ? '店舗一律' : 'ホステス別',
+    gmDivision: shop.gm_category ? '有' : '無',
+    nominationFee: shop.nomination_fee || 0,
+    extensionFee: shop.extension_fee || 0,
+    extensionUnit: shop.extension_per_minutes || 0,
+    basicTransportationFee: shop.standard_transportation_expenses || 0,
+    cancellationFee: shop.cancel_fee || 0,
+    memberCardIssuance: shop.is_membership_card ? '有' : '無',
+    customerPointInitialValueFirstHalf: shop.customer_point_initial_former || 0,
+    customerPointInitialValueSecondHalf: shop.customer_point_initial_latter || 0,
+    nominationPlusBackSystem: shop.is_nomination_plusback ? '有' : '無',
+    changeFee: shop.change_fee || 0,
+    cardCommissionRate: shop.card_commission || 0,
+    basicHostessReceivingRate: shop.standard_hostess_recieve_rate?.toString() || '',
+    extensionMethod: shop.extension_style === 'fixed_rate' ? '固定割合制' : 'ホステス別',
+    extensionHostessReceivingRate: shop.extension_hostess_recieve_rate?.toString() || '',
+    panelNominationFee: shop.panel_nomination_fee || 0,
+    starUnitPrice: shop.star_price?.toString() || '',
+    starFeeExcludeFrNR: '無', // shopテーブルにないためデフォルト値
+    businessType: shop.business_style === 'delivery_health' ? 'デリヘル' : 'ホテヘル',
+    memberNumberIssuanceManagement: shop.membership_number_management ? '店舗' : 'グループ',
+    storeSpecificMemberNumberIssuance: '', // shopテーブルにないため空文字
+    groupNo: shop.group_no?.toString() || '',
+    groupCommonMemberNumberIssuance: '', // shopテーブルにないため空文字
+    firstHalfStartTime: shop.former_start || '',
+    firstHalfEndTime: shop.former_end || '',
+    secondHalfStartTime: shop.latter_start || '',
+    secondHalfEndTime: shop.latter_end || '',
+  };
+}
+
+// shopデータをStoreBasicInfo形式に変換する関数
+function convertShopToStoreBasicInfo(shop: Shop) {
+  return {
+    id: shop.id,
+    storeName: shop.store_name || '',
+    storeCode: shop.spid?.toString() || '',
+    address: '', // shopテーブルにないため空文字
+    phoneNumber: shop.phone_number || '',
+    email: shop.mail || undefined,
+    businessHours: {
+      open: shop.former_start || '',
+      close: shop.latter_end || '',
+    },
+    capacity: 0, // shopテーブルにないためデフォルト値
+    isActive: true, // shopテーブルにないためデフォルト値
+    notes: undefined,
+  };
+}
+
+// 店舗一覧取得フック（shopテーブルから取得）
 export function useStoreBasicInfo() {
-  return useQuery({
-    queryKey: [QUERY_KEYS.STORE_BASIC_INFO],
-    queryFn: () => storeLedgerService.getStoreBasicInfo(),
-    staleTime: 5 * 60 * 1000, // 5分間キャッシュ
-  });
+  const { data: shops = [], isLoading, error } = useShopList();
+  
+  const storeBasicInfoList = useMemo(() => {
+    return shops.map(convertShopToStoreBasicInfo);
+  }, [shops]);
+
+  return {
+    data: storeBasicInfoList,
+    isLoading,
+    error,
+  };
 }
 
 // 選択された店舗の基本情報取得フック
 export function useStoreBasicInfoByName(storeName: string) {
-  return useQuery({
-    queryKey: [QUERY_KEYS.STORE_BASIC_INFO, 'by-name', storeName],
-    queryFn: () => storeLedgerService.getStoreBasicInfoByName(storeName),
-    enabled: !!storeName,
-    staleTime: 5 * 60 * 1000,
-  });
+  const { data: shops = [], isLoading, error } = useShopList();
+  
+  const storeInfo = useMemo(() => {
+    const shop = shops.find(s => s.store_name === storeName);
+    return shop ? convertShopToStoreBasicInfo(shop) : null;
+  }, [shops, storeName]);
+
+  return {
+    data: storeInfo,
+    isLoading,
+    error,
+  };
 }
 
-// 基本タグ取得フック
+// 基本タグ取得フック（shopテーブルから取得）
 export function useBasicTags() {
-  return useQuery({
-    queryKey: [QUERY_KEYS.BASIC_TAGS],
-    queryFn: () => storeLedgerService.getBasicTags(),
-    staleTime: 5 * 60 * 1000,
-  });
+  const { data: shops = [], isLoading, error } = useShopList();
+  
+  const basicTags = useMemo(() => {
+    return shops.map(convertShopToBasicTag);
+  }, [shops]);
+
+  return {
+    data: basicTags,
+    isLoading,
+    error,
+  };
 }
 
 // 選択された店舗の基本タグ取得フック
 export function useBasicTagByStoreName(storeName: string) {
-  return useQuery({
-    queryKey: [QUERY_KEYS.BASIC_TAGS, 'by-store', storeName],
-    queryFn: () => storeLedgerService.getBasicTagByStoreName(storeName),
-    enabled: !!storeName,
-    staleTime: 5 * 60 * 1000,
-  });
+  const { data: shops = [], isLoading, error } = useShopList();
+  
+  const basicTag = useMemo(() => {
+    const shop = shops.find(s => s.store_name === storeName);
+    return shop ? convertShopToBasicTag(shop) : null;
+  }, [shops, storeName]);
+
+  return {
+    data: basicTag,
+    isLoading,
+    error,
+  };
 }
 
 // GM区分取得フック
