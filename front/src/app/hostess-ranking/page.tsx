@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useMemo } from 'react';
+import dynamic from 'next/dynamic';
 import { useRouter } from 'next/navigation';
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -16,7 +17,11 @@ import { sampleHostessRanking } from "@/data/hostessSampleData";
 import type { HostessRanking } from "@/types/hostess";
 import type { SortKey, RankingCardProps, RankChangeIconProps } from "@/types/hostess-ranking";
 import { SORT_OPTIONS } from "@/types/hostess-ranking";
-import RankingTransitionChart from "@/components/hostess/ranking-transition-chart";
+
+const RankingTransitionChart = dynamic(
+  () => import("@/components/hostess/ranking-transition-chart"),
+  { ssr: false, loading: () => <div className="h-[320px] bg-card rounded-lg animate-pulse" /> }
+);
 
 // ランク変動アイコン
 const RankChangeIcon = ({ change }: RankChangeIconProps) => {

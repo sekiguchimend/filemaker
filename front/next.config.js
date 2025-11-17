@@ -51,6 +51,8 @@ const nextConfig = {
       transform: 'lucide-react/dist/esm/icons/{{kebabCase member}}',
     },
   },
+  // Transpile recharts for better tree-shaking
+  transpilePackages: ['recharts'],
 };
 
 module.exports = nextConfig;
