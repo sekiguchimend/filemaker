@@ -7,6 +7,7 @@ import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { ArrowLeft } from "lucide-react";
 // import type { TodayCastData } from '@/types'; // 将来の実装で使用予定
 import { sampleCastData } from '@/data/castSampleData';
+import { formatDate } from 'date-fns';
 
 
 
@@ -54,30 +55,13 @@ export default function RT2Panel() {
               <h1 className="text-xl font-bold">RT Ⅱ パネル</h1>
             </div>
             
-            <div className="flex items-center gap-2">
-              <Button variant="outline" size="sm" className="bg-green-100">
-                配車統制検査
-              </Button>
-              <Button variant="outline" size="sm" className="bg-pink-100">
-                配車パネル
-              </Button>
-              <Button variant="outline" size="sm" className="bg-blue-100">
-                考査印刷
-              </Button>
-              <Button variant="outline" size="sm" className="bg-gray-100">
-                Menu
-              </Button>
-              <Button variant="outline" size="sm" className="bg-yellow-100">
-                再表示
-              </Button>
-            </div>
           </div>
           
           <div className="flex items-center justify-between mt-2">
-            <div className="text-2xl font-bold text-blue-600">
-              終了時刻
+          <div className="text-lg font-mono bg-gray-500 text-white px-3 py-1 rounded">
+              {formatDate(currentTime, 'yyyy/MM/dd(EEE)')}
             </div>
-            <div className="text-lg font-mono bg-black text-white px-3 py-1 rounded">
+            <div className="text-lg font-mono bg-gray-500 text-white px-3 py-1 rounded">
               {formatTime(currentTime)}
             </div>
           </div>
